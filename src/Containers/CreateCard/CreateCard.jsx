@@ -1,14 +1,53 @@
 import Grid from "@mui/material/Grid2";
 import {Button, Container, FormControl, InputLabel, MenuItem, Select, TextField} from "@mui/material";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
+import {selectCard, selectCardLoading, selectReasons, selectSolutions} from "../../features/list/listSlice.js";
+import {getReasons, getSolution} from "../../features/list/listThunk.js";
 
 const CreateCard = () => {
 
+    const dispatch = useAppDispatch();
+    const [state, setState] = useState({
+        ls_abon: '',
+        spec_full_name: '',
+        sip: '',
+        full_name: "",
+        phone_number: "",
+        address: '',
+        comment: '',
+        reason: '',
+        solution: '',
+    });
+
+    const inputChangeHandler = (event) => {
+        const { name, value } = event.target;
+        setState((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+
+    const card = useAppSelector(selectCard);
+    const cardLoading = useAppSelector(selectCardLoading);
     const [phoneNumber, setPhoneNumber] = useState("");
+    const reasons = useAppSelector(selectReasons);
+    const solutions = useAppSelector(selectSolutions);
+
+    useEffect(() => {
+        dispatch(getSolution());
+        dispatch(getReasons());
+    }, [dispatch]);
+
 
     const changePhoneNumber = (e) => {
         setPhoneNumber(e.target.value);
-    }
+    };
+
+    const submitFormHandler = (event) => {
+        event.preventDefault();
+        console.log(state);
+    };
 
     return(
         <>
@@ -24,7 +63,7 @@ const CreateCard = () => {
                       <Grid sx={{
                           padding: "20px 0"
                       }}>
-                          <Grid component={"form"} container spacing={2}>
+                          <Grid component={"form"} container spacing={2} onSubmit={submitFormHandler}>
                               <Grid container spacing={1} flexDirection={"column"}
                               >
                                   <Grid>
@@ -54,14 +93,17 @@ const CreateCard = () => {
                                               required
                                               labelId="resone-for-contact-label"
                                               id="resone-for-contact"
-                                              // value={state.trainingLevel}
+                                              value={state.reason}
                                               label="Причина обращения"
                                               variant="outlined"
-                                              // onChange={handleLevelChange}
+                                              onChange={inputChangeHandler}
+                                              name={"reason"}
                                           >
-                                              <MenuItem value="">вфцв</MenuItem>
-                                              <MenuItem value="">вфцв</MenuItem>
-                                              <MenuItem value="">вфцфв</MenuItem>
+                                              {reasons.map((item, index) => (
+                                                  <MenuItem value={item.title} key={index}>
+                                                      {item.title}
+                                                  </MenuItem>
+                                              ))}
                                           </Select>
                                       </FormControl>
                                   </Grid>
@@ -79,19 +121,22 @@ const CreateCard = () => {
                                               required
                                               labelId="solution-label"
                                               id="solution"
-                                              // value={state.trainingLevel}
+                                              value={state.solution}
                                               label="Решение"
                                               variant="outlined"
-                                              // onChange={handleLevelChange}
+                                              onChange={inputChangeHandler}
+                                              name={"solution"}
                                           >
-                                              <MenuItem value="">Замена бп/роутера заявка</MenuItem>
-                                              <MenuItem value="">вфцв</MenuItem>
-                                              <MenuItem value="">вфцфв</MenuItem>
+                                              {solutions.map((item, index) => {
+                                                      return (
+                                                          <MenuItem value={item.title} key={index}>{item.title}</MenuItem>
+                                                      )
+                                              })}
                                           </Select>
                                       </FormControl>
                                   </Grid>
                                   <Grid container justifyContent={"end"}>
-                                      <Button variant={"outlined"}>
+                                      <Button variant={"outlined"} type={"submit"}>
                                           Сохранить
                                       </Button>
                                   </Grid>

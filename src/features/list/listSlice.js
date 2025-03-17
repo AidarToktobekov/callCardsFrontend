@@ -1,37 +1,15 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {getList} from "./listThunk.js";
+import {getCard, getList, getReasons, getSolution} from "./listThunk.js";
 
 const initialState = {
-    list: [
-        {
-            id: 9,
-            ls_abon: "12345",
-            created_at: "2025-03-17 03:41:48",
-            spec_full_name: "Бектур Раззаков",
-            sip: "624",
-            full_name: "Ерасыл Акимжанов",
-            phone_number: "+996707777404",
-            address: "Тилебалды-Ата, 9",
-            comment: "",
-            reason: "Исходящий звонок",
-            solution: null
-        },
-        {
-            id: 10,
-            ls_abon: "12345",
-            created_at: "2025-03-17 03:42:07",
-            spec_full_name: "Бектур Раззаков",
-            sip: "624",
-            full_name: "Ерасыл Акимжанов",
-            phone_number: "+996707777404",
-            address: "Тилебалды-Ата, 9",
-            comment: "",
-            reason: "Не работает интернет",
-            solution: "Замена бп/роутера заявка"
-        },
-    ],
+    list: [],
     listLoading: false,
-    listError: null,
+    card: null,
+    cardLoading: false,
+    reasons: [],
+    reasonsLoading: false,
+    solutions: [],
+    solutionsLoading: false,
 };
 
 const ListSlice = createSlice({
@@ -49,11 +27,46 @@ const ListSlice = createSlice({
         builder.addCase(getList.rejected, (state)=>{
             state.listLoading = false;
         });
+        builder.addCase(getCard.pending, (state)=>{
+            state.cardLoading = true;
+        });
+        builder.addCase(getCard.fulfilled, (state, {payload: card})=>{
+            state.cardLoading = false;
+            state.card = card;
+        });
+        builder.addCase(getCard.rejected, (state)=>{
+            state.cardLoading = false;
+        });
+        builder.addCase(getReasons.pending, (state)=>{
+            state.reasonsLoading = true;
+        });
+        builder.addCase(getReasons.fulfilled, (state, {payload: reasons})=>{
+            state.reasonsLoading = false;
+            state.reasons = reasons;
+        });
+        builder.addCase(getReasons.rejected, (state)=>{
+            state.reasonsLoading = false;
+        });
+        builder.addCase(getSolution.pending, (state)=>{
+            state.solutionsLoading = true;
+        });
+        builder.addCase(getSolution.fulfilled, (state, {payload: solution})=>{
+            state.solutionsLoading = false;
+            state.solutions = solution;
+        });
+        builder.addCase(getSolution.rejected, (state)=>{
+            state.solutionsLoading = false;
+        });
     },
     selectors: {
         selectList: state => state.list,
         selectListLoading: state => state.listLoading,
-        selectListError: state => state.listError,
+        selectCard: state => state.card,
+        selectCardLoading: state => state.cardLoading,
+        selectReasons: state => state.reasons,
+        selectReasonsLoading: state => state.reasonsLoading,
+        selectSolutions: state => state.solutions,
+        selectSolutionsLoading: state => state.solutionsLoading,
     }
 });
 
@@ -61,5 +74,10 @@ export const listReducer = ListSlice.reducer;
 export const {
     selectList,
     selectListLoading,
-    selectListError
+    selectCard,
+    selectCardLoading,
+    selectReasons,
+    selectReasonsLoading,
+    selectSolutions,
+    selectSolutionsLoading,
 } = ListSlice.selectors;
