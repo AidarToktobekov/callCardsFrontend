@@ -1,14 +1,22 @@
 import Grid from "@mui/material/Grid2";
-import {Button, Container, TextField, Typography} from "@mui/material";
+import {Button, Container, TextField} from "@mui/material";
+import {useState} from "react";
 
 const CreateCard = () => {
+
+    const [phoneNumber, setPhoneNumber] = useState("");
+
+    const changePhoneNumber = (e) => {
+        setPhoneNumber(e.target.value);
+    }
+
     return(
         <>
           <Grid>
               <Container maxWidth="lg">
                   <Grid>
                       <Grid>
-                          <TextField variant={"outlined"}></TextField>
+                          <TextField variant={"outlined"} value={phoneNumber} onChange={changePhoneNumber}></TextField>
                           <Button>
                               Search
                           </Button>
