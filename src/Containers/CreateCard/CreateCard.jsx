@@ -1,9 +1,9 @@
 import Grid from "@mui/material/Grid2";
-import {Button, Container, FormControl, InputLabel, MenuItem, Select, TextField} from "@mui/material";
+import {Autocomplete, Button, Container, MenuItem, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
-import {selectCard, selectCardLoading, selectReasons, selectSolutions} from "../../features/list/listSlice.js";
-import {getReasons, getSolution} from "../../features/list/listThunk.js";
+import {selectClients, selectReasons, selectSolutions} from "../../features/list/listSlice.js";
+import {createCard, getClient, getReasons, getSolution} from "../../features/list/listThunk.js";
 
 const CreateCard = () => {
 
@@ -13,23 +13,55 @@ const CreateCard = () => {
         spec_full_name: '',
         sip: '',
         full_name: "",
-        phone_number: "",
+        phone_number: [],
         address: '',
         comment: '',
-        reason: '',
-        solution: '',
+        reason: {
+            id: '',
+            title: '',
+        },
+        solution: {
+            id: '',
+            reason_id: '',
+            title: '',
+        },
+        ip_address: '',
+        mac_address: '',
     });
 
-    const inputChangeHandler = (event) => {
-        const { name, value } = event.target;
-        setState((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
+    const [cardIndex , setCardIndex] = useState(0);
+
+    const handleCardChange = (e)=> {
+        setCardIndex(e.target.value);
     };
 
-    const card = useAppSelector(selectCard);
-    const cardLoading = useAppSelector(selectCardLoading);
+    const inputChangeHandler = (e)=>{
+        const {name, value} = e.target;
+        setState(prevState => ({...prevState, [name]: value}));
+    }
+
+    const selectChangeHandler = (event, arr)=>{
+        const { name, value } = event.target;
+        if (!value){
+            setState((prevState)=>({
+                ...prevState,
+                [name]: {
+                    id: '',
+                    reason_id: '',
+                    title: '',
+                },
+            }))
+        }else {
+            const selectedItem = arr.find(item=> item.title === value);
+            setState((prevState)=>({
+                ...prevState,
+                [name]: selectedItem,
+            }));
+        }
+
+    }
+
+    const cards = useAppSelector(selectClients);
     const [phoneNumber, setPhoneNumber] = useState("");
     const reasons = useAppSelector(selectReasons);
     const solutions = useAppSelector(selectSolutions);
@@ -39,26 +71,83 @@ const CreateCard = () => {
         dispatch(getReasons());
     }, [dispatch]);
 
+    useEffect(() => {
+        if (cards[cardIndex]){
+            setState(prevState => ({
+                ...prevState,
+                ls_abon: cards[cardIndex].ls_abon,
+                full_name: cards[cardIndex].full_name,
+                phone_number: cards[cardIndex].phone_number,
+                address: cards[cardIndex].address,
+                ip_address: cards[cardIndex].ip_address,
+                mac_address: cards[cardIndex].mac_address,
+            }));
+        }
+    }, [dispatch, cardIndex, cards]);
+
 
     const changePhoneNumber = (e) => {
         setPhoneNumber(e.target.value);
     };
 
-    const submitFormHandler = (event) => {
+    const submitFormHandler = async (event) => {
         event.preventDefault();
-        console.log(state);
+
+        const cardMutation = {
+            ls_abon: state.ls_abon,
+            phone_number: state.phone_number,
+            sip: "615",
+            spec_full_name: "Бектур Раззаков",
+            full_name: state.full_name,
+            address: state.address,
+            reason_id: state.reason.id,
+            solution_id: state.solution.id,
+            comment: state.comment.trim(),
+        };
+
+        await dispatch(createCard(cardMutation));
     };
+
+    const searchClient = async ()=>{
+        await dispatch(getClient(phoneNumber));
+    }
 
     return(
         <>
           <Grid>
               <Container maxWidth="lg">
                   <Grid>
-                      <Grid>
-                          <TextField variant={"outlined"} value={phoneNumber} onChange={changePhoneNumber}></TextField>
-                          <Button>
-                              Search
-                          </Button>
+                      <Grid container sx={{
+                          pt: 2
+                      }}>
+                          <Grid>
+                              <TextField variant={"outlined"} value={phoneNumber} onChange={changePhoneNumber}></TextField>
+                              <Button onClick={searchClient}>
+                                  Search
+                              </Button>
+                          </Grid>
+                          <Grid sx={{
+                              width: "300px"
+                          }}>
+                              <TextField
+                                  required
+                                  select
+                                  label={"Клиенты"}
+                                  id="card"
+                                  name="card"
+                                  value={cards.length > 0 ? String(cardIndex) : ""}
+                                  onChange={handleCardChange}
+                                  sx={{
+                                      width: '100%'
+                                  }}
+                              >
+                                  {cards.map((card, index) => (
+                                      <MenuItem key={index} value={index}>
+                                          {card.full_name}
+                                      </MenuItem>
+                                  ))}
+                              </TextField>
+                          </Grid>
                       </Grid>
                       <Grid sx={{
                           padding: "20px 0"
@@ -67,73 +156,84 @@ const CreateCard = () => {
                               <Grid container spacing={1} flexDirection={"column"}
                               >
                                   <Grid>
-                                      <TextField placeholder={"Личный счет"}></TextField>
+                                      <TextField required label={"Личный счет"} value={state.ls_abon}></TextField>
                                   </Grid>
                                   <Grid>
-                                      <TextField placeholder={"ФИО"}></TextField>
+                                      <TextField required label={"ФИО"} value={state.full_name}></TextField>
                                   </Grid>
                                   <Grid>
-                                      <TextField placeholder={"Адрес"}></TextField>
+                                      <TextField required label={"Адрес"} value={state.address}></TextField>
                                   </Grid>
                                   <Grid>
-                                      <TextField placeholder={"Номер телефона"}></TextField>
+                                      <Autocomplete
+                                          required
+                                          multiple
+                                          options={state.phone_number}
+                                          value={state.phone_number}
+                                          disableClearable
+                                          readOnly
+                                          renderInput={params => <TextField {...params} label={"Номера"}></TextField>}
+                                      ></Autocomplete>
                                   </Grid>
                                   <Grid>
-                                      <TextField placeholder={"Мак роутера"}></TextField>
+                                      <TextField required label={"Мак роутера"} value={state.mac_address}></TextField>
                                   </Grid>
                                   <Grid>
-                                      <TextField placeholder={"Айпи адрес"}></TextField>
+                                      <TextField required label={"Айпи адрес"} value={state.ip_address}></TextField>
                                   </Grid>
                               </Grid>
                               <Grid container spacing={1} flexDirection={"column"}>
                                   <Grid>
-                                      <FormControl fullWidth>
-                                          <InputLabel id="resone-for-contact-label">Причина обращения</InputLabel>
-                                          <Select
-                                              required
-                                              labelId="resone-for-contact-label"
-                                              id="resone-for-contact"
-                                              value={state.reason}
-                                              label="Причина обращения"
-                                              variant="outlined"
-                                              onChange={inputChangeHandler}
-                                              name={"reason"}
-                                          >
-                                              {reasons.map((item, index) => (
-                                                  <MenuItem value={item.title} key={index}>
-                                                      {item.title}
-                                                  </MenuItem>
-                                              ))}
-                                          </Select>
-                                      </FormControl>
+                                      <TextField
+                                          required
+                                          select
+                                          label={"Причина обращения"}
+                                          id="resone-for-contact"
+                                          name="reason"
+                                          value={state.reason.title || ""}
+                                          onChange={(e)=>selectChangeHandler(e, reasons)}
+                                          sx={{
+                                              width: '100%'
+                                          }}
+                                      >
+                                          {reasons.map((item, index) => (
+                                              <MenuItem value={item.title} key={index}>
+                                                  {item.title}
+                                              </MenuItem>
+                                          ))}
+                                      </TextField>
                                   </Grid>
                                   <Grid>
-                                      <TextField label="Комментарий" minRows={3} multiline placeholder={"Айпи адрес"}></TextField>
+                                      <TextField label="Комментарий" minRows={3} multiline onChange={inputChangeHandler} name={"comment"} value={state.comment}></TextField>
                                   </Grid>
                               </Grid>
                               <Grid container flexDirection={"column"} spacing={3} sx={{
                                   flexGrow: 1,
                               }}>
                                   <Grid>
-                                      <FormControl fullWidth>
-                                          <InputLabel id="solution-label">Решение</InputLabel>
-                                          <Select
-                                              required
-                                              labelId="solution-label"
+                                          <TextField
+                                              select
                                               id="solution"
-                                              value={state.solution}
+                                              value={state.solution.title || ""}
                                               label="Решение"
                                               variant="outlined"
-                                              onChange={inputChangeHandler}
+                                              onChange={(e)=>selectChangeHandler(e, solutions)}
                                               name={"solution"}
                                           >
+                                              <MenuItem value={''}>Нет решения</MenuItem>
                                               {solutions.map((item, index) => {
+                                                  if (!state.reason.id){
                                                       return (
                                                           <MenuItem value={item.title} key={index}>{item.title}</MenuItem>
                                                       )
+                                                  }
+                                                  if (state.reason.id && state.reason.id === item.reason_id) {
+                                                      return (
+                                                          <MenuItem value={item.title} key={index}>{item.title}</MenuItem>
+                                                      )
+                                                  }
                                               })}
-                                          </Select>
-                                      </FormControl>
+                                          </TextField>
                                   </Grid>
                                   <Grid container justifyContent={"end"}>
                                       <Button variant={"outlined"} type={"submit"}>

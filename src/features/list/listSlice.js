@@ -1,11 +1,11 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {getCard, getList, getReasons, getSolution} from "./listThunk.js";
+import { getClient, getList, getReasons, getSolution} from "./listThunk.js";
 
 const initialState = {
     list: [],
     listLoading: false,
-    card: null,
-    cardLoading: false,
+    clients: [],
+    clientsLoading: false,
     reasons: [],
     reasonsLoading: false,
     solutions: [],
@@ -27,14 +27,14 @@ const ListSlice = createSlice({
         builder.addCase(getList.rejected, (state)=>{
             state.listLoading = false;
         });
-        builder.addCase(getCard.pending, (state)=>{
+        builder.addCase(getClient.pending, (state)=>{
             state.cardLoading = true;
         });
-        builder.addCase(getCard.fulfilled, (state, {payload: card})=>{
+        builder.addCase(getClient.fulfilled, (state, {payload: client})=>{
             state.cardLoading = false;
-            state.card = card;
+            state.clients = client;
         });
-        builder.addCase(getCard.rejected, (state)=>{
+        builder.addCase(getClient.rejected, (state)=>{
             state.cardLoading = false;
         });
         builder.addCase(getReasons.pending, (state)=>{
@@ -61,8 +61,8 @@ const ListSlice = createSlice({
     selectors: {
         selectList: state => state.list,
         selectListLoading: state => state.listLoading,
-        selectCard: state => state.card,
-        selectCardLoading: state => state.cardLoading,
+        selectClients: state => state.clients,
+        selectClientsLoading: state => state.clientsLoading,
         selectReasons: state => state.reasons,
         selectReasonsLoading: state => state.reasonsLoading,
         selectSolutions: state => state.solutions,
@@ -74,8 +74,8 @@ export const listReducer = ListSlice.reducer;
 export const {
     selectList,
     selectListLoading,
-    selectCard,
-    selectCardLoading,
+    selectClients,
+    selectClientsLoading,
     selectReasons,
     selectReasonsLoading,
     selectSolutions,

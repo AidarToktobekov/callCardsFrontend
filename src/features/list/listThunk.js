@@ -12,12 +12,24 @@ export const getList = createAsyncThunk( "list/getAll",
         }
     });
 
-export const getCard = createAsyncThunk("list/getCard",
+export const getClient = createAsyncThunk("list/getClient",
     async (number)=>{
         try {
-            const {data: card} = await axiosApi.get(`/hydra_seeker/${number}`);
+            const {data: client} = await axiosApi.get(`/hydra_seeker/${number}`);
 
-            return card;
+            return client;
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+);
+
+export const createCard = createAsyncThunk("list/createCard",
+    async (cardMutation)=>{
+        try {
+            const {data: client} = await axiosApi.post("/cards/create_card", cardMutation);
+
+            return client;
         }catch(error){
             throw new Error(error);
         }
