@@ -6,6 +6,7 @@ import UserLogin from "./Containers/UserLogin/UserLogin.jsx";
 import UserRegister from "./Containers/UserRegister/UserRegister.jsx";
 import {Typography} from "@mui/material";
 import Layout from "./Components/Layout/Layout.jsx";
+import Reports from "./Containers/Reports/Reports.jsx";
 
 function App() {
 
@@ -31,6 +32,11 @@ function App() {
                 <Route path="/sign-up" element={
                     <>
                         <UserRegister></UserRegister>
+                    </>
+                } />
+                <Route path="/reports" element={
+                    <>
+                        <Reports></Reports>
                     </>
                 } />
                 <Route

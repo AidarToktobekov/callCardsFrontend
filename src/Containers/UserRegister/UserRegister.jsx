@@ -1,20 +1,24 @@
 import React, { useState } from "react";
-import {Box, Stack, TextField, Typography, Link, Button} from "@mui/material";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import {Box, Stack, TextField, Typography, Button, MenuItem, Alert} from "@mui/material";
+import {useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import Grid from "@mui/material/Grid2";
 import {selectRegisterLoading} from "../../features/user/userSlice.js";
+import {register} from "../../features/user/userThunk.js";
 
 const UserRegister = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const loading = useAppSelector(selectRegisterLoading);
+    const [error, setError] = useState('');
     const [state, setState] = useState({
         username: "",
         name: "",
         phone_number: "996",
         password: "",
         confirmPassword: "",
+        sip: '',
+        role: '',
     });
 
     const inputChangeHandler = (event) => {
@@ -41,15 +45,17 @@ const UserRegister = () => {
             const userMutation = {
                 username: state.username.trim(),
                 name: state.name.trim(),
+                sip: state.sip.trim(),
+                role: state.role,
                 phone_number: state.phone_number.trim(),
                 password: state.password.trim(),
-                confirmPassword: state.confirmPassword.trim(),
             };
 
             await dispatch(register(userMutation)).unwrap();
             navigate("/");
         } catch (e) {
-            console.error(e);
+            setError(e.message);
+            console.log(e)
         }
     };
 
@@ -62,11 +68,18 @@ const UserRegister = () => {
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
+                        maxWidth: "500px",
+                        width: '100%',
                     }}
                 >
                     <Typography component="h1" variant="h5" gutterBottom>
-                        Присоединяйтесь к нам <br /> и наслаждайтесь фитнесом!
+                        Регистрация
                     </Typography>
+                    {error && (
+                        <Alert severity="error" sx={{ my: 1}}>
+                            {error}
+                        </Alert>
+                    )}
                     <Box
                         component="form"
                         noValidate
@@ -83,6 +96,9 @@ const UserRegister = () => {
                                     autoComplete="new-username"
                                     value={state.username}
                                     onChange={inputChangeHandler}
+                                    sx={{
+                                        width: '100%',
+                                    }}
                                 />
                             </Grid>
                             <Grid>
@@ -94,7 +110,46 @@ const UserRegister = () => {
                                     autoComplete="new-name"
                                     value={state.name}
                                     onChange={inputChangeHandler}
+                                    sx={{
+                                        width: '100%',
+                                    }}
                                 />
+                            </Grid>
+                            <Grid>
+                                <TextField
+                                    required
+                                    type="text"
+                                    label="SIP"
+                                    name="sip"
+                                    autoComplete="new-sip"
+                                    value={state.sip}
+                                    onChange={inputChangeHandler}
+                                    sx={{
+                                        width: '100%',
+                                    }}
+                                />
+                            </Grid>
+                            <Grid>
+                                <TextField
+                                    required
+                                    select
+                                    type="text"
+                                    label="Роль"
+                                    name="role"
+                                    autoComplete="new-role"
+                                    value={state.role}
+                                    onChange={inputChangeHandler}
+                                    sx={{
+                                        width: '100%',
+                                    }}
+                                >
+                                    <MenuItem value={"user"}>
+                                        Пользователь
+                                    </MenuItem>
+                                    <MenuItem value={"admin"}>
+                                        Администратор
+                                    </MenuItem>
+                                </TextField>
                             </Grid>
                             <Grid>
                                 <TextField
@@ -105,6 +160,9 @@ const UserRegister = () => {
                                     autoComplete="new-phone_number"
                                     value={state.phone_number}
                                     onChange={inputChangeHandler}
+                                    sx={{
+                                        width: '100%',
+                                    }}
                                 />
                             </Grid>
                             <Grid>
@@ -116,17 +174,9 @@ const UserRegister = () => {
                                     autoComplete="new-password"
                                     value={state.password}
                                     onChange={inputChangeHandler}
-                                />
-                            </Grid>
-                            <Grid>
-                                <TextField
-                                    required
-                                    type="password"
-                                    label="Подтвердите пароль"
-                                    name="confirmPassword"
-                                    autoComplete="new-password"
-                                    value={state.confirmPassword}
-                                    onChange={inputChangeHandler}
+                                    sx={{
+                                        width: '100%',
+                                    }}
                                 />
                             </Grid>
                         </Grid>
@@ -137,13 +187,8 @@ const UserRegister = () => {
                             sx={{ mt: 3, mb: 2 }}
                             loading={loading}
                         >
-                            Регистрация
+                            Сохранить
                         </Button>
-                        <Typography variant="body1">
-                            <Link component={RouterLink} to={"sign-in"}>
-                                Войти
-                            </Link>
-                        </Typography>
                     </Box>
                 </Box>
             </Stack>

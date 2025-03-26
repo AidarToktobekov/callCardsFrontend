@@ -32,7 +32,6 @@ const UserLogin = () => {
                 password: state.password.trim(),
             };
 
-            console.log(userMutation);
             await dispatch(login(userMutation)).unwrap();
             navigate("/");
         } catch (e) {

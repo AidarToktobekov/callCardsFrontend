@@ -5,7 +5,7 @@ export const login = createAsyncThunk(
     'user/login',
     async (user) => {
         try {
-            const {data: req} = await axiosApi.post('/users/sessions', user);
+            const {data: req} = await axiosApi.post('/sign-in', user);
             return req;
         } catch (e) {
             throw new Error(e);

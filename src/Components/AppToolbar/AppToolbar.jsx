@@ -1,4 +1,4 @@
-import {AppBar, Button, Container, Link, List, ListItem, Popover, Toolbar, Typography} from "@mui/material";
+import {AppBar, Container, Link, Toolbar, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import {selectUser} from "../../features/user/userSlice.js";
 import {useAppSelector} from "../../app/hooks.js";
@@ -26,59 +26,10 @@ const AppToolbar = ()=>{
                                 </Typography>
                             </Grid>
                             {user ?
-                                <Grid>
-                                    <Button onClick={handleClick} sx={{
-                                        textDecoration: 'none',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        color: '#000',
-                                    }}>
-                                        <Grid>
-                                            <PermIdentityIcon sx={{
-                                                fontSize: '30px',
-                                            }}/>
-                                        </Grid>
-                                        <Typography sx={{
-
-                                        }}>
-                                            {user.name}
-                                        </Typography>
-                                    </Button>
-                                    <Popover
-                                        id={id}
-                                        open={open}
-                                        aria-hidden={!open}
-                                        anchorEl={anchorEl}
-                                        onClose={handleClose}
-                                        anchorOrigin={{
-                                            vertical: "bottom",
-                                            horizontal: "left",
-                                        }}
-                                        transformOrigin={{
-                                            vertical: "top",
-                                            horizontal: "right",
-                                        }}
-                                    >
-                                        <List
-                                            sx={{
-                                                width: "100%",
-                                                maxWidth: 360,
-                                                bgcolor: "background.paper",
-                                            }}
-                                        >
-                                            <ListItem alignItems="center">
-                                                <Link href={"/profile"}>
-                                                    Профиль
-                                                </Link>
-                                            </ListItem>
-                                            <ListItem alignItems="center">
-                                                <Link href={"/profile"}>
-                                                    Профиль
-                                                </Link>
-                                            </ListItem>
-                                        </List>
-                                    </Popover>
+                                <Grid container>
+                                    <Link href={"create-card"}>
+                                        Создать карту
+                                    </Link>
                                 </Grid>
                                 :
                                 <Link href={"/sign-in"} sx={{

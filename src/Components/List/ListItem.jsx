@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {TableCell, TableRow} from "@mui/material";
+import {List, ListItemText, TableCell, TableRow} from "@mui/material";
 
 const ListItem = ({item}) => {
     return(
@@ -8,7 +8,21 @@ const ListItem = ({item}) => {
             <TableCell>{dayjs().format(item.created_at)}</TableCell>
             <TableCell>{item.spec_full_name}</TableCell>
             <TableCell>{item.full_name}</TableCell>
-            <TableCell>{item.phone_number}</TableCell>
+            <TableCell>
+                <List>
+                    {typeof (item.phone_number) === "object" &&
+                        <>
+                            {item.phone_number.map((phone, index)=>{
+                                return(
+                                    <ListItemText key={index}>
+                                        {phone}
+                                    </ListItemText>
+                                )
+                            })}
+                        </>
+                    }
+                </List>
+            </TableCell>
             <TableCell>{item.address}</TableCell>
             <TableCell>{item.comment ? (
                     <>

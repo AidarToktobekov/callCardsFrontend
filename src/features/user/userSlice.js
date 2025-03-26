@@ -36,16 +36,8 @@ const UsersSlice = createSlice({
         builder.addCase(register.pending, (state) => {
             state.registerLoading = true;
         });
-        builder.addCase(register.fulfilled, (state, { payload: res }) => {
+        builder.addCase(register.fulfilled, (state) => {
             state.registerLoading = false;
-            state.user = {
-                username: res.username,
-                name: res.name,
-                role: res.role,
-                sip: res.sip,
-                phone_number: res.phone_number,
-                token: res.token,
-            };
         });
         builder.addCase(register.rejected, (state) => {
             state.registerLoading = false;

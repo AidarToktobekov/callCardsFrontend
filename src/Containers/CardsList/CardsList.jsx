@@ -1,7 +1,17 @@
 import Grid from "@mui/material/Grid2";
-import {Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import {
+    CircularProgress,
+    Container,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow
+} from "@mui/material";
 import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
-import {selectList} from "../../features/list/listSlice.js";
+import {selectList, selectListLoading} from "../../features/list/listSlice.js";
 import ListItem from "../../Components/List/ListItem.jsx";
 import {useEffect} from "react";
 import {getList} from "../../features/list/listThunk.js";
@@ -10,10 +20,11 @@ const CardsList = ()=>{
 
     const dispatch = useAppDispatch();
     const list = useAppSelector(selectList);
+    const loading = useAppSelector(selectListLoading);
 
     useEffect(() => {
-        // dispatch(getList());
-    }, []);
+        dispatch(getList());
+    },[dispatch]);
 
     return(
         <>
@@ -21,6 +32,11 @@ const CardsList = ()=>{
                 <Container maxWidth={"lg"} sx={{
                     width: "100%",
                 }}>
+                    {loading && (
+                        <Grid sx={{padding: "10px"}} container justifyContent={"center"}>
+                            <CircularProgress />
+                        </Grid>
+                    )}
                     <TableContainer component={Paper} sx={{
                         margin: "30px 0 0"
                     }}>
@@ -39,11 +55,13 @@ const CardsList = ()=>{
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                    {list.map((item, index)=>{
+                                {!loading && (
+                                    list.map((item, index)=>{
                                         return(
                                             <ListItem key={index} item={item}></ListItem>
                                         )
-                                    })}
+                                    })
+                                )}
                             </TableBody>
                         </Table>
                     </TableContainer>
