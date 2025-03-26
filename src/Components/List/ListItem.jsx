@@ -1,36 +1,16 @@
-import Grid from "@mui/material/Grid2";
 import dayjs from "dayjs";
+import {TableCell, TableRow} from "@mui/material";
 
 const ListItem = ({item}) => {
     return(
-        <Grid sx={{
-                borderBottom: "1px solid black",
-                display: 'flex',
-                "&>div":{
-                        borderRight: "1px solid black",
-                        width: "100%",
-                }}}
-        >
-            <Grid>
-                {item.ls_abon}
-            </Grid>
-            <Grid>
-                {dayjs().format(item.created_at)}
-            </Grid>
-            <Grid>
-                {item.spec_full_name}
-            </Grid>
-            <Grid>
-                {item.full_name}
-            </Grid>
-            <Grid>
-                {item.phone_number}
-            </Grid>
-            <Grid>
-                {item.address}
-            </Grid>
-            <Grid>
-                {item.comment ? (
+        <TableRow>
+            <TableCell>{item.ls_abon}</TableCell>
+            <TableCell>{dayjs().format(item.created_at)}</TableCell>
+            <TableCell>{item.spec_full_name}</TableCell>
+            <TableCell>{item.full_name}</TableCell>
+            <TableCell>{item.phone_number}</TableCell>
+            <TableCell>{item.address}</TableCell>
+            <TableCell>{item.comment ? (
                     <>
                         {item.comment}
                     </>
@@ -38,13 +18,9 @@ const ListItem = ({item}) => {
                     <>
                         Нет коментария
                     </>
-                )}
-            </Grid>
-            <Grid>
-                {item.reason}
-            </Grid>
-            <Grid>
-                {item.reason ? (
+                )}</TableCell>
+            <TableCell>{item.reason}</TableCell>
+            <TableCell>{item.reason ? (
                     <>
                         {item.reason}
                     </>
@@ -52,9 +28,8 @@ const ListItem = ({item}) => {
                     <>
                         Нет решения
                     </>
-                )}
-            </Grid>
-        </Grid>
+                )}</TableCell>
+        </TableRow>
     );
 };
 

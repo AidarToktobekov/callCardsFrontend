@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { signIn } from './userThunk';
+import {login, register} from './userThunk';
 
 const initialState = {
     user: null,
-    signInLoading: false,
+    loginLoading: false,
+    registerLoading: false,
 };
 
 const UsersSlice = createSlice({
@@ -15,25 +16,52 @@ const UsersSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(signIn.pending, (state) => {
-            state.signInLoading = true;
+        builder.addCase(login.pending, (state) => {
+            state.loginLoading = true;
         });
-        builder.addCase(signIn.fulfilled, (state, { payload: res }) => {
-            state.signInLoading = false;
+        builder.addCase(login.fulfilled, (state, { payload: res }) => {
+            state.loginLoading = false;
             state.user = {
                 username: res.username,
                 name: res.name,
                 role: res.role,
                 sip: res.sip,
-                phone: res.phone,
+                phone_number: res.phone_number,
                 token: res.token,
             };
         });
-        builder.addCase(signIn.rejected, (state) => {
-            state.signInLoading = false;
+        builder.addCase(login.rejected, (state) => {
+            state.loginLoading = false;
+        });
+        builder.addCase(register.pending, (state) => {
+            state.registerLoading = true;
+        });
+        builder.addCase(register.fulfilled, (state, { payload: res }) => {
+            state.registerLoading = false;
+            state.user = {
+                username: res.username,
+                name: res.name,
+                role: res.role,
+                sip: res.sip,
+                phone_number: res.phone_number,
+                token: res.token,
+            };
+        });
+        builder.addCase(register.rejected, (state) => {
+            state.registerLoading = false;
         });
     },
+    selectors: {
+        selectUser: (state) => state.user,
+        selectLoginLoading: (state) => state.loginLoading,
+        selectRegisterLoading: (state) => state.registerLoading,
+    }
 });
 
 export const userReducer = UsersSlice.reducer;
+export const {
+    selectUser,
+    selectLoginLoading,
+    selectRegisterLoading
+} = UsersSlice.selectors;
 export const { logout } = UsersSlice.actions;

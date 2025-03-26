@@ -1,12 +1,24 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosApi from '../../axiosApi';
 
-export const signIn = createAsyncThunk(
-    'user/signIn',
-    async (user, { dispatch, rejectWithValue }) => {
+export const login = createAsyncThunk(
+    'user/login',
+    async (user) => {
         try {
-            const req = await axiosApi.post('/sign-in', user);
-            return await req.data;
+            const {data: req} = await axiosApi.post('/users/sessions', user);
+            return req;
+        } catch (e) {
+            throw new Error(e);
+        }
+    }
+);
+
+export const register = createAsyncThunk(
+    'user/register',
+    async (user) => {
+        try {
+            const {data: req} = await axiosApi.post('/sign-up', user);
+            return req;
         } catch (e) {
             throw new Error(e);
         }

@@ -1,5 +1,5 @@
 import Grid from "@mui/material/Grid2";
-import {Container} from "@mui/material";
+import {Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
 import {selectList} from "../../features/list/listSlice.js";
 import ListItem from "../../Components/List/ListItem.jsx";
@@ -12,7 +12,7 @@ const CardsList = ()=>{
     const list = useAppSelector(selectList);
 
     useEffect(() => {
-        dispatch(getList());
+        // dispatch(getList());
     }, []);
 
     return(
@@ -21,55 +21,32 @@ const CardsList = ()=>{
                 <Container maxWidth={"lg"} sx={{
                     width: "100%",
                 }}>
-                    <Grid sx={{
-                        border: "1px solid black",
+                    <TableContainer component={Paper} sx={{
+                        margin: "30px 0 0"
                     }}>
-                        <Grid sx={{
-                            borderBottom: "1px solid black",
-                            display: 'flex',
-                            "&>div":{
-                                borderRight: "1px solid black",
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "center",
-                                padding: "10px 0",
-                            }
-                        }}
-                        >
-                            <Grid>
-                                Лицевой счет
-                            </Grid>
-                            <Grid>
-                                Дата
-                            </Grid>
-                            <Grid>
-                                Сотрудник
-                            </Grid>
-                            <Grid>
-                                ФИО Клиента
-                            </Grid>
-                            <Grid>
-                                Номер телефона
-                            </Grid>
-                            <Grid>
-                                Адрес
-                            </Grid>
-                            <Grid>
-                                Коментарий
-                            </Grid>
-                            <Grid>
-                                Причина
-                            </Grid>
-                            <Grid>
-                                Решение
-                            </Grid>
-                        </Grid>
-                        {list.map((item, index)=>{
-                            return(
-                                <ListItem key={index} item={item}></ListItem>
-                            )
-                        })}
-                    </Grid>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Лицевой счет</TableCell>
+                                    <TableCell>Дата</TableCell>
+                                    <TableCell>Сотрудник</TableCell>
+                                    <TableCell>ФИО Клиента</TableCell>
+                                    <TableCell>Номер телефона</TableCell>
+                                    <TableCell>Адрес</TableCell>
+                                    <TableCell>Коментарий</TableCell>
+                                    <TableCell>Причина</TableCell>
+                                    <TableCell>Решение</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                    {list.map((item, index)=>{
+                                        return(
+                                            <ListItem key={index} item={item}></ListItem>
+                                        )
+                                    })}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </Container>
             </Grid>
         </>

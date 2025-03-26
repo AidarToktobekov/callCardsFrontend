@@ -1,7 +1,8 @@
 import {combineReducers, configureStore} from "@reduxjs/toolkit";
 import storage from 'redux-persist/lib/storage';
-import {FLUSH, PAUSE, PERSIST, persistStore, PURGE, REGISTER, REHYDRATE} from "redux-persist";
+import {FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE} from "redux-persist";
 import {listReducer} from "../features/list/listSlice.js";
+import {userReducer} from "../features/user/userSlice.js";
 
 const usersPersistConfig = {
     key: 'Skynet:user',
@@ -11,6 +12,7 @@ const usersPersistConfig = {
 
 const rootReducer = combineReducers({
     list: listReducer,
+    user: persistReducer(usersPersistConfig, userReducer),
 })
 
 export const store = configureStore({

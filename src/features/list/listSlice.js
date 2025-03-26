@@ -2,7 +2,34 @@ import {createSlice} from "@reduxjs/toolkit";
 import { getClient, getList, getReasons, getSolution} from "./listThunk.js";
 
 const initialState = {
-    list: [],
+    list: [
+        {
+            id: 9,
+            ls_abon: "12345",
+            created_at: "2025-03-17 03:41:48",
+            spec_full_name: "Бектур Раззаков",
+            sip: 624,
+            full_name: "Ерасыл Акимжанов",
+            phone_number: "+996707777404",
+            address: "Тилебалды-Ата, 9",
+            comment: "",
+            reason: "Исходящий звонок",
+            solution: null
+        },
+        {
+            id: 10,
+            ls_abon: "12345",
+            created_at: "2025-03-17 03:42:07",
+            spec_full_name: "Бектур Раззаков",
+            sip: 624,
+            full_name: "Ерасыл Акимжанов",
+            phone_number: "+996707777404",
+            address: "Тилебалды-Ата, 9",
+            comment: "",
+            reason: "Не работает интернет",
+            solution: "Замена бп/роутера заявка"
+        },
+    ],
     listLoading: false,
     clients: [],
     clientsLoading: false,
