@@ -6,7 +6,7 @@ import {userReducer} from "../features/user/userSlice.js";
 import {reportsReducer} from "../features/reports/reportsSlice.js";
 
 const usersPersistConfig = {
-    key: 'Skynet:user',
+    key: 'callCards:user',
     storage,
     whitelist: ['user'],
 };

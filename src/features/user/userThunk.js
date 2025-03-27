@@ -7,7 +7,7 @@ export const login = createAsyncThunk(
     async (user, {rejectWithValue}) => {
         try {
             const {data: req} = await axiosApi.post('/sign-in', user);
-            return req;
+            return req.data;
         } catch (e) {
             if (isAxiosError(e) && e.response && e.response.status === 401) {
                 return rejectWithValue(e.response.data);

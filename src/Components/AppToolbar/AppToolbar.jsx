@@ -1,11 +1,31 @@
-import {AppBar, Container, Link, Toolbar, Typography} from "@mui/material";
+import {AppBar, Button, Container, Link, Menu, MenuItem, Toolbar, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import {selectUser} from "../../features/user/userSlice.js";
-import {useAppSelector} from "../../app/hooks.js";
+import {logout, selectUser} from "../../features/user/userSlice.js";
+import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
+import LogoutIcon from "@mui/icons-material/Logout";
+import {useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 const AppToolbar = ()=>{
     const user = useAppSelector(selectUser);
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+
+    const [anchorEl, setAnchorEl] = useState(null);
+    const isOpen = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleLogout = async () => {
+        await dispatch(logout());
+        navigate("/");
+    };
 
     return(
         <>
@@ -33,6 +53,17 @@ const AppToolbar = ()=>{
                                     <Link href={"create-card"}>
                                         Создать карту
                                     </Link>
+                                    <Button onClick={handleClick} sx={{
+                                        color: "#000",
+                                    }}>
+                                        {user.name}
+                                    </Button>
+                                    <Menu open={isOpen} anchorEl={anchorEl} onClose={handleClose} keepMounted>
+                                        <MenuItem onClick={handleLogout}>
+                                            <LogoutIcon sx={{ mr: 2 }} />
+                                            Выход
+                                        </MenuItem>
+                                    </Menu>
                                 </Grid>
                                 :
                                 <Link href={"/sign-in"} sx={{
@@ -54,7 +85,6 @@ const AppToolbar = ()=>{
                                     </Typography>
                                 </Link>
                             }
-
                         </Grid>
                     </Container>
                 </Toolbar>

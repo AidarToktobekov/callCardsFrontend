@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useState} from "react";
 import {Box, Stack, TextField, Typography, Button, Alert} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -10,9 +10,6 @@ const UserLogin = () => {
     const dispatch = useAppDispatch();
     const loading = useAppSelector(selectLoginLoading);
     const error = useAppSelector(selectLoginError);
-    useEffect(()=>{
-        console.log(error);
-    }, [error])
     const navigate = useNavigate();
     const [state, setState] = useState({
         username: "",

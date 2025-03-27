@@ -24,7 +24,7 @@ const UsersSlice = createSlice({
         builder.addCase(login.fulfilled, (state, { payload: res }) => {
             state.user = {
                 username: res.username,
-                name: res.name,
+                name: res.full_name,
                 role: res.role,
                 sip: res.sip,
                 phone_number: res.phone_number,
