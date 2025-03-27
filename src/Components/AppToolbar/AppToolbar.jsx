@@ -26,7 +26,10 @@ const AppToolbar = ()=>{
                                 </Typography>
                             </Grid>
                             {user ?
-                                <Grid container>
+                                <Grid container spacing={2}>
+                                    <Link href={"reports"}>
+                                        Отчеты
+                                    </Link>
                                     <Link href={"create-card"}>
                                         Создать карту
                                     </Link>

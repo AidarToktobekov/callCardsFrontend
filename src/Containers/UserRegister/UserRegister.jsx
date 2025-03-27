@@ -3,18 +3,18 @@ import {Box, Stack, TextField, Typography, Button, MenuItem, Alert} from "@mui/m
 import {useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import Grid from "@mui/material/Grid2";
-import {selectRegisterLoading} from "../../features/user/userSlice.js";
+import {selectRegisterError, selectRegisterLoading} from "../../features/user/userSlice.js";
 import {register} from "../../features/user/userThunk.js";
 
 const UserRegister = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const loading = useAppSelector(selectRegisterLoading);
-    const [error, setError] = useState('');
+    const error = useAppSelector(selectRegisterError);
     const [state, setState] = useState({
         username: "",
         name: "",
-        phone_number: "996",
+        phone_number: "+996",
         password: "",
         confirmPassword: "",
         sip: '',
@@ -30,7 +30,7 @@ const UserRegister = () => {
                 [name]: value,
             }));
         }else{
-            if (value.trim().length >= 3){
+            if (value.trim().length >= 4){
                 setState((prevState) => ({
                     ...prevState,
                     [name]: value,
@@ -44,7 +44,7 @@ const UserRegister = () => {
         try {
             const userMutation = {
                 username: state.username.trim(),
-                name: state.name.trim(),
+                full_name: state.name.trim(),
                 sip: state.sip.trim(),
                 role: state.role,
                 phone_number: state.phone_number.trim(),
@@ -54,7 +54,6 @@ const UserRegister = () => {
             await dispatch(register(userMutation)).unwrap();
             navigate("/");
         } catch (e) {
-            setError(e.message);
             console.log(e)
         }
     };
@@ -77,7 +76,7 @@ const UserRegister = () => {
                     </Typography>
                     {error && (
                         <Alert severity="error" sx={{ my: 1}}>
-                            {error}
+                            {error.message}
                         </Alert>
                     )}
                     <Box

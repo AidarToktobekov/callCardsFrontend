@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {getCardsReport, getSolutionReport, getTreatmentReport} from "./reportsThunk.js";
+import {getCardsReport, getRepeatedCalls, getSolutionReport, getTreatmentReport} from "./reportsThunk.js";
 
 const initialState = {
     cardsReport: [],
@@ -8,9 +8,11 @@ const initialState = {
     treatmentReportLoading: false,
     solutionReport: [],
     solutionReportLoading: false,
+    repeatedCalls: [],
+    repeatedCallsLoading: false,
 };
 
-const ListSlice = createSlice({
+const ReportsSlice = createSlice({
     name: "reports",
     initialState,
     reducers: {},
@@ -45,6 +47,16 @@ const ListSlice = createSlice({
         builder.addCase(getSolutionReport.rejected, (state)=>{
             state.solutionReportLoading = false;
         });
+        builder.addCase(getRepeatedCalls.pending, (state)=>{
+            state.solutionReportLoading = true;
+        });
+        builder.addCase(getRepeatedCalls.fulfilled, (state, {payload: list})=>{
+            state.repeatedCallsLoading = false;
+            state.repeatedCalls = list;
+        });
+        builder.addCase(getRepeatedCalls.rejected, (state)=>{
+            state.repeatedCallsLoading = false;
+        });
     },
     selectors: {
         selectCardsReport: state => state.cardsReport,
@@ -53,10 +65,12 @@ const ListSlice = createSlice({
         selectTreatmentReportLoading: state => state.treatmentReportLoading,
         selectSolutionReport: state => state.solutionReport,
         selectSolutionReportLoading: state => state.solutionReportLoading,
+        selectRepeatedCalls: state => state.repeatedCalls,
+        selectRepeatedCallsLoading: state => state.repeatedCallsLoading,
     }
 });
 
-export const listReducer = ListSlice.reducer;
+export const reportsReducer = ReportsSlice.reducer;
 export const {
     selectCardsReport,
     selectCardsReportLoading,
@@ -64,4 +78,6 @@ export const {
     selectTreatmentReportLoading,
     selectSolutionReport,
     selectSolutionReportLoading,
-} = ListSlice.selectors;
+    selectRepeatedCalls,
+    selectRepeatedCallsLoading
+} = ReportsSlice.selectors;

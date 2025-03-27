@@ -12,7 +12,7 @@ export const getCardsReport = createAsyncThunk( "reports/getCardsReport",
         }
     });
 
-export const getTreatmentReport = createAsyncThunk( "reports/getCardsReport",
+export const getTreatmentReport = createAsyncThunk( "reports/getTreatmentReport",
     async()=>{
         try{
             const {data: treatmentReport} = await axiosApi.get("/cards/stats_by_reason");
@@ -23,11 +23,22 @@ export const getTreatmentReport = createAsyncThunk( "reports/getCardsReport",
         }
     });
 
-export const getSolutionReport = createAsyncThunk( "reports/getCardsReport",
+export const getSolutionReport = createAsyncThunk( "reports/getSolutionReport",
     async()=>{
         try{
             const {data: solutionReport} = await axiosApi.get("/cards/stats_by_solution");
             return solutionReport || [];
+        }
+        catch(error){
+            console.log(error)
+        }
+    });
+
+export const getRepeatedCalls = createAsyncThunk( "reports/getRepeatedCalls",
+    async()=>{
+        try{
+            const {data: repeatedCalls} = await axiosApi.get("/cards/repeated_calls");
+            return repeatedCalls || [];
         }
         catch(error){
             console.log(error)

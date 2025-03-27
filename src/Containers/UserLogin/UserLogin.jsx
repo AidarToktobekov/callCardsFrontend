@@ -1,14 +1,18 @@
-import React, { useState } from "react";
-import {Box, Stack, TextField, Typography, Link, Button} from "@mui/material";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {Box, Stack, TextField, Typography, Button, Alert} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import Grid from "@mui/material/Grid2";
 import {login} from "../../features/user/userThunk.js";
-import {selectLoginLoading} from "../../features/user/userSlice.js";
+import {selectLoginError, selectLoginLoading} from "../../features/user/userSlice.js";
 
 const UserLogin = () => {
     const dispatch = useAppDispatch();
     const loading = useAppSelector(selectLoginLoading);
+    const error = useAppSelector(selectLoginError);
+    useEffect(()=>{
+        console.log(error);
+    }, [error])
     const navigate = useNavigate();
     const [state, setState] = useState({
         username: "",
@@ -53,6 +57,11 @@ const UserLogin = () => {
                     <Typography component="h1" variant="h5" gutterBottom>
                        Login Title
                     </Typography>
+                    {error && (
+                        <Alert severity="error" sx={{ my: 1}}>
+                            {error.message}
+                        </Alert>
+                    )}
                     <Box
                         component="form"
                         noValidate
@@ -98,11 +107,6 @@ const UserLogin = () => {
                         >
                             Войти
                         </Button>
-                        <Typography variant="body1">
-                            <Link component={RouterLink} to={"/sign-up"}>
-                                Зарегистрироваться
-                            </Link>
-                        </Typography>
                     </Box>
                 </Box>
             </Stack>

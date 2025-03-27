@@ -7,8 +7,13 @@ import UserRegister from "./Containers/UserRegister/UserRegister.jsx";
 import {Typography} from "@mui/material";
 import Layout from "./Components/Layout/Layout.jsx";
 import Reports from "./Containers/Reports/Reports.jsx";
+import ProtectedRoute from "./Components/ProtactedRoute/ProtactedRoute.jsx";
+import {useAppSelector} from "./app/hooks.js";
+import {selectUser} from "./features/user/userSlice.js";
 
 function App() {
+
+    const user = useAppSelector(selectUser);
 
   return (
     <>
@@ -16,12 +21,16 @@ function App() {
             <Routes>
                 <Route path="/" element={
                     <>
-                        <CardsList></CardsList>
+                        <ProtectedRoute isAllowed={!!user}>
+                            <CardsList></CardsList>
+                        </ProtectedRoute>
                     </>
                 } />
                 <Route path="/create-card" element={
                     <>
-                        <CreateCard></CreateCard>
+                        <ProtectedRoute isAllowed={!!user}>
+                            <CreateCard></CreateCard>
+                        </ProtectedRoute>
                     </>
                 } />
                 <Route path="/sign-in" element={
@@ -31,12 +40,16 @@ function App() {
                 } />
                 <Route path="/sign-up" element={
                     <>
-                        <UserRegister></UserRegister>
+                        <ProtectedRoute isAllowed={!!user}>
+                            <UserRegister></UserRegister>
+                        </ProtectedRoute>
                     </>
                 } />
                 <Route path="/reports" element={
                     <>
-                        <Reports></Reports>
+                        <ProtectedRoute isAllowed={!!user}>
+                            <Reports></Reports>
+                        </ProtectedRoute>
                     </>
                 } />
                 <Route

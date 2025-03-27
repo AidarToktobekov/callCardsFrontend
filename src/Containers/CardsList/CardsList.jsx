@@ -38,10 +38,12 @@ const CardsList = ()=>{
                         </Grid>
                     )}
                     <TableContainer component={Paper} sx={{
-                        margin: "30px 0 0"
+                        margin: "30px 0 0",
+                        maxHeight: "500px",
+                        overflowY: 'auto',
                     }}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                            <TableHead>
+                        <Table>
+                            <TableHead stickyHeader>
                                 <TableRow>
                                     <TableCell>Лицевой счет</TableCell>
                                     <TableCell>Дата</TableCell>
