@@ -32,18 +32,13 @@ const CardsList = ()=>{
                 <Container maxWidth={"lg"} sx={{
                     width: "100%",
                 }}>
-                    {loading && (
-                        <Grid sx={{padding: "10px"}} container justifyContent={"center"}>
-                            <CircularProgress />
-                        </Grid>
-                    )}
                     <TableContainer component={Paper} sx={{
                         margin: "30px 0 0",
                         maxHeight: "500px",
                         overflowY: 'auto',
                     }}>
-                        <Table>
-                            <TableHead stickyHeader>
+                        <Table stickyHeader>
+                            <TableHead>
                                 <TableRow>
                                     <TableCell>Лицевой счет</TableCell>
                                     <TableCell>Дата</TableCell>
@@ -67,6 +62,11 @@ const CardsList = ()=>{
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    {loading && (
+                        <Grid sx={{padding: "10px"}} container justifyContent={"center"}>
+                            <CircularProgress />
+                        </Grid>
+                    )}
                 </Container>
             </Grid>
         </>

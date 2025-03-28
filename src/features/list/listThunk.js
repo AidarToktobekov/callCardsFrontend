@@ -27,9 +27,9 @@ export const getClient = createAsyncThunk("list/getClient",
 export const createCard = createAsyncThunk("list/createCard",
     async (cardMutation)=>{
         try {
-            const {data: client} = await axiosApi.post("/cards/create_card", cardMutation);
+            const {data: card} = await axiosApi.post("/cards/create_card", cardMutation);
 
-            return client;
+            return card;
         }catch(error){
             throw new Error(error);
         }

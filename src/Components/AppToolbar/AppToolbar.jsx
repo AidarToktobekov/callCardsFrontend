@@ -24,7 +24,7 @@ const AppToolbar = ()=>{
 
     const handleLogout = async () => {
         await dispatch(logout());
-        navigate("/");
+        navigate("/sign-in");
     };
 
     return(
@@ -47,18 +47,38 @@ const AppToolbar = ()=>{
                             </Grid>
                             {user ?
                                 <Grid container spacing={2}>
-                                    <Link href={"reports"}>
-                                        Отчеты
-                                    </Link>
-                                    <Link href={"create-card"}>
-                                        Создать карту
-                                    </Link>
                                     <Button onClick={handleClick} sx={{
                                         color: "#000",
                                     }}>
                                         {user.name}
                                     </Button>
                                     <Menu open={isOpen} anchorEl={anchorEl} onClose={handleClose} keepMounted>
+                                        {user.role === "admin" &&
+                                            <MenuItem>
+                                                <Link sx={{
+                                                    width: "100%",
+                                                    height: "100%",
+                                                }} href={"solution-and-reason"}>
+                                                    Присок причин и решений
+                                                </Link>
+                                            </MenuItem>
+                                        }
+                                        <MenuItem>
+                                            <Link sx={{
+                                                width: "100%",
+                                                height: "100%",
+                                            }} href={"reports"}>
+                                                Отчеты
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem>
+                                            <Link sx={{
+                                                width: "100%",
+                                                height: "100%",
+                                            }} href={"create-card"}>
+                                                Создать карту
+                                            </Link>
+                                        </MenuItem>
                                         <MenuItem onClick={handleLogout}>
                                             <LogoutIcon sx={{ mr: 2 }} />
                                             Выход

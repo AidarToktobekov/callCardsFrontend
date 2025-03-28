@@ -4,6 +4,7 @@ import {FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, RE
 import {listReducer} from "../features/list/listSlice.js";
 import {userReducer} from "../features/user/userSlice.js";
 import {reportsReducer} from "../features/reports/reportsSlice.js";
+import {reasonsAndSolutionsReducer} from "../features/reasonsAndSolution/reasonsAndSolutionSlice.js";
 
 const usersPersistConfig = {
     key: 'callCards:user',
@@ -12,9 +13,10 @@ const usersPersistConfig = {
 };
 
 const rootReducer = combineReducers({
-    list: listReducer,
     user: persistReducer(usersPersistConfig, userReducer),
+    list: listReducer,
     reports: reportsReducer,
+    reasonsAndSolutions: reasonsAndSolutionsReducer,
 })
 
 export const store = configureStore({

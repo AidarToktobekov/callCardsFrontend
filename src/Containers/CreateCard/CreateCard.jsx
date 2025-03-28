@@ -2,7 +2,7 @@ import Grid from "@mui/material/Grid2";
 import {Alert, Autocomplete, Button, Container, MenuItem, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
-import {selectClients, selectReasons, selectSolutions} from "../../features/list/listSlice.js";
+import {selectClients, selectCreateCardLoading, selectReasons, selectSolutions} from "../../features/list/listSlice.js";
 import {createCard, getClient, getReasons, getSolution} from "../../features/list/listThunk.js";
 import {selectUser} from "../../features/user/userSlice.js";
 import {useNavigate} from "react-router-dom";
@@ -12,6 +12,7 @@ const CreateCard = () => {
     const user = useAppSelector(selectUser);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const loading = useAppSelector(selectCreateCardLoading);
     const [error, setError] = useState('');
     const [state, setState] = useState({
         ls_abon: '',
@@ -102,8 +103,8 @@ const CreateCard = () => {
             const cardMutation = {
                 ls_abon: state.ls_abon,
                 phone_number: state.phone_number,
-                sip: "",
-                spec_full_name: "",
+                sip: user.sip,
+                spec_full_name: user.name,
                 full_name: state.full_name,
                 address: state.address,
                 reason_id: state.reason.id,
@@ -281,7 +282,7 @@ const CreateCard = () => {
                                   width: '100%'
                               }}></TextField>
                           </Grid>
-                          <Button variant={"outlined"} type={"submit"}>
+                          <Button variant={"outlined"} loading={loading} type={"submit"}>
                               Сохранить
                           </Button>
                       </Grid>

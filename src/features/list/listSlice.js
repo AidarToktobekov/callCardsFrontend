@@ -1,9 +1,10 @@
 import {createSlice} from "@reduxjs/toolkit";
-import { getClient, getList, getReasons, getSolution} from "./listThunk.js";
+import {createCard, getClient, getList, getReasons, getSolution} from "./listThunk.js";
 
 const initialState = {
     list: [],
     listLoading: false,
+    createCardLoading: false,
     clients: [],
     clientsLoading: false,
     reasons: [],
@@ -57,6 +58,16 @@ const ListSlice = createSlice({
         builder.addCase(getSolution.rejected, (state)=>{
             state.solutionsLoading = false;
         });
+        builder.addCase(createCard.pending, (state)=>{
+            state.createCardLoading = true;
+        });
+        builder.addCase(createCard.fulfilled, (state, {payload: req})=>{
+            state.createCardLoading = false;
+            console.log(req)
+        });
+        builder.addCase(createCard.rejected, (state)=>{
+            state.createCardLoading = false;
+        });
     },
     selectors: {
         selectList: state => state.list,
@@ -67,6 +78,7 @@ const ListSlice = createSlice({
         selectReasonsLoading: state => state.reasonsLoading,
         selectSolutions: state => state.solutions,
         selectSolutionsLoading: state => state.solutionsLoading,
+        selectCreateCardLoading: state => state.createCardLoading,
     }
 });
 
@@ -80,4 +92,5 @@ export const {
     selectReasonsLoading,
     selectSolutions,
     selectSolutionsLoading,
+    selectCreateCardLoading
 } = ListSlice.selectors;
