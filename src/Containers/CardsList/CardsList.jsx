@@ -1,18 +1,10 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks.js";
 import {
-  selectList, selectListLoading
+  selectList,
+  selectListLoading
 } from "../../features/list/listSlice.js";
 import { useEffect, useState } from "react";
 import { getList } from "../../features/list/listThunk.js";
-import {
-  selectReasonsList,
-  selectReasonsListLoading,
-  selectSolutionsList,
-  selectSolutionsListLoading
-} from "../../features/reasonsAndSolution/reasonsAndSolutionSlice.js";
-import {
-  getReasonsList, getSolutionsList
-} from "../../features/reasonsAndSolution/reasonsAndSolutionThunk.js";
 import { Paper } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 
@@ -132,7 +124,6 @@ const CardsList = () => {
   const changeTableHeight = () => {
     const headerHeight = document.querySelector('header').offsetHeight;
     const windowHeight = window.innerHeight;
-    
     setTableHeight(windowHeight - headerHeight);
   };
   
