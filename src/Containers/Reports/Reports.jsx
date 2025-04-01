@@ -83,6 +83,7 @@ const Reports = () => {
           sx={{
             height: `${tableHeight}px`,
             width: 'fit-content',
+            m: '0 auto'
           }}
         >
           <DataGrid

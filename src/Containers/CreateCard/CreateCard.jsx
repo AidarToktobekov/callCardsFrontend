@@ -222,41 +222,41 @@ const CreateCard = () => {
                 name={"call_from"}
                 onChange={inputChangeHandler}
                 sx={{ width: 'calc(50% - 15px)' }}
-                value={state?.call_from}
+                value={state?.call_from || ''}
               />
               <TextField
                 required
                 label={"Личный счет"}
-                value={state?.ls_abon}
+                value={state?.ls_abon || ''}
                 sx={{ width: 'calc(50% - 15px)' }}
               />
               <TextField
                 label={"Аккаунт айди"}
-                value={state?.account_id}
+                value={state?.account_id || ''}
                 sx={{ width: 'calc(50% - 15px)' }}
               />
               <TextField
                 label={"n_result_id"}
-                value={state?.n_result_id}
+                value={state?.n_result_id || ''}
                 sx={{ width: 'calc(50% - 15px)' }}
               />
               <TextField
                 required
                 label={"ФИО"}
-                value={state?.full_name}
+                value={state?.full_name || ''}
                 sx={{ width: 'calc(50% - 15px)' }}
               />
               <TextField
                 required
                 label={"Адрес"}
-                value={state?.address}
+                value={state?.address || ''}
                 sx={{ width: 'calc(50% - 15px)' }}
               />
               <Autocomplete
                 required
                 multiple
                 options={state?.phone_number}
-                value={state?.phone_number}
+                value={Array.isArray(state?.phone_number) ? state.phone_number : []}
                 disableClearable
                 readOnly
                 renderInput={params =>
@@ -266,13 +266,13 @@ const CreateCard = () => {
               <TextField
                 required
                 label={"Мак роутера"}
-                value={state?.mac_address}
+                value={state?.mac_address || ''}
                 sx={{ width: 'calc(50% - 15px)' }}
               />
               <TextField
                 required
                 label={"Айпи адрес"}
-                value={state?.ip_address}
+                value={state?.ip_address || ''}
                 sx={{ width: 'calc(50% - 15px)' }}
               />
               <TextField
