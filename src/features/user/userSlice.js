@@ -2,13 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import {login, register} from './userThunk';
 
 const initialState = {
-    user: {
-        name: "Aidar",
-        username: "Aidar",
-        role: "admin",
-        token: '32131212',
-        id: '1',
-    },
+    user: null,
     loginLoading: false,
     loginError: null,
     registerError: null,

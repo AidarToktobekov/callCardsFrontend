@@ -2,7 +2,13 @@ import Grid from "@mui/material/Grid2";
 import {Alert, Autocomplete, Button, Container, MenuItem, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
-import {selectClients, selectCreateCardLoading, selectReasons, selectSolutions} from "../../features/list/listSlice.js";
+import {
+    selectClients,
+    selectClientsLoading,
+    selectCreateCardLoading,
+    selectReasons,
+    selectSolutions
+} from "../../features/list/listSlice.js";
 import {createCard, getClient, getReasons, getSolution} from "../../features/list/listThunk.js";
 import {selectUser} from "../../features/user/userSlice.js";
 import {useNavigate} from "react-router-dom";
@@ -15,7 +21,10 @@ const CreateCard = () => {
     const loading = useAppSelector(selectCreateCardLoading);
     const [error, setError] = useState('');
     const [state, setState] = useState({
+        call_from: '',
         ls_abon: '',
+        account_id: '',
+        n_result_id: '',
         spec_full_name: '',
         sip: '',
         full_name: "",
@@ -33,6 +42,8 @@ const CreateCard = () => {
         },
         ip_address: '',
         mac_address: '',
+        ip_olt: '',
+        mac_onu: '',
     });
 
     const [cardIndex , setCardIndex] = useState(0);
@@ -68,6 +79,7 @@ const CreateCard = () => {
     }
 
     const cards = useAppSelector(selectClients);
+    const clientsLoading = useAppSelector(selectClientsLoading);
     const [phoneNumber, setPhoneNumber] = useState("");
     const reasons = useAppSelector(selectReasons);
     const solutions = useAppSelector(selectSolutions);
@@ -87,6 +99,10 @@ const CreateCard = () => {
                 address: cards[cardIndex].address,
                 ip_address: cards[cardIndex].ip_address,
                 mac_address: cards[cardIndex].mac_address,
+                account_id: cards[cardIndex].account_id,
+                n_result_id: cards[cardIndex].n_result_id,
+                mac_onu: cards[cardIndex].mac_onu,
+                ip_olt: cards[cardIndex].ip_olt,
             }));
         }
     }, [dispatch, cardIndex, cards]);
@@ -106,6 +122,7 @@ const CreateCard = () => {
                 sip: user.sip,
                 spec_full_name: user.name,
                 full_name: state.full_name,
+                call_from: state.call_from,
                 address: state.address,
                 reason_id: state.reason.id,
                 solution_id: state.solution.id,
@@ -114,7 +131,10 @@ const CreateCard = () => {
 
             await dispatch(createCard(cardMutation));
             setState({
+                call_from: '',
                 ls_abon: '',
+                account_id: '',
+                n_result_id: '',
                 spec_full_name: '',
                 sip: '',
                 full_name: "",
@@ -132,6 +152,8 @@ const CreateCard = () => {
                 },
                 ip_address: '',
                 mac_address: '',
+                ip_olt: '',
+                mac_onu: '',
             });
             navigate("/");
         }else{
@@ -163,7 +185,7 @@ const CreateCard = () => {
                               <TextField variant={"outlined"} label={"Номер или лицевой счет"} value={phoneNumber} onChange={changePhoneNumber} sx={{
                                   flexGrow: '1',
                               }}></TextField>
-                              <Button onClick={searchClient} variant="outlined">
+                              <Button onClick={searchClient} loading={clientsLoading} variant="outlined">
                                   Search
                               </Button>
                           </Grid>
@@ -189,9 +211,24 @@ const CreateCard = () => {
                               </TextField>
                           </Grid>
                           <Grid>
+                              <TextField required label={"Номер с которого звонили"} name={"call_from"} onChange={inputChangeHandler} sx={{
+                                  width: '100%'
+                              }} value={state.call_from}></TextField>
+                          </Grid>
+                          <Grid>
                               <TextField required label={"Личный счет"} sx={{
                                   width: '100%'
                               }} value={state.ls_abon}></TextField>
+                          </Grid>
+                          <Grid>
+                              <TextField label={"Аккаунт айди"} sx={{
+                                  width: '100%'
+                              }} value={state.account_id}></TextField>
+                          </Grid>
+                          <Grid>
+                              <TextField label={"n_result_id"} sx={{
+                                  width: '100%'
+                              }} value={state.n_result_id}></TextField>
                           </Grid>
                           <Grid>
                               <TextField required label={"ФИО"} value={state.full_name} sx={{
@@ -221,6 +258,16 @@ const CreateCard = () => {
                           </Grid>
                           <Grid>
                               <TextField required label={"Айпи адрес"} value={state.ip_address} sx={{
+                                  width: '100%'
+                              }}></TextField>
+                          </Grid>
+                          <Grid>
+                              <TextField label={"mac_onu"} value={state.mac_onu || ""} sx={{
+                                  width: '100%'
+                              }}></TextField>
+                          </Grid>
+                          <Grid>
+                              <TextField label={"ip_olt"} value={state.ip_olt || ""} sx={{
                                   width: '100%'
                               }}></TextField>
                           </Grid>

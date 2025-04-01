@@ -11,7 +11,7 @@ let isToastVisible = false;
 
 export const addInterceptors = (store) => {
     axiosApi.interceptors.request.use((request) => {
-        const token = store.getState().users.user?.token;
+        const token = store.getState().user.user?.token;
         if (token) {
             request.headers.set("Authorization", `Bearer ${token}`);
         }

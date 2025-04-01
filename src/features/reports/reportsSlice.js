@@ -1,5 +1,11 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {getCardsReport, getRepeatedCalls, getSolutionReport, getTreatmentReport} from "./reportsThunk.js";
+import {
+    getCardsInactives,
+    getCardsReport,
+    getRepeatedCalls,
+    getSolutionReport,
+    getTreatmentReport
+} from "./reportsThunk.js";
 
 const initialState = {
     cardsReport: [],
@@ -10,6 +16,8 @@ const initialState = {
     solutionReportLoading: false,
     repeatedCalls: [],
     repeatedCallsLoading: false,
+    cardsInactives: [],
+    cardsInactivesLoading: false,
 };
 
 const ReportsSlice = createSlice({
@@ -57,6 +65,16 @@ const ReportsSlice = createSlice({
         builder.addCase(getRepeatedCalls.rejected, (state)=>{
             state.repeatedCallsLoading = false;
         });
+        builder.addCase(getCardsInactives.pending, (state)=>{
+            state.cardsInactivesLoading = true;
+        });
+        builder.addCase(getCardsInactives.fulfilled, (state, {payload: list})=>{
+            state.cardsInactivesLoading = false;
+            state.cardsInactives = list;
+        });
+        builder.addCase(getCardsInactives.rejected, (state)=>{
+            state.cardsInactivesLoading = false;
+        });
     },
     selectors: {
         selectCardsReport: state => state.cardsReport,
@@ -67,6 +85,8 @@ const ReportsSlice = createSlice({
         selectSolutionReportLoading: state => state.solutionReportLoading,
         selectRepeatedCalls: state => state.repeatedCalls,
         selectRepeatedCallsLoading: state => state.repeatedCallsLoading,
+        selectCardsInactives: state => state.cardsInactives,
+        selectCardsInactivesLoading: state => state.cardsInactivesLoading,
     }
 });
 
@@ -79,5 +99,7 @@ export const {
     selectSolutionReport,
     selectSolutionReportLoading,
     selectRepeatedCalls,
-    selectRepeatedCallsLoading
+    selectRepeatedCallsLoading,
+    selectCardsInactives,
+    selectCardsInactivesLoading,
 } = ReportsSlice.selectors;

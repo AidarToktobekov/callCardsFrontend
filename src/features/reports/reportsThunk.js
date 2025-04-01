@@ -44,3 +44,14 @@ export const getRepeatedCalls = createAsyncThunk( "reports/getRepeatedCalls",
             console.log(error)
         }
     });
+
+export const getCardsInactives = createAsyncThunk( "reports/getCardsInactives",
+    async()=>{
+        try{
+            const {data: cardsInactives} = await axiosApi.get("/cards/inactives");
+            return cardsInactives || [];
+        }
+        catch(error){
+            console.log(error)
+        }
+    });

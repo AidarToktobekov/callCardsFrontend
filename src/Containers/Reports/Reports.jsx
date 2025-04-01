@@ -1,5 +1,6 @@
 import Grid from "@mui/material/Grid2";
 import {
+    Autocomplete,
     CircularProgress,
     Container,
     List,
@@ -10,22 +11,32 @@ import {
     TableCell,
     TableContainer,
     TableHead,
-    TableRow
+    TableRow, TextField
 } from "@mui/material";
 import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
 import {
+    selectCardsInactives, selectCardsInactivesLoading,
     selectCardsReport,
     selectCardsReportLoading, selectRepeatedCalls, selectRepeatedCallsLoading, selectSolutionReport,
     selectSolutionReportLoading, selectTreatmentReport,
     selectTreatmentReportLoading
 } from "../../features/reports/reportsSlice.js";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {
+    getCardsInactives,
     getCardsReport,
     getRepeatedCalls,
     getSolutionReport,
     getTreatmentReport
 } from "../../features/reports/reportsThunk.js";
+import ListItem from "../../Components/List/ListItem.jsx";
+import {
+    selectReasonsList,
+    selectReasonsListLoading,
+    selectSolutionsList,
+    selectSolutionsListLoading
+} from "../../features/reasonsAndSolution/reasonsAndSolutionSlice.js";
+import {getReasonsList, getSolutionsList} from "../../features/reasonsAndSolution/reasonsAndSolutionThunk.js";
 
 const Reports = ()=>{
 
@@ -35,24 +46,37 @@ const Reports = ()=>{
     const treatmentReport = useAppSelector(selectTreatmentReport);
     const solutionReport = useAppSelector(selectSolutionReport);
     const repeatedCalls = useAppSelector(selectRepeatedCalls);
+    const inactivesCards = useAppSelector(selectCardsInactives);
+
+    const solutions = useAppSelector(selectSolutionsList);
+    const solutionsListLoading = useAppSelector(selectSolutionsListLoading);
+    const reasons = useAppSelector(selectReasonsList);
+    const reasonsLoading = useAppSelector(selectReasonsListLoading);
 
     const cardsReportLoading = useAppSelector(selectCardsReportLoading);
     const treatmentReportLoading = useAppSelector(selectTreatmentReportLoading);
     const solutionReportLoading = useAppSelector(selectSolutionReportLoading);
     const repeatedCallsLoading = useAppSelector(selectRepeatedCallsLoading);
+    const inactivesCardsLoading = useAppSelector(selectCardsInactivesLoading);
+
+    const [solutionsFiltered, setSolutionsFiltered] = useState([]);
 
     useEffect(() => {
         dispatch(getCardsReport());
         dispatch(getTreatmentReport());
         dispatch(getSolutionReport());
         dispatch(getRepeatedCalls());
+        dispatch(getCardsInactives());
+        dispatch(getSolutionsList());
+        dispatch(getReasonsList());
     }, [dispatch])
 
     return(
         <Grid>
             <Container maxWidth={"lg"}>
                 <Grid container spacing={2} wrap={"nowrap"}>
-                    <Grid>
+                    <Grid
+                    >
                         <TableContainer component={Paper} sx={{
                             maxHeight: '500px',
                             height: '100%',
@@ -87,7 +111,8 @@ const Reports = ()=>{
                             </Grid>
                         )}
                     </Grid>
-                    <Grid>
+                    <Grid
+                    >
                         <TableContainer component={Paper} sx={{
                             maxHeight: '500px',
                             height: '100%',
@@ -130,15 +155,31 @@ const Reports = ()=>{
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>Причина обращения</TableCell>
-                                        <TableCell>Решение</TableCell>
+                                        <TableCell>Решение
+                                            <Autocomplete
+                                                loading={solutionsListLoading}
+                                                multiple
+                                                options={solutions.map(option => ({
+                                                    id: option.id,
+                                                    label: `${option.title} (${reasons.find(reason => reason.id === option.reason_id)?.title})`,
+                                                }))}
+                                                getOptionLabel={(option) => option.label}
+                                                value={solutionsFiltered}
+                                                onChange={(_, newValue) => setSolutionsFiltered(newValue)}
+                                                renderInput={(params) => <TextField {...params} label="Выберите решение" variant="outlined" />}
+                                                fullWidth
+                                            />
+                                        </TableCell>
                                         <TableCell>Кол-во</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {!solutionReportLoading && (
-                                        solutionReport.map((item, index)=>{
+                                        (solutionsFiltered.length === 0 ? solutionReport : solutionReport.filter(item =>
+                                                solutionsFiltered.some(solution => solution.id === item.id)
+                                        )).map((item)=>{
                                             return(
-                                                <TableRow key={index}>
+                                                <TableRow key={item.id}>
                                                     <TableCell>{item.reason}</TableCell>
                                                     <TableCell>{item.solution}</TableCell>
                                                     <TableCell>{item.count}</TableCell>
@@ -202,6 +243,49 @@ const Reports = ()=>{
                         </Table>
                     </TableContainer>
                     {solutionReportLoading && (
+                        <Grid sx={{padding: "10px"}} container justifyContent={"center"}>
+                            <CircularProgress />
+                        </Grid>
+                    )}
+                </Grid>
+                <Grid>
+                    <TableContainer component={Paper} sx={{
+                        margin: "30px 0 0",
+                        maxHeight: "500px",
+                        overflowY: 'auto',
+                    }}>
+                        <Table stickyHeader border={"1px solid #000"}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Лицевой счет</TableCell>
+                                    <TableCell>Дата</TableCell>
+                                    <TableCell>Сотрудник</TableCell>
+                                    <TableCell>Sip</TableCell>
+                                    <TableCell>ФИО Клиента</TableCell>
+                                    <TableCell>Телефон с которого звонили</TableCell>
+                                    <TableCell>Номер телефона</TableCell>
+                                    <TableCell>Адрес</TableCell>
+                                    <TableCell>Mac address</TableCell>
+                                    <TableCell>Ip address</TableCell>
+                                    <TableCell>Mac onu</TableCell>
+                                    <TableCell>Ip olt</TableCell>
+                                    <TableCell>Коментарий</TableCell>
+                                    <TableCell>Причина</TableCell>
+                                    <TableCell>Решение</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {!inactivesCardsLoading && (
+                                    inactivesCards.map((item, index)=>{
+                                        return(
+                                            <ListItem key={index} item={item}></ListItem>
+                                        )
+                                    })
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    {inactivesCardsLoading && (
                         <Grid sx={{padding: "10px"}} container justifyContent={"center"}>
                             <CircularProgress />
                         </Grid>

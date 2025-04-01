@@ -29,14 +29,14 @@ const ListSlice = createSlice({
             state.listLoading = false;
         });
         builder.addCase(getClient.pending, (state)=>{
-            state.cardLoading = true;
+            state.clientsLoading = true;
         });
         builder.addCase(getClient.fulfilled, (state, {payload: client})=>{
-            state.cardLoading = false;
+            state.clientsLoading = false;
             state.clients = client;
         });
         builder.addCase(getClient.rejected, (state)=>{
-            state.cardLoading = false;
+            state.clientsLoading = false;
         });
         builder.addCase(getReasons.pending, (state)=>{
             state.reasonsLoading = true;
