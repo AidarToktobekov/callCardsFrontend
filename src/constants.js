@@ -1,4 +1,4 @@
-export const API_URL = 'http://10.1.6.44:8000';
+export const API_URL = 'http://10.1.4.9:8010';
 
 export const PAGE_NAMES = {
   '/': 'Главная',
