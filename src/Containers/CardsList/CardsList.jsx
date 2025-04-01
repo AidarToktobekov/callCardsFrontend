@@ -12,7 +12,9 @@ const columns = [
   {
     field: 'id',
     headerName: 'ID',
-    width: 70
+    width: 70,
+    align: 'center',
+    headerAlign: 'center'
   },
   {
     field: 'full_name',
@@ -54,13 +56,15 @@ const columns = [
     width: 200,
     align: 'center',
     headerAlign: 'center',
+    valueGetter: (value, _) => value?.title || '-'
   },
   {
     field: 'solution',
     headerName: 'Решение',
     width: 200,
     align: 'center',
-    headerAlign: 'center'
+    headerAlign: 'center',
+    valueGetter: (value, _) => value?.title || '-'
   },
   {
     field: 'sip',
@@ -145,7 +149,7 @@ const CardsList = () => {
             100
           ]}
           pageSize={100}
-          checkboxSelection
+          //checkboxSelection
           sx={{ border: 0 }}
           loading={loading}
         />
