@@ -18,10 +18,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { LoadingButton } from "@mui/lab";
 import { useNavigate } from "react-router-dom";
+import { selectUser } from "../../features/user/userSlice.js";
 
 const SolutionReasonLists = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { role } = useAppSelector(selectUser);
   const reasons = useAppSelector(selectReasonsList);
   const solutions = useAppSelector(selectSolutionsList);
   const reasonLoading = useAppSelector(selectReasonsListLoading);
@@ -84,14 +86,14 @@ const SolutionReasonLists = () => {
       headerAlign: 'center',
       renderCell: (params) => {
         return (
-          <LoadingButton
+          role === 'admin' ? <LoadingButton
             variant='outlined'
             color='error'
             size='small'
             startIcon={<DeleteIcon/>}
             onClick={() => onDeleteReason(params.row?.id)}
             loading={reasonDeleteId === params.row?.id}
-          >Удалить</LoadingButton>
+          >Удалить</LoadingButton> : ''
         );
       },
       sortable: false,
@@ -129,14 +131,14 @@ const SolutionReasonLists = () => {
       headerAlign: 'center',
       renderCell: (params) => {
         return (
-          <LoadingButton
+          role === 'admin' ? <LoadingButton
             variant='outlined'
             color='error'
             size='small'
             startIcon={<DeleteIcon/>}
             onClick={() => onDeleteSolution(params.row?.id)}
             loading={solutionDeleteId === params.row?.id}
-          >Удалить</LoadingButton>
+          >Удалить</LoadingButton> : ''
         );
       },
       sortable: false,
@@ -155,7 +157,7 @@ const SolutionReasonLists = () => {
       >
         <Paper
           sx={{
-            height: `${tableHeight - 20}px`,
+            height: `${tableHeight - 61}px`,
             width: '40%',
           }}
         >
@@ -186,7 +188,7 @@ const SolutionReasonLists = () => {
         </Paper>
         <Paper
           sx={{
-            height: `${tableHeight - 20}px`,
+            height: `${tableHeight - 61}px`,
             width: '60%',
           }}
         >

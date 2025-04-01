@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import { Provider } from "react-redux";
@@ -24,15 +23,13 @@ const theme = createTheme(
 );
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Provider store={store}>
-          <PersistGate persistor={persistor}>
-            <App/>
-          </PersistGate>
-        </Provider>
-      </BrowserRouter>
-    </ThemeProvider>
-  </StrictMode>,
-)
+  <ThemeProvider theme={theme}>
+    <BrowserRouter>
+      <Provider store={store}>
+        <PersistGate persistor={persistor}>
+          <App/>
+        </PersistGate>
+      </Provider>
+    </BrowserRouter>
+  </ThemeProvider>
+);

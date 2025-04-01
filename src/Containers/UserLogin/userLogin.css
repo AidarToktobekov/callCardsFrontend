@@ -1,0 +1,13 @@
+.sign-in {
+  display: flex !important;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 20px;
+  margin-bottom: 150px;
+}
+
+main:has(.sign-in) {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+}

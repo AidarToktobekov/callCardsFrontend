@@ -1,15 +1,11 @@
 import Grid from "@mui/material/Grid2";
 import {
-  Alert,
-  Autocomplete,
-  Button,
-  Container,
-  MenuItem,
-  TextField
+  Alert, Autocomplete, Button, Container, MenuItem, TextField
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks.js";
 import {
+  resetClients,
   selectClients,
   selectClientsLoading,
   selectCreateCardLoading,
@@ -17,10 +13,7 @@ import {
   selectSolutions
 } from "../../features/list/listSlice.js";
 import {
-  createCard,
-  getClient,
-  getReasons,
-  getSolution
+  createCard, getClient, getReasons, getSolution
 } from "../../features/list/listThunk.js";
 import { selectUser } from "../../features/user/userSlice.js";
 import { useNavigate } from "react-router-dom";
@@ -31,34 +24,7 @@ const CreateCard = () => {
   const navigate = useNavigate();
   const loading = useAppSelector(selectCreateCardLoading);
   const [error, setError] = useState('');
-  const [state, setState] = useState({
-    call_from: '',
-    ls_abon: '',
-    account_id: '',
-    n_result_id: '',
-    spec_full_name: '',
-    sip: '',
-    full_name: "",
-    phone_number: [],
-    address: '',
-    comment: '',
-    reason: {
-      id: '',
-      title: '',
-    },
-    solution: {
-      id: '',
-      reason: {
-        id: "",
-        title: '',
-      },
-      title: '',
-    },
-    ip_address: '',
-    mac_address: '',
-    ip_olt: '',
-    mac_onu: '',
-  });
+  const [state, setState] = useState(null);
   
   const [cardIndex, setCardIndex] = useState(0);
   
@@ -116,6 +82,11 @@ const CreateCard = () => {
   useEffect(() => {
     dispatch(getSolution());
     dispatch(getReasons());
+    
+    return () => {
+      setState(null);
+      dispatch(resetClients());
+    }
   }, [dispatch]);
   
   useEffect(() => {
@@ -152,51 +123,23 @@ const CreateCard = () => {
     
     if (user) {
       const cardMutation = {
-        ls_abon: state.ls_abon,
-        phone_number: state.phone_number,
+        ls_abon: state?.ls_abon,
+        phone_number: state?.phone_number,
         sip: user.sip,
-        spec_full_name: user.name,
-        full_name: state.full_name,
-        call_from: state.call_from,
-        address: state.address,
-        reason_id: state.reason.id,
-        solution_id: state.solution.id,
-        comment: state.comment.trim(),
-        ip_address: '',
-        mac_address: '',
-        ip_olt: '',
-        mac_onu: '',
+        spec_full_name: user?.name,
+        full_name: state?.full_name,
+        call_from: state?.call_from,
+        address: state?.address,
+        reason_id: state?.reason?.id,
+        solution_id: state?.solution?.id,
+        comment: state?.comment?.trim(),
+        ip_address: state?.ip_address,
+        mac_address: state?.mac_address,
+        ip_olt: state?.ip_olt,
+        mac_onu: state?.mac_onu,
       };
       
       await dispatch(createCard(cardMutation));
-      setState({
-        call_from: '',
-        ls_abon: '',
-        account_id: '',
-        n_result_id: '',
-        spec_full_name: '',
-        sip: '',
-        full_name: "",
-        phone_number: [],
-        address: '',
-        comment: '',
-        reason: {
-          id: '',
-          title: '',
-        },
-        solution: {
-          id: '',
-          reason: {
-            id: "",
-            title: '',
-          },
-          title: '',
-        },
-        ip_address: '',
-        mac_address: '',
-        ip_olt: '',
-        mac_onu: '',
-      });
       navigate("/");
     } else {
       setError("Зарегстрируйтесь!")
@@ -226,46 +169,43 @@ const CreateCard = () => {
           >
             <Grid
               container
-              flexDirection={"column"}
-              gap={"15px"}
               sx={{
-                width: "40%",
-                paddingRight: '20px'
+                display: "flex",
+                gap: '15px'
               }}
             >
-              <Grid
-                container
-                gap={"10px"}
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  width: '100%',
+                  gap: '20px',
+                  marginBottom: '15px'
+                }}
               >
                 <TextField
                   variant={"outlined"}
                   label={"Номер или лицевой счет"}
                   value={phoneNumber}
                   onChange={changePhoneNumber}
-                  sx={{
-                    flexGrow: '1',
-                  }}
-                ></TextField>
+                  sx={{ flexGrow: 1 }}
+                />
                 <Button
                   onClick={searchClient}
                   loading={clientsLoading}
                   variant='outlined'
                 >
-                  Search
+                  Поиск
                 </Button>
-              </Grid>
-              <Grid>
                 <TextField
                   required
                   select
-                  label={"Клиенты"}
+                  label='Абоненты'
                   id='card'
                   name='card'
                   value={cards.length > 0 ? String(cardIndex) : ""}
                   onChange={handleCardChange}
-                  sx={{
-                    width: '100%'
-                  }}
+                  sx={{ width: '100%' }}
                 >
                   {cards.map((card, index) => (
                     <MenuItem
@@ -276,203 +216,146 @@ const CreateCard = () => {
                     </MenuItem>
                   ))}
                 </TextField>
-              </Grid>
-              <Grid>
-                <TextField
-                  label={"Номер с которого звонили"}
-                  name={"call_from"}
-                  onChange={inputChangeHandler}
-                  sx={{
-                    width: '100%'
-                  }}
-                  value={state.call_from}
-                ></TextField>
-              </Grid>
-              <Grid>
-                <TextField
-                  required
-                  label={"Личный счет"}
-                  sx={{
-                    width: '100%'
-                  }}
-                  value={state.ls_abon}
-                ></TextField>
-              </Grid>
-              <Grid>
-                <TextField
-                  label={"Аккаунт айди"}
-                  sx={{
-                    width: '100%'
-                  }}
-                  value={state.account_id}
-                ></TextField>
-              </Grid>
-              <Grid>
-                <TextField
-                  label={"n_result_id"}
-                  sx={{
-                    width: '100%'
-                  }}
-                  value={state.n_result_id}
-                ></TextField>
-              </Grid>
-              <Grid>
-                <TextField
-                  required
-                  label={"ФИО"}
-                  value={state.full_name}
-                  sx={{
-                    width: '100%'
-                  }}
-                ></TextField>
-              </Grid>
-              <Grid>
-                <TextField
-                  required
-                  label={"Адрес"}
-                  value={state.address}
-                  sx={{
-                    width: '100%'
-                  }}
-                ></TextField>
-              </Grid>
-              <Grid>
-                <Autocomplete
-                  required
-                  multiple
-                  options={state.phone_number}
-                  value={state.phone_number}
-                  disableClearable
-                  readOnly
-                  renderInput={params =>
-                    <TextField {...params} label={"Номера"}></TextField>}
-                ></Autocomplete>
-              </Grid>
-              <Grid>
-                <TextField
-                  required
-                  label={"Мак роутера"}
-                  value={state.mac_address}
-                  sx={{
-                    width: '100%'
-                  }}
-                ></TextField>
-              </Grid>
-              <Grid>
-                <TextField
-                  required
-                  label={"Айпи адрес"}
-                  value={state.ip_address}
-                  sx={{
-                    width: '100%'
-                  }}
-                ></TextField>
-              </Grid>
-              <Grid>
-                <TextField
-                  label={"mac_onu"}
-                  value={state.mac_onu || ""}
-                  sx={{
-                    width: '100%'
-                  }}
-                ></TextField>
-              </Grid>
-              <Grid>
-                <TextField
-                  label={"ip_olt"}
-                  value={state.ip_olt || ""}
-                  sx={{
-                    width: '100%'
-                  }}
-                ></TextField>
-              </Grid>
+              </div>
+              <TextField
+                label={"Номер с которого звонили"}
+                name={"call_from"}
+                onChange={inputChangeHandler}
+                sx={{ width: 'calc(50% - 15px)' }}
+                value={state?.call_from}
+              />
+              <TextField
+                required
+                label={"Личный счет"}
+                value={state?.ls_abon}
+                sx={{ width: 'calc(50% - 15px)' }}
+              />
+              <TextField
+                label={"Аккаунт айди"}
+                value={state?.account_id}
+                sx={{ width: 'calc(50% - 15px)' }}
+              />
+              <TextField
+                label={"n_result_id"}
+                value={state?.n_result_id}
+                sx={{ width: 'calc(50% - 15px)' }}
+              />
+              <TextField
+                required
+                label={"ФИО"}
+                value={state?.full_name}
+                sx={{ width: 'calc(50% - 15px)' }}
+              />
+              <TextField
+                required
+                label={"Адрес"}
+                value={state?.address}
+                sx={{ width: 'calc(50% - 15px)' }}
+              />
+              <Autocomplete
+                required
+                multiple
+                options={state?.phone_number}
+                value={state?.phone_number}
+                disableClearable
+                readOnly
+                renderInput={params =>
+                  <TextField {...params} label={"Номера"}></TextField>}
+                sx={{ width: 'calc(50% - 15px)' }}
+              />
+              <TextField
+                required
+                label={"Мак роутера"}
+                value={state?.mac_address}
+                sx={{ width: 'calc(50% - 15px)' }}
+              />
+              <TextField
+                required
+                label={"Айпи адрес"}
+                value={state?.ip_address}
+                sx={{ width: 'calc(50% - 15px)' }}
+              />
+              <TextField
+                label={"mac_onu"}
+                value={state?.mac_onu || ""}
+                sx={{ width: 'calc(50% - 15px)' }}
+              />
+              <TextField
+                label={"ip_olt"}
+                value={state?.ip_olt || ""}
+                sx={{ width: 'calc(50% - 15px)' }}
+              />
+              <TextField
+                required
+                select
+                label={"Причина обращения"}
+                id='resone-for-contact'
+                name='reason'
+                value={state?.reason?.title || ""}
+                onChange={(e) => selectChangeHandler(e, reasons)}
+                sx={{ width: 'calc(50% - 15px)' }}
+              >
+                {reasons.map((item, index) => (
+                  <MenuItem
+                    value={item.title}
+                    key={index}
+                  >
+                    {item.title}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                id='solution'
+                value={state?.solution?.title || ""}
+                label='Решение'
+                variant='outlined'
+                onChange={(e) => selectChangeHandler(e, solutions)}
+                sx={{ width: 'calc(50% - 15px)' }}
+                name={"solution"}
+              >
+                <MenuItem value={''}>Нет решения</MenuItem>
+                {solutions.map((item, index) => {
+                  if (!state?.reason?.id) {
+                    return (
+                      <MenuItem
+                        value={item.title}
+                        key={index}
+                      >{item.title}</MenuItem>
+                    )
+                  }
+                  if (state?.reason?.id && state?.reason?.id === item?.reason?.id) {
+                    return (
+                      <MenuItem
+                        value={item.title}
+                        key={index}
+                      >{item.title}</MenuItem>
+                    )
+                  }
+                })}
+              </TextField>
+              <TextField
+                label='Комментарий'
+                minRows={3}
+                multiline
+                onChange={inputChangeHandler}
+                sx={{ width: '100%' }}
+                name={"comment"}
+                value={state?.comment}
+              />
             </Grid>
-            <Grid
-              container
-              flexDirection={"column"}
-              gap={"15px"}
+            <Button
+              variant={"outlined"}
+              size='large'
+              loading={loading}
+              type={"submit"}
               sx={{
-                width: "60%",
+                width: '100%',
+                mt: '15px'
               }}
             >
-              <Grid>
-                <TextField
-                  required
-                  select
-                  label={"Причина обращения"}
-                  id='resone-for-contact'
-                  name='reason'
-                  value={state.reason.title || ""}
-                  onChange={(e) => selectChangeHandler(e, reasons)}
-                  sx={{
-                    width: '100%'
-                  }}
-                >
-                  {reasons.map((item, index) => (
-                    <MenuItem
-                      value={item.title}
-                      key={index}
-                    >
-                      {item.title}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid>
-                <TextField
-                  select
-                  id='solution'
-                  value={state.solution.title || ""}
-                  label='Решение'
-                  variant='outlined'
-                  onChange={(e) => selectChangeHandler(e, solutions)}
-                  name={"solution"}
-                  sx={{
-                    width: '100%'
-                  }}
-                >
-                  <MenuItem value={''}>Нет решения</MenuItem>
-                  {solutions.map((item, index) => {
-                    if (!state.reason.id) {
-                      return (
-                        <MenuItem
-                          value={item.title}
-                          key={index}
-                        >{item.title}</MenuItem>
-                      )
-                    }
-                    if (state.reason.id && state.reason.id === item.reason.id) {
-                      return (
-                        <MenuItem
-                          value={item.title}
-                          key={index}
-                        >{item.title}</MenuItem>
-                      )
-                    }
-                  })}
-                </TextField>
-              </Grid>
-              <Grid>
-                <TextField
-                  label='Комментарий'
-                  minRows={3}
-                  multiline
-                  onChange={inputChangeHandler}
-                  name={"comment"}
-                  value={state.comment}
-                  sx={{
-                    width: '100%'
-                  }}
-                ></TextField>
-              </Grid>
-              <Button
-                variant={"outlined"}
-                loading={loading}
-                type={"submit"}
-              >
-                Сохранить
-              </Button>
-            </Grid>
+              Создать
+            </Button>
           </Grid>
         </Container>
       </Grid>

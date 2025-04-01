@@ -1,11 +1,5 @@
 import {
-  AppBar,
-  Box,
-  IconButton,
-  Menu,
-  MenuItem,
-  Toolbar,
-  Typography
+  AppBar, Box, IconButton, Menu, MenuItem, Toolbar, Typography
 } from "@mui/material";
 import { logout, selectUser } from "../../features/user/userSlice.js";
 import { useState } from "react";
@@ -20,20 +14,20 @@ const AppToolbar = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
-
+  
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
+  
   const handleClick = (url) => {
     navigate(url);
     handleClose();
   };
-
+  
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  
   const handleLogout = async () => {
     await dispatch(logout());
     navigate("/sign-in");
@@ -80,9 +74,12 @@ const AppToolbar = () => {
                 >
                   <MenuItem onClick={() => handleClick('/')}>Главная</MenuItem>
                   <MenuItem onClick={() => handleClick('/solution-and-reason')}>Причины/решения</MenuItem>
-                  <MenuItem onClick={() => handleClick('/reports')}>Отчёты</MenuItem>
+                  <MenuItem onClick={() => handleClick(user?.role === 'admin' ? '/reports' : '/stats_by_reasons')}>Отчёты</MenuItem>
                   <MenuItem onClick={() => handleClick('/create-card')}>Новая
                     карточка</MenuItem>
+                  {user?.role === 'admin' &&
+                    <MenuItem onClick={() => handleClick('/sign-up')}>Новый
+                      пользователь</MenuItem>}
                   <MenuItem onClick={handleLogout}>Выйти</MenuItem>
                 </Menu>
               </div>
