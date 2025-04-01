@@ -12,7 +12,7 @@ const columns = [
   {
     field: 'id',
     headerName: 'ID',
-    width: 70,
+    width: 100,
     align: 'center',
     headerAlign: 'center'
   },
