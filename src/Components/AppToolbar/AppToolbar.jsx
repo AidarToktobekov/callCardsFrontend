@@ -20,20 +20,20 @@ const AppToolbar = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
-  
+
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  
+
   const handleClick = (url) => {
     navigate(url);
     handleClose();
   };
-  
+
   const handleClose = () => {
     setAnchorEl(null);
   };
-  
+
   const handleLogout = async () => {
     await dispatch(logout());
     navigate("/sign-in");

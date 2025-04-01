@@ -4,26 +4,18 @@ import {
 } from "@mui/material";
 import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
 import {
-    selectCardsReport,
-    selectCardsReportLoading
+    selectTreatmentReport, selectTreatmentReportLoading
 } from "../../features/reports/reportsSlice.js";
 import {useEffect, useState} from "react";
 import {
-    getCardsReport
+    getTreatmentReport
 } from "../../features/reports/reportsThunk.js";
 import {DataGrid} from "@mui/x-data-grid";
 
 const columns = [
     {
-        field: 'sip',
-        headerName: 'Sip',
-        width: 130,
-        align: 'center',
-        headerAlign: 'center'
-    },
-    {
-        field: 'spec_full_name',
-        headerName: 'Специалист',
+        field: 'reason',
+        headerName: 'Причина',
         width: 250,
         align: 'center',
         headerAlign: 'center'
@@ -37,17 +29,17 @@ const columns = [
     }
 ];
 
-const Reports = ()=>{
+
+const StatsByReasons = () => {
 
     const dispatch = useAppDispatch();
     const [tableHeight, setTableHeight] = useState(0);
 
-    const cardsReport = useAppSelector(selectCardsReport);
-    const loading = useAppSelector(selectCardsReportLoading);
-
+    const treatmentReport = useAppSelector(selectTreatmentReport);
+    const loading = useAppSelector(selectTreatmentReportLoading);
 
     useEffect(() => {
-        dispatch(getCardsReport());
+        dispatch(getTreatmentReport());
     }, [dispatch]);
 
     useEffect(() => {
@@ -59,18 +51,18 @@ const Reports = ()=>{
         const headerHeight = document.querySelector('header').offsetHeight;
         const windowHeight = window.innerHeight;
         setTableHeight(windowHeight - headerHeight);
-    }
+    };
 
     return(
         <>
-            <Container variant={"h1"} maxWidth={"lg"}>
-                <Typography sx={{
+            <Container maxWidth={"lg"}>
+                <Typography variant={"h1"} sx={{
                     fontSize: "25px",
                     color: '#fff',
                     textAlign: 'center',
                     margin: "20px 0"
                 }}>
-                    Отчет по сотрудникам
+                    Отчет по причинам
                 </Typography>
                 <Paper
                     sx={{
@@ -80,7 +72,7 @@ const Reports = ()=>{
                     }}
                 >
                     <DataGrid
-                        rows={cardsReport}
+                        rows={treatmentReport}
                         getRowId={() =>  Math.random()}
                         columns={columns}
                         initialState={{}}
@@ -99,4 +91,4 @@ const Reports = ()=>{
     );
 };
 
-export default Reports;
+export default StatsByReasons;

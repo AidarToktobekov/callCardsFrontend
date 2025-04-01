@@ -15,6 +15,10 @@ import SolutionReasonLists
 import CreateReason from "./Containers/SolutionsAndReasons/CreateReason.jsx";
 import CreateSolution
   from "./Containers/SolutionsAndReasons/CreateSolution.jsx";
+import StatsByInactivesUsers from "./Containers/Reports/StatsByInactivesUsers.jsx";
+import StatsByReasons from "./Containers/Reports/StatsByReasons.jsx";
+import StatsByRepeatedCalls from "./Containers/Reports/StatsByRepeatedCalls.jsx";
+import StatsBySolutions from "./Containers/Reports/StatsBySolutions.jsx";
 
 function App() {
   
@@ -84,6 +88,58 @@ function App() {
               </>
             }
           />
+            <Route
+                path='/stats_by_reasons'
+                element={
+                    <>
+                        <ProtectedRoute
+                            isAllowed={user}
+                            protectionType={"auth"}
+                        >
+                            <StatsByReasons></StatsByReasons>
+                        </ProtectedRoute>
+                    </>
+                }
+            />
+            <Route
+                path='/stats_by_solutions'
+                element={
+                    <>
+                        <ProtectedRoute
+                            isAllowed={user}
+                            protectionType={"auth"}
+                        >
+                            <StatsBySolutions></StatsBySolutions>
+                        </ProtectedRoute>
+                    </>
+                }
+            />
+            <Route
+                path='/stats_by_repeated_calls'
+                element={
+                    <>
+                        <ProtectedRoute
+                            isAllowed={user}
+                            protectionType={"auth"}
+                        >
+                            <StatsByRepeatedCalls></StatsByRepeatedCalls>
+                        </ProtectedRoute>
+                    </>
+                }
+            />
+            <Route
+                path='/stats_by_inactives_users'
+                element={
+                    <>
+                        <ProtectedRoute
+                            isAllowed={user}
+                            protectionType={"auth"}
+                        >
+                            <StatsByInactivesUsers></StatsByInactivesUsers>
+                        </ProtectedRoute>
+                    </>
+                }
+            />
           <Route
             path='/solution-and-reason'
             element={

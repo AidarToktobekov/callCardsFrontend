@@ -1,32 +1,27 @@
-import {
-    Container,
-    Paper, Typography,
-} from "@mui/material";
+import {Container, Paper, Typography} from "@mui/material";
 import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
-import {
-    selectCardsReport,
-    selectCardsReportLoading
-} from "../../features/reports/reportsSlice.js";
+import {selectSolutionReport, selectSolutionReportLoading,} from "../../features/reports/reportsSlice.js";
+
 import {useEffect, useState} from "react";
-import {
-    getCardsReport
-} from "../../features/reports/reportsThunk.js";
+import {getSolutionReport,} from "../../features/reports/reportsThunk.js";
 import {DataGrid} from "@mui/x-data-grid";
 
 const columns = [
     {
-        field: 'sip',
-        headerName: 'Sip',
-        width: 130,
-        align: 'center',
-        headerAlign: 'center'
-    },
-    {
-        field: 'spec_full_name',
-        headerName: 'Специалист',
+        field: 'reason',
+        headerName: 'Причина',
         width: 250,
         align: 'center',
-        headerAlign: 'center'
+        headerAlign: 'center',
+        valueGetter: (value) => value?.title || '-'
+    },
+    {
+        field: 'solution',
+        headerName: 'Решение',
+        width: 250,
+        align: 'center',
+        headerAlign: 'center',
+        valueGetter: (value) => value?.title || '-'
     },
     {
         field: 'count',
@@ -34,20 +29,19 @@ const columns = [
         width: 130,
         align: 'center',
         headerAlign: 'center'
-    }
+    },
 ];
 
-const Reports = ()=>{
+const StatsByInactivesUsers = () => {
 
     const dispatch = useAppDispatch();
     const [tableHeight, setTableHeight] = useState(0);
 
-    const cardsReport = useAppSelector(selectCardsReport);
-    const loading = useAppSelector(selectCardsReportLoading);
-
+    const solutionReport = useAppSelector(selectSolutionReport);
+    const loading = useAppSelector(selectSolutionReportLoading);
 
     useEffect(() => {
-        dispatch(getCardsReport());
+        dispatch(getSolutionReport());
     }, [dispatch]);
 
     useEffect(() => {
@@ -59,18 +53,19 @@ const Reports = ()=>{
         const headerHeight = document.querySelector('header').offsetHeight;
         const windowHeight = window.innerHeight;
         setTableHeight(windowHeight - headerHeight);
-    }
+    };
+
 
     return(
         <>
-            <Container variant={"h1"} maxWidth={"lg"}>
-                <Typography sx={{
+            <Container maxWidth={"lg"}>
+                <Typography variant={"h1"} sx={{
                     fontSize: "25px",
                     color: '#fff',
                     textAlign: 'center',
                     margin: "20px 0"
                 }}>
-                    Отчет по сотрудникам
+                    Отчет по причинам и решениям
                 </Typography>
                 <Paper
                     sx={{
@@ -80,8 +75,8 @@ const Reports = ()=>{
                     }}
                 >
                     <DataGrid
-                        rows={cardsReport}
-                        getRowId={() =>  Math.random()}
+                        rows={solutionReport}
+                        getRowId={(row) => `${row.reason.id}-${row.solution.id}`}
                         columns={columns}
                         initialState={{}}
                         pageSizeOptions={[
@@ -99,4 +94,4 @@ const Reports = ()=>{
     );
 };
 
-export default Reports;
+export default StatsByInactivesUsers;

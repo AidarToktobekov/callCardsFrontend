@@ -48,7 +48,10 @@ const CreateCard = () => {
     },
     solution: {
       id: '',
-      reason_id: '',
+      reason: {
+        id: "",
+        title: '',
+      },
       title: '',
     },
     ip_address: '',
@@ -183,7 +186,10 @@ const CreateCard = () => {
         },
         solution: {
           id: '',
-          reason_id: '',
+          reason: {
+            id: "",
+            title: '',
+          },
           title: '',
         },
         ip_address: '',
@@ -273,7 +279,6 @@ const CreateCard = () => {
               </Grid>
               <Grid>
                 <TextField
-                  required
                   label={"Номер с которого звонили"}
                   name={"call_from"}
                   onChange={inputChangeHandler}
@@ -436,7 +441,7 @@ const CreateCard = () => {
                         >{item.title}</MenuItem>
                       )
                     }
-                    if (state.reason.id && state.reason.id === item.reason_id) {
+                    if (state.reason.id && state.reason.id === item.reason.id) {
                       return (
                         <MenuItem
                           value={item.title}

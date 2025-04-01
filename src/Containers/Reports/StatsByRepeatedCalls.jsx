@@ -1,32 +1,55 @@
-import {
-    Container,
-    Paper, Typography,
-} from "@mui/material";
 import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
 import {
-    selectCardsReport,
-    selectCardsReportLoading
+    selectRepeatedCalls, selectRepeatedCallsLoading,
 } from "../../features/reports/reportsSlice.js";
 import {useEffect, useState} from "react";
 import {
-    getCardsReport
+    getCardsReport,
+    getRepeatedCalls,
 } from "../../features/reports/reportsThunk.js";
+import {
+    Container,
+    Paper, Typography
+} from "@mui/material";
 import {DataGrid} from "@mui/x-data-grid";
 
 const columns = [
     {
-        field: 'sip',
-        headerName: 'Sip',
-        width: 130,
+        field: 'ls_abon',
+        headerName: 'Личный счет',
+        width: 250,
         align: 'center',
         headerAlign: 'center'
     },
     {
-        field: 'spec_full_name',
-        headerName: 'Специалист',
+        field: 'address',
+        headerName: 'Адрес',
         width: 250,
         align: 'center',
         headerAlign: 'center'
+    },
+    {
+        field: 'phone_number',
+        headerName: 'Номер телефона',
+        width: 200,
+        headerAlign: 'center',
+        valueGetter: (value, _) => Array.isArray(value) ? value.join(', ') : value
+    },
+    {
+        field: 'reason',
+        headerName: 'Причина',
+        width: 200,
+        align: 'center',
+        headerAlign: 'center',
+        valueGetter: (value, _) => value?.title || '-'
+    },
+    {
+        field: 'solution',
+        headerName: 'Решение',
+        width: 200,
+        align: 'center',
+        headerAlign: 'center',
+        valueGetter: (value, _) => value?.title || '-'
     },
     {
         field: 'count',
@@ -37,13 +60,13 @@ const columns = [
     }
 ];
 
-const Reports = ()=>{
+const StatsByRepeatedCalls = () => {
 
     const dispatch = useAppDispatch();
     const [tableHeight, setTableHeight] = useState(0);
 
-    const cardsReport = useAppSelector(selectCardsReport);
-    const loading = useAppSelector(selectCardsReportLoading);
+    const repeatedCalls = useAppSelector(selectRepeatedCalls);
+    const loading = useAppSelector(selectRepeatedCallsLoading);
 
 
     useEffect(() => {
@@ -61,16 +84,20 @@ const Reports = ()=>{
         setTableHeight(windowHeight - headerHeight);
     }
 
+    useEffect(() => {
+        dispatch(getRepeatedCalls());
+    }, [dispatch]);
+
     return(
         <>
-            <Container variant={"h1"} maxWidth={"lg"}>
-                <Typography sx={{
+            <Container maxWidth={"lg"}>
+                <Typography variant={"h1"} sx={{
                     fontSize: "25px",
                     color: '#fff',
                     textAlign: 'center',
                     margin: "20px 0"
                 }}>
-                    Отчет по сотрудникам
+                    Отчет по повторным звонакам
                 </Typography>
                 <Paper
                     sx={{
@@ -80,7 +107,7 @@ const Reports = ()=>{
                     }}
                 >
                     <DataGrid
-                        rows={cardsReport}
+                        rows={repeatedCalls}
                         getRowId={() =>  Math.random()}
                         columns={columns}
                         initialState={{}}
@@ -99,4 +126,4 @@ const Reports = ()=>{
     );
 };
 
-export default Reports;
+export default StatsByRepeatedCalls;
