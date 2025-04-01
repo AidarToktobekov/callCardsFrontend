@@ -1,7 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks.js";
 import {
-  selectDeleteReasonLoading,
-  selectDeleteSolutionLoading,
   selectReasonsList,
   selectReasonsListLoading,
   selectSolutionsList,
@@ -16,57 +14,18 @@ import {
 } from "../../features/reasonsAndSolution/reasonsAndSolutionThunk.js";
 import { Box, Paper } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-
-const reasonColumns = [
-  {
-    field: 'id',
-    headerName: 'ID',
-    width: 100,
-    align: 'center',
-    headerAlign: 'center'
-  },
-  {
-    field: 'title',
-    headerName: 'Причина',
-    width: 280,
-    align: 'center',
-    headerAlign: 'center',
-  },
-];
-const solutionColumns = [
-  {
-    field: 'id',
-    headerName: 'ID',
-    width: 100,
-    align: 'center',
-    headerAlign: 'center'
-  },
-  {
-    field: 'reason',
-    headerName: 'Причина',
-    width: 280,
-    align: 'center',
-    headerAlign: 'center',
-    valueGetter: (value, _) => value?.title || '-'
-  },
-  {
-    field: 'title',
-    headerName: 'Решение',
-    width: 300,
-    align: 'center',
-    headerAlign: 'center',
-  },
-];
+import DeleteIcon from '@mui/icons-material/Delete';
+import { LoadingButton } from "@mui/lab";
 
 const SolutionReasonLists = () => {
   const dispatch = useAppDispatch();
   const reasons = useAppSelector(selectReasonsList);
   const solutions = useAppSelector(selectSolutionsList);
-  const reasonDeleteLoading = useAppSelector(selectDeleteReasonLoading);
-  const solutionDeleteLoading = useAppSelector(selectDeleteSolutionLoading);
   const reasonLoading = useAppSelector(selectReasonsListLoading);
   const solutionsLoading = useAppSelector(selectSolutionsListLoading);
   const [tableHeight, setTableHeight] = useState(0);
+  const [reasonDeleteId, setReasonDeleteId] = useState(null);
+  const [solutionDeleteId, setSolutionDeleteId] = useState(null);
   
   useEffect(() => {
     dispatch(getReasonsList());
@@ -78,32 +37,123 @@ const SolutionReasonLists = () => {
     document.body.addEventListener('resize', changeTableHeight);
   }, []);
   
+  const onDeleteReason = async (id) => {
+    setReasonDeleteId(id);
+    await dispatch(deleteReason(id));
+    setReasonDeleteId(null);
+    await dispatch(getReasonsList());
+    await dispatch(getSolutionsList());
+  }
+  
+  const onDeleteSolution = async (id) => {
+    setSolutionDeleteId(id);
+    await dispatch(deleteSolution(id));
+    setSolutionDeleteId(null);
+    await dispatch(getSolutionsList());
+  }
+  
   const changeTableHeight = () => {
     const headerHeight = document.querySelector('header').offsetHeight;
     const windowHeight = window.innerHeight;
     setTableHeight(windowHeight - headerHeight);
   };
   
-  const onDeleteReason = async (id) => {
-    await dispatch(deleteReason(id));
-    await dispatch(getReasonsList());
-  }
+  const reasonColumns = [
+    {
+      field: 'id',
+      headerName: 'ID',
+      width: 100,
+      align: 'center',
+      headerAlign: 'center'
+    },
+    {
+      field: 'title',
+      headerName: 'Причина',
+      width: 280,
+      align: 'center',
+      headerAlign: 'center',
+    },
+    {
+      field: ' ',
+      headerName: 'Действия',
+      width: 200,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => {
+        return (
+          <LoadingButton
+            variant='outlined'
+            color='error'
+            size='small'
+            startIcon={<DeleteIcon/>}
+            onClick={() => onDeleteReason(params.row?.id)}
+            loading={reasonDeleteId === params.row?.id}
+          >Удалить</LoadingButton>
+        );
+      },
+      sortable: false,
+    },
+  ];
   
-  const onDeleteSolution = async (id) => {
-    await dispatch(deleteSolution(id));
-    await dispatch(getSolutionsList());
-  }
-  
-  console.log(reasons);
+  const solutionColumns = [
+    {
+      field: 'id',
+      headerName: 'ID',
+      width: 100,
+      align: 'center',
+      headerAlign: 'center'
+    },
+    {
+      field: 'reason',
+      headerName: 'Причина',
+      width: 280,
+      align: 'center',
+      headerAlign: 'center',
+      valueGetter: (value, _) => value?.title || '-'
+    },
+    {
+      field: 'title',
+      headerName: 'Решение',
+      width: 300,
+      align: 'center',
+      headerAlign: 'center',
+    },
+    {
+      field: ' ',
+      headerName: 'Действия',
+      width: 200,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => {
+        return (
+          <LoadingButton
+            variant='outlined'
+            color='error'
+            size='small'
+            startIcon={<DeleteIcon/>}
+            onClick={() => onDeleteSolution(params.row?.id)}
+            loading={solutionDeleteId === params.row?.id}
+          >Удалить</LoadingButton>
+        );
+      },
+      sortable: false,
+    },
+  ];
   
   return (
     <>
-      <Box sx={{display: 'flex', justifyContent: 'center', gap: '20px', padding: '10px 0'}}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '10px',
+          padding: '10px 0',
+        }}
+      >
         <Paper
           sx={{
             height: `${tableHeight - 20}px`,
-            width: '100%',
-            maxWidth: '700px'
+            width: '40%',
           }}
         >
           <DataGrid
@@ -124,8 +174,7 @@ const SolutionReasonLists = () => {
         <Paper
           sx={{
             height: `${tableHeight - 20}px`,
-            width: '100%',
-            maxWidth: '1000px'
+            width: '60%',
           }}
         >
           <DataGrid
