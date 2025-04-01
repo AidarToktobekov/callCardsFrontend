@@ -12,12 +12,15 @@ import {
   getReasonsList,
   getSolutionsList
 } from "../../features/reasonsAndSolution/reasonsAndSolutionThunk.js";
-import { Box, Paper } from "@mui/material";
+import { Box, Button, Paper } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 import { LoadingButton } from "@mui/lab";
+import { useNavigate } from "react-router-dom";
 
 const SolutionReasonLists = () => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const reasons = useAppSelector(selectReasonsList);
   const solutions = useAppSelector(selectSolutionsList);
@@ -156,6 +159,17 @@ const SolutionReasonLists = () => {
             width: '40%',
           }}
         >
+          <Button
+            variant='outlined'
+            color='secondary'
+            sx={{
+              width: 'calc(100% - 20px)',
+              m: '10px'
+            }}
+            size='small'
+            startIcon={<AddIcon/>}
+            onClick={() => navigate('/create-reason')}
+          >Новая причина</Button>
           <DataGrid
             rows={reasons}
             columns={reasonColumns}
@@ -166,7 +180,6 @@ const SolutionReasonLists = () => {
               100
             ]}
             pageSize={100}
-            //checkboxSelection
             sx={{ border: 0 }}
             loading={reasonLoading}
           />
@@ -177,6 +190,17 @@ const SolutionReasonLists = () => {
             width: '60%',
           }}
         >
+          <Button
+            variant='outlined'
+            color='success'
+            sx={{
+              width: 'calc(100% - 20px)',
+              m: '10px'
+            }}
+            size='small'
+            startIcon={<AddIcon/>}
+            onClick={() => navigate('/create-solution')}
+          >Новое решение</Button>
           <DataGrid
             rows={solutions}
             columns={solutionColumns}
@@ -187,7 +211,6 @@ const SolutionReasonLists = () => {
               100
             ]}
             pageSize={100}
-            //checkboxSelection
             sx={{ border: 0 }}
             loading={solutionsLoading}
           />
