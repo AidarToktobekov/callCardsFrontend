@@ -11,23 +11,26 @@ import GroupIcon from '@mui/icons-material/Group';
 import HelpIcon from '@mui/icons-material/Help';
 import RepeatIcon from '@mui/icons-material/Repeat';
 import VoiceOverOffIcon from '@mui/icons-material/VoiceOverOff';
+import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import { useEffect, useState } from "react";
 import { useAppSelector } from "../../app/hooks.js";
 import { selectUser } from "../../features/user/userSlice.js";
 
 const adminTabs = {
-  '/reports': 0,
-  '/stats_by_reasons': 1,
-  '/stats_by_solutions': 2,
-  '/stats_by_repeated_calls': 3,
-  '/stats_by_inactives_users': 4,
+  '/stats_by_cards': 0,
+  '/stats_by_employees': 1,
+  '/stats_by_reasons': 2,
+  '/stats_by_solutions': 3,
+  '/stats_by_repeated_calls': 4,
+  '/stats_by_inactives_users': 5,
 };
 
 const userTabs = {
-  '/stats_by_reasons': 1,
-  '/stats_by_solutions': 2,
-  '/stats_by_repeated_calls': 3,
-  '/stats_by_inactives_users': 4,
+  '/stats_by_cards': 0,
+  '/stats_by_reasons': 2,
+  '/stats_by_solutions': 3,
+  '/stats_by_repeated_calls': 4,
+  '/stats_by_inactives_users': 5,
 };
 
 const Layout = ({ children }) => {
@@ -44,16 +47,13 @@ const Layout = ({ children }) => {
         user?.role === 'admin' ? adminTabs : userTabs
       )[pathname]);
     }
-  }, [
-    currentTab,
-    pathname
-  ]);
+  }, [currentTab, user, pathname]);
   const onExcludedPage =
-    location.pathname.includes("/sign-in") ||
-    location.pathname.includes("/sign-up");
+    location.pathname.includes("/sign-in")
   
   const onReportsPage =
-    location.pathname.includes("/reports") ||
+      location.pathname.includes("/stats_by_employees") ||
+    location.pathname.includes("/stats_by_cards") ||
     location.pathname.includes("/stats_by_reasons") ||
     location.pathname.includes("/stats_by_solutions") ||
     location.pathname.includes("/stats_by_repeated_calls") ||
@@ -78,10 +78,20 @@ const Layout = ({ children }) => {
               setCurrentTab(newValue);
             }}
           >
+            <BottomNavigationAction
+                label='Карты звонков'
+                onClick={() => navigate('/stats_by_cards')}
+                showLabel
+                sx={{
+                  flexGrow: 1,
+                  maxWidth: 'unset'
+                }}
+                icon={<ContactPhoneIcon/>}
+            />
             {
               user?.role === 'admin' && <BottomNavigationAction
                 label='Сотрудники'
-                onClick={() => navigate('/reports')}
+                onClick={() => navigate('/stats_by_employees')}
                 icon={<GroupIcon/>}
                 showLabel
                 sx={{

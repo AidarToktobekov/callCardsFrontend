@@ -78,9 +78,8 @@ const UserRegister = () => {
   
   return (
     <Stack
-      sx={{ width: "100%" }}
+      sx={{ width: "100%"}}
       textAlign='center'
-      mt={3}
     >
       <Stack
         alignItems='center'

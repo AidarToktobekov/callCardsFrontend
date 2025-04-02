@@ -72,11 +72,11 @@ const AppToolbar = () => {
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                 >
-                  <MenuItem onClick={() => handleClick('/')}>Главная</MenuItem>
-                  <MenuItem onClick={() => handleClick('/solution-and-reason')}>Причины/решения</MenuItem>
-                  <MenuItem onClick={() => handleClick(user?.role === 'admin' ? '/reports' : '/stats_by_reasons')}>Отчёты</MenuItem>
-                  <MenuItem onClick={() => handleClick('/create-card')}>Новая
-                    карточка</MenuItem>
+                  <MenuItem onClick={() => handleClick('/')}>Новая карточка</MenuItem>
+                  {user?.role === 'admin' &&
+                      <MenuItem onClick={() => handleClick('/solution-and-reason')}>Причины/решения</MenuItem>
+                  }
+                  <MenuItem onClick={() => handleClick('/stats_by_cards')}>Отчёты</MenuItem>
                   {user?.role === 'admin' &&
                     <MenuItem onClick={() => handleClick('/sign-up')}>Новый
                       пользователь</MenuItem>}

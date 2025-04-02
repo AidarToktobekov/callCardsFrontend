@@ -221,26 +221,26 @@ const CreateCard = () => {
                 label={"Номер с которого звонили"}
                 name={"call_from"}
                 onChange={inputChangeHandler}
-                sx={{ width: 'calc(50% - 15px)' }}
+                sx={{ width: 'calc(50% - 7.5px)' }}
                 value={state?.call_from || ''}
               />
               <TextField
                 required
                 label={"Личный счет"}
                 value={state?.ls_abon || ''}
-                sx={{ width: 'calc(50% - 15px)' }}
+                sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
                 required
                 label={"ФИО"}
                 value={state?.full_name || ''}
-                sx={{ width: 'calc(50% - 15px)' }}
+                sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
                 required
                 label={"Адрес"}
                 value={state?.address || ''}
-                sx={{ width: 'calc(50% - 15px)' }}
+                sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <Autocomplete
                 required
@@ -251,29 +251,29 @@ const CreateCard = () => {
                 readOnly
                 renderInput={params =>
                   <TextField {...params} label={"Номера"}></TextField>}
-                sx={{ width: 'calc(50% - 15px)' }}
+                sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
                 required
                 label={"Мак роутера"}
                 value={state?.mac_address || ''}
-                sx={{ width: 'calc(50% - 15px)' }}
+                sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
                 required
                 label={"Айпи адрес"}
                 value={state?.ip_address || ''}
-                sx={{ width: 'calc(50% - 15px)' }}
+                sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
                 label={"mac_onu"}
                 value={state?.mac_onu || ""}
-                sx={{ width: 'calc(50% - 15px)' }}
+                sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
                 label={"ip_olt"}
                 value={state?.ip_olt || ""}
-                sx={{ width: 'calc(50% - 15px)' }}
+                sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
                 required
@@ -283,7 +283,7 @@ const CreateCard = () => {
                 name='reason'
                 value={state?.reason?.title || ""}
                 onChange={(e) => selectChangeHandler(e, reasons)}
-                sx={{ width: 'calc(50% - 15px)' }}
+                sx={{ width: 'calc(50% - 7.5px)' }}
               >
                 {reasons.map((item, index) => (
                   <MenuItem
@@ -302,7 +302,7 @@ const CreateCard = () => {
                 label='Решение'
                 variant='outlined'
                 onChange={(e) => selectChangeHandler(e, solutions)}
-                sx={{ width: 'calc(50% - 15px)' }}
+                sx={{ width: 'calc(50% - 7.5px)' }}
                 name={"solution"}
               >
                 {!state?.reason?.id ? (

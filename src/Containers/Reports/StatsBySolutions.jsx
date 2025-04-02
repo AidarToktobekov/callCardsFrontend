@@ -82,7 +82,7 @@ const StatsByInactivesUsers = () => {
         >
           <DataGrid
             rows={solutionReport}
-            getRowId={(row) => `${row.reason.id}-${row.solution.id}`}
+            getRowId={(row) => `${row.reason.id}-${row.solution?.id}`}
             columns={columns}
             initialState={{}}
             pageSizeOptions={[

@@ -1,12 +1,12 @@
 import './App.css'
-import CardsList from "./Containers/CardsList/CardsList.jsx";
+import CardsList from "./Containers/Reports/CardsList.jsx";
 import { Route, Routes } from "react-router-dom";
 import CreateCard from "./Containers/CreateCard/CreateCard.jsx";
 import UserLogin from "./Containers/UserLogin/UserLogin.jsx";
 import UserRegister from "./Containers/UserRegister/UserRegister.jsx";
 import { Typography } from "@mui/material";
 import Layout from "./Components/Layout/Layout.jsx";
-import Reports from "./Containers/Reports/Reports.jsx";
+import StatsByEmployees from "./Containers/Reports/StatsByEmployees.jsx";
 import ProtectedRoute from "./Components/ProtactedRoute/ProtactedRoute.jsx";
 import { useAppSelector } from "./app/hooks.js";
 import { selectUser } from "./features/user/userSlice.js";
@@ -43,14 +43,14 @@ function App() {
             }
           />
           <Route
-            path='/cards'
+            path='/stats_by_employees'
             element={
               <>
                 <ProtectedRoute
                   isAllowed={user}
-                  protectionType={"auth"}
+                  protectionType={"admin"}
                 >
-                    <CardsList></CardsList>
+                    <StatsByEmployees></StatsByEmployees>
                 </ProtectedRoute>
               </>
             }
@@ -77,14 +77,14 @@ function App() {
             }
           />
           <Route
-            path='/reports'
+            path='/stats_by_cards'
             element={
               <>
                 <ProtectedRoute
                   isAllowed={user}
-                  protectionType={"admin"}
+                  protectionType={"auth"}
                 >
-                  <Reports></Reports>
+                    <CardsList></CardsList>
                 </ProtectedRoute>
               </>
             }

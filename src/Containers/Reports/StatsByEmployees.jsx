@@ -37,7 +37,7 @@ const columns = [
   }
 ];
 
-const Reports = () => {
+const StatsByEmployees = () => {
   
   const dispatch = useAppDispatch();
   const [tableHeight, setTableHeight] = useState(0);
@@ -109,4 +109,4 @@ const Reports = () => {
   );
 };
 
-export default Reports;
+export default StatsByEmployees;

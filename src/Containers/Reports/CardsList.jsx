@@ -5,7 +5,7 @@ import {
 } from "../../features/list/listSlice.js";
 import { useEffect, useState } from "react";
 import { getList } from "../../features/list/listThunk.js";
-import { Paper } from "@mui/material";
+import {Paper, Typography} from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 
 const columns = [
@@ -128,11 +128,21 @@ const CardsList = () => {
   const changeTableHeight = () => {
     const headerHeight = document.querySelector('header').offsetHeight;
     const windowHeight = window.innerHeight;
-    setTableHeight(windowHeight - headerHeight);
+    setTableHeight(windowHeight - headerHeight - 135);
   };
   
   return (
     <>
+      <Typography
+          sx={{
+            fontSize: "25px",
+            color: '#fff',
+            textAlign: 'center',
+            margin: "20px 0"
+          }}
+      >
+        Отчет по картам звонков
+      </Typography>
       <Paper
         sx={{
           height: `${tableHeight}px`,
