@@ -37,20 +37,20 @@ function App() {
                   isAllowed={user}
                   protectionType={"auth"}
                 >
-                  <CardsList></CardsList>
+                    <CreateCard></CreateCard>
                 </ProtectedRoute>
               </>
             }
           />
           <Route
-            path='/create-card'
+            path='/cards'
             element={
               <>
                 <ProtectedRoute
                   isAllowed={user}
                   protectionType={"auth"}
                 >
-                  <CreateCard></CreateCard>
+                    <CardsList></CardsList>
                 </ProtectedRoute>
               </>
             }

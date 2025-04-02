@@ -16,12 +16,10 @@ import {
   createCard, getClient, getReasons, getSolution
 } from "../../features/list/listThunk.js";
 import { selectUser } from "../../features/user/userSlice.js";
-import { useNavigate } from "react-router-dom";
 
 const CreateCard = () => {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const loading = useAppSelector(selectCreateCardLoading);
   const [error, setError] = useState('');
   const [state, setState] = useState(null);
@@ -88,7 +86,7 @@ const CreateCard = () => {
       dispatch(resetClients());
     }
   }, [dispatch]);
-  
+
   useEffect(() => {
     if (cards[cardIndex]) {
       setState(prevState => (
@@ -140,7 +138,9 @@ const CreateCard = () => {
       };
       
       await dispatch(createCard(cardMutation));
-      navigate("/");
+      await setState(null);
+      await setPhoneNumber("");
+      await dispatch(resetClients());
     } else {
       setError("Зарегстрируйтесь!")
     }
@@ -231,16 +231,6 @@ const CreateCard = () => {
                 sx={{ width: 'calc(50% - 15px)' }}
               />
               <TextField
-                label={"Аккаунт айди"}
-                value={state?.account_id || ''}
-                sx={{ width: 'calc(50% - 15px)' }}
-              />
-              <TextField
-                label={"n_result_id"}
-                value={state?.n_result_id || ''}
-                sx={{ width: 'calc(50% - 15px)' }}
-              />
-              <TextField
                 required
                 label={"ФИО"}
                 value={state?.full_name || ''}
@@ -305,6 +295,7 @@ const CreateCard = () => {
                 ))}
               </TextField>
               <TextField
+                  required
                 select
                 id='solution'
                 value={state?.solution?.title || ""}
@@ -314,25 +305,20 @@ const CreateCard = () => {
                 sx={{ width: 'calc(50% - 15px)' }}
                 name={"solution"}
               >
-                <MenuItem value={''}>Нет решения</MenuItem>
-                {solutions.map((item, index) => {
-                  if (!state?.reason?.id) {
-                    return (
-                      <MenuItem
-                        value={item.title}
-                        key={index}
-                      >{item.title}</MenuItem>
-                    )
-                  }
-                  if (state?.reason?.id && state?.reason?.id === item?.reason?.id) {
-                    return (
-                      <MenuItem
-                        value={item.title}
-                        key={index}
-                      >{item.title}</MenuItem>
-                    )
-                  }
-                })}
+                {!state?.reason?.id ? (
+                  <MenuItem value={''}>Выберите причину</MenuItem>
+                ) : (
+                  solutions.map((item, index) => {
+                    if (state?.reason?.id && state?.reason?.id === item?.reason?.id) {
+                      return (
+                        <MenuItem
+                          value={item.title}
+                          key={index}
+                        >{item.title}</MenuItem>
+                      )
+                    }
+                  })
+                )}
               </TextField>
               <TextField
                 label='Комментарий'
@@ -341,7 +327,7 @@ const CreateCard = () => {
                 onChange={inputChangeHandler}
                 sx={{ width: '100%' }}
                 name={"comment"}
-                value={state?.comment}
+                value={state?.comment || ""}
               />
             </Grid>
             <Button
