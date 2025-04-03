@@ -1,4 +1,5 @@
 import {
+  Button,
   Paper, Typography
 } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks.js";
@@ -10,6 +11,8 @@ import {
   getCardsInactives,
 } from "../../features/reports/reportsThunk.js";
 import { DataGrid } from "@mui/x-data-grid";
+import Grid from "@mui/material/Grid2";
+import {exportToExcel} from "../../excelExporter.js";
 
 const columns = [
   {
@@ -119,6 +122,7 @@ const StatsByInactivesUsers = () => {
   
   const inactivesCards = useAppSelector(selectCardsInactives);
   const loading = useAppSelector(selectCardsInactivesLoading);
+  const [filteredList, setFilteredList] = useState(inactivesCards);
   
   useEffect(() => {
     dispatch(getCardsInactives());
@@ -139,16 +143,20 @@ const StatsByInactivesUsers = () => {
   
   return (
     <>
-      <Typography
-        sx={{
-          fontSize: "25px",
-          color: '#fff',
-          textAlign: 'center',
-          margin: "20px 0"
-        }}
-      >
-        Отчет по неактивным пользователям
-      </Typography>
+      <Grid container justifyContent="space-between" p={"20px"}>
+        <Typography
+            sx={{
+              fontSize: "25px",
+              color: '#fff',
+              textAlign: 'center',
+            }}
+        >
+          Отчет по неактивным пользователям
+        </Typography>
+        <Button variant={"outlined"} onClick={()=>exportToExcel(filteredList, "Стат-ка_по_не_активным")}>
+          Export excel
+        </Button>
+      </Grid>
       <Paper
         sx={{
           height: `${tableHeight}px`,
@@ -167,6 +175,17 @@ const StatsByInactivesUsers = () => {
           pageSize={100}
           sx={{ border: 0 }}
           loading={loading}
+          onFilterModelChange={(model)=>{
+            const filteredRows = inactivesCards.filter((row) => {
+              return model.items.every((filter) => {
+                if (!filter.value) return true; // No filter applied
+                return String(row[filter.field])
+                    .toLowerCase()
+                    .includes(filter.value.toLowerCase());
+              });
+            });
+            setFilteredList(filteredRows);
+          }}
         />
       </Paper>
     </>

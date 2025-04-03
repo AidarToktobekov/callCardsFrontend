@@ -1,4 +1,5 @@
 import {
+  Button,
   Container,
   Paper, Typography,
 } from "@mui/material";
@@ -12,6 +13,8 @@ import {
   getCardsReport
 } from "../../features/reports/reportsThunk.js";
 import { DataGrid } from "@mui/x-data-grid";
+import Grid from "@mui/material/Grid2";
+import {exportToExcel} from "../../excelExporter.js";
 
 const columns = [
   {
@@ -44,7 +47,7 @@ const StatsByEmployees = () => {
   
   const cardsReport = useAppSelector(selectCardsReport);
   const loading = useAppSelector(selectCardsReportLoading);
-  
+  const [filteredList, setFilteredList] = useState(cardsReport);
   
   useEffect(() => {
     dispatch(getCardsReport());
@@ -69,16 +72,20 @@ const StatsByEmployees = () => {
         variant={"h1"}
         maxWidth={"lg"}
       >
-        <Typography
-          sx={{
-            fontSize: "25px",
-            color: '#fff',
-            textAlign: 'center',
-            margin: "20px 0"
-          }}
-        >
-          Отчет по сотрудникам
-        </Typography>
+        <Grid container justifyContent="space-between" p={"20px"}>
+          <Typography
+              sx={{
+                fontSize: "25px",
+                color: '#fff',
+                textAlign: 'center',
+              }}
+          >
+            Отчет по сотрудникам
+          </Typography>
+          <Button variant={"outlined"} onClick={()=>exportToExcel(filteredList, "Стат-ка_по_сотрудникам")}>
+            Export excel
+          </Button>
+        </Grid>
         <Paper
           sx={{
             height: `${tableHeight}px`,
@@ -102,6 +109,17 @@ const StatsByEmployees = () => {
               width: 'fit-content'
             }}
             loading={loading}
+            onFilterModelChange={(model)=>{
+              const filteredRows = cardsReport.filter((row) => {
+                return model.items.every((filter) => {
+                  if (!filter.value) return true; // No filter applied
+                  return String(row[filter.field])
+                      .toLowerCase()
+                      .includes(filter.value.toLowerCase());
+                });
+              });
+              setFilteredList(filteredRows);
+            }}
           />
         </Paper>
       </Container>

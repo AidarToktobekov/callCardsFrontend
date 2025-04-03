@@ -1,4 +1,4 @@
-import { Container, Paper, Typography } from "@mui/material";
+import {Button, Container, Paper, Typography} from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks.js";
 import {
   selectSolutionReport,
@@ -8,6 +8,8 @@ import {
 import { useEffect, useState } from "react";
 import { getSolutionReport, } from "../../features/reports/reportsThunk.js";
 import { DataGrid } from "@mui/x-data-grid";
+import Grid from "@mui/material/Grid2";
+import {exportToExcel} from "../../excelExporter.js";
 
 const columns = [
   {
@@ -42,6 +44,7 @@ const StatsByInactivesUsers = () => {
   
   const solutionReport = useAppSelector(selectSolutionReport);
   const loading = useAppSelector(selectSolutionReportLoading);
+  const [filteredList, setFilteredList] = useState(solutionReport);
   
   useEffect(() => {
     dispatch(getSolutionReport());
@@ -63,16 +66,20 @@ const StatsByInactivesUsers = () => {
   return (
     <>
       <Container maxWidth={"lg"}>
-        <Typography
-          sx={{
-            fontSize: "25px",
-            color: '#fff',
-            textAlign: 'center',
-            margin: "20px 0"
-          }}
-        >
-          Отчет по причинам и решениям
-        </Typography>
+        <Grid container justifyContent="space-between" p={"20px"}>
+          <Typography
+              sx={{
+                fontSize: "25px",
+                color: '#fff',
+                textAlign: 'center',
+              }}
+          >
+            Отчет по причинам и решениям
+          </Typography>
+          <Button variant={"outlined"} onClick={()=>exportToExcel(filteredList, "Стат-ка_по_решениям")}>
+            Export excel
+          </Button>
+        </Grid>
         <Paper
           sx={{
             height: `${tableHeight}px`,
@@ -96,6 +103,17 @@ const StatsByInactivesUsers = () => {
               width: 'fit-content'
             }}
             loading={loading}
+            onFilterModelChange={(model)=>{
+              const filteredRows = solutionReport.filter((row) => {
+                return model.items.every((filter) => {
+                  if (!filter.value) return true; // No filter applied
+                  return String(row[filter.field])
+                      .toLowerCase()
+                      .includes(filter.value.toLowerCase());
+                });
+              });
+              setFilteredList(filteredRows);
+            }}
           />
         </Paper>
       </Container>

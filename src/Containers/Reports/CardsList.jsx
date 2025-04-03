@@ -1,12 +1,11 @@
-import { useAppDispatch, useAppSelector } from "../../app/hooks.js";
-import {
-  selectList,
-  selectListLoading
-} from "../../features/list/listSlice.js";
-import { useEffect, useState } from "react";
-import { getList } from "../../features/list/listThunk.js";
-import {Paper, Typography} from "@mui/material";
-import { DataGrid } from '@mui/x-data-grid';
+import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
+import {selectList, selectListLoading} from "../../features/list/listSlice.js";
+import {useEffect, useState} from "react";
+import {getList} from "../../features/list/listThunk.js";
+import {Button, Paper, Typography} from "@mui/material";
+import {DataGrid} from '@mui/x-data-grid';
+import Grid from "@mui/material/Grid2";
+import {exportToExcel} from "../../excelExporter.js";
 
 const columns = [
   {
@@ -115,7 +114,8 @@ const CardsList = () => {
   const list = useAppSelector(selectList);
   const loading = useAppSelector(selectListLoading);
   const [tableHeight, setTableHeight] = useState(0);
-  
+  const [filteredList, setFilteredList] = useState(list);
+
   useEffect(() => {
     dispatch(getList());
   }, [dispatch]);
@@ -133,16 +133,20 @@ const CardsList = () => {
   
   return (
     <>
-      <Typography
-          sx={{
-            fontSize: "25px",
-            color: '#fff',
-            textAlign: 'center',
-            margin: "20px 0"
-          }}
-      >
-        Отчет по картам звонков
-      </Typography>
+      <Grid container justifyContent="space-between" p={"20px"}>
+        <Typography
+            sx={{
+              fontSize: "25px",
+              color: '#fff',
+              textAlign: 'center',
+            }}
+        >
+          Отчет по картам звонков
+        </Typography>
+        <Button variant={"outlined"} onClick={()=>exportToExcel(filteredList, "Карты-звонков")}>
+          Export excel
+        </Button>
+      </Grid>
       <Paper
         sx={{
           height: `${tableHeight}px`,
@@ -159,9 +163,19 @@ const CardsList = () => {
             100
           ]}
           pageSize={100}
-          //checkboxSelection
           sx={{ border: 0 }}
           loading={loading}
+          onFilterModelChange={(model)=>{
+            const filteredRows = list.filter((row) => {
+              return model.items.every((filter) => {
+                if (!filter.value) return true; // No filter applied
+                return String(row[filter.field])
+                    .toLowerCase()
+                    .includes(filter.value.toLowerCase());
+              });
+            });
+            setFilteredList(filteredRows);
+          }}
         />
       </Paper>
     </>
