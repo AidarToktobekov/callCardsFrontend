@@ -117,6 +117,10 @@ const CardsList = () => {
   const [filteredList, setFilteredList] = useState(list);
 
   useEffect(() => {
+    setFilteredList(list);
+  }, [list]);
+
+  useEffect(() => {
     dispatch(getList());
   }, [dispatch]);
   

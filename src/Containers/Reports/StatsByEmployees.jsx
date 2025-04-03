@@ -48,7 +48,11 @@ const StatsByEmployees = () => {
   const cardsReport = useAppSelector(selectCardsReport);
   const loading = useAppSelector(selectCardsReportLoading);
   const [filteredList, setFilteredList] = useState(cardsReport);
-  
+
+  useEffect(() => {
+    setFilteredList(cardsReport);
+  }, [cardsReport]);
+
   useEffect(() => {
     dispatch(getCardsReport());
   }, [dispatch]);

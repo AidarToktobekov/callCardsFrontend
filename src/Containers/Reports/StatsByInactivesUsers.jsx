@@ -123,7 +123,11 @@ const StatsByInactivesUsers = () => {
   const inactivesCards = useAppSelector(selectCardsInactives);
   const loading = useAppSelector(selectCardsInactivesLoading);
   const [filteredList, setFilteredList] = useState(inactivesCards);
-  
+
+  useEffect(() => {
+    setFilteredList(inactivesCards);
+  }, [inactivesCards]);
+
   useEffect(() => {
     dispatch(getCardsInactives());
   }, [dispatch]);
@@ -153,7 +157,9 @@ const StatsByInactivesUsers = () => {
         >
           Отчет по неактивным пользователям
         </Typography>
-        <Button variant={"outlined"} onClick={()=>exportToExcel(filteredList, "Стат-ка_по_не_активным")}>
+        <Button variant={"outlined"} onClick={()=> {
+          exportToExcel(filteredList, "Стат-ка_по_не_активным")
+        }}>
           Export excel
         </Button>
       </Grid>

@@ -72,6 +72,10 @@ const StatsByRepeatedCalls = () => {
   const [filteredList, setFilteredList] = useState(repeatedCalls);
 
   useEffect(() => {
+    setFilteredList(repeatedCalls);
+  }, [repeatedCalls]);
+
+  useEffect(() => {
     dispatch(getCardsReport());
   }, [dispatch]);
   

@@ -45,6 +45,10 @@ const StatsByInactivesUsers = () => {
   const solutionReport = useAppSelector(selectSolutionReport);
   const loading = useAppSelector(selectSolutionReportLoading);
   const [filteredList, setFilteredList] = useState(solutionReport);
+
+  useEffect(() => {
+    setFilteredList(solutionReport);
+  }, [solutionReport]);
   
   useEffect(() => {
     dispatch(getSolutionReport());

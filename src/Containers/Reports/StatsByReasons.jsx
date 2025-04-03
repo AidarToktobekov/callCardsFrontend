@@ -41,6 +41,10 @@ const StatsByReasons = () => {
   const treatmentReport = useAppSelector(selectTreatmentReport);
   const loading = useAppSelector(selectTreatmentReportLoading);
   const [filteredList, setFilteredList] = useState(treatmentReport);
+
+  useEffect(() => {
+    setFilteredList(treatmentReport);
+  }, [treatmentReport]);
   
   useEffect(() => {
     dispatch(getTreatmentReport());
