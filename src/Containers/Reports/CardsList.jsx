@@ -147,7 +147,7 @@ const CardsList = () => {
         >
           Отчет по картам звонков
         </Typography>
-        <Button variant={"outlined"} onClick={()=>exportToExcel(filteredList, "Карты-звонков")}>
+        <Button variant={"outlined"} onClick={()=> exportToExcel(filteredList, "Карты-звонков")}>
           Export excel
         </Button>
       </Grid>
@@ -170,14 +170,23 @@ const CardsList = () => {
           sx={{ border: 0 }}
           loading={loading}
           onFilterModelChange={(model)=>{
-            const filteredRows = list.filter((row) => {
-              return model.items.every((filter) => {
-                if (!filter.value) return true; // No filter applied
-                return String(row[filter.field])
-                    .toLowerCase()
-                    .includes(filter.value.toLowerCase());
-              });
-            });
+            const filteredRows = list.filter((row) =>
+                model.items.every((filter) => {
+                  if (!filter.value) return true;
+
+                  const fieldValue = row[filter.field];
+
+                  let fieldText;
+                  if (typeof fieldValue === "object" && fieldValue !== null) {
+                    fieldText = Object.values(fieldValue).join(" ").toLowerCase();
+                  } else {
+                    fieldText = fieldValue ? String(fieldValue).toLowerCase() : "";
+                  }
+
+                  return fieldText.includes(filter.value.toLowerCase());
+                })
+            );
+
             setFilteredList(filteredRows);
           }}
         />
