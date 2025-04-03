@@ -1,6 +1,6 @@
 import Grid from "@mui/material/Grid2";
 import {
-  Alert, Autocomplete, Button, Container, MenuItem, TextField
+  Alert, Autocomplete, Button, CircularProgress, Container, MenuItem, TextField
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks.js";
@@ -9,8 +9,8 @@ import {
   selectClients,
   selectClientsLoading,
   selectCreateCardLoading,
-  selectReasons,
-  selectSolutions
+  selectReasons, selectReasonsLoading,
+  selectSolutions, selectSolutionsLoading
 } from "../../features/list/listSlice.js";
 import {
   createCard, getClient, getReasons, getSolution
@@ -43,40 +43,43 @@ const CreateCard = () => {
     ));
   }
   
-  const selectChangeHandler = (event, arr) => {
-    const {
-      name,
-      value
-    } = event.target;
-    if (!value) {
-      setState((prevState) => (
-        {
-          ...prevState,
-          [name]: {
-            id: '',
-            reason_id: '',
-            title: '',
-          },
-        }
-      ))
-    } else {
-      const selectedItem = arr.find(item => item.title === value);
-      setState((prevState) => (
-        {
-          ...prevState,
-          [name]: selectedItem,
-        }
-      ));
-    }
-    
+  const selectChangeHandler = (name, value) => {
+      if (value?.id !== 'placeholder') {
+          setState(prevState => ({
+              ...prevState,
+              [name]: value,
+          }));
+      }
   }
   
   const cards = useAppSelector(selectClients);
   const clientsLoading = useAppSelector(selectClientsLoading);
   const [phoneNumber, setPhoneNumber] = useState("");
   const reasons = useAppSelector(selectReasons);
+  const reasonLoading = useAppSelector(selectReasonsLoading);
   const solutions = useAppSelector(selectSolutions);
-  
+  const solutionLoading = useAppSelector(selectSolutionsLoading);
+
+  useEffect(()=>{
+      if (state?.reason?.id){
+          const newSolutions = [];
+          solutions.map((item) => {
+              if (state?.reason?.id && state?.reason?.id === item?.reason?.id) {
+                 newSolutions.push(item);
+              }
+          });
+          if (newSolutions.length > 0){
+              setFilteredSolution(newSolutions);
+          }
+      }else{
+          setState(prevState => ({
+              ...prevState,
+              solution: null
+          }))
+          setFilteredSolution([{id: 'placeholder', title: 'Выберите причину'}]);
+      }
+  }, [state?.reason, solutions, dispatch])
+
   useEffect(() => {
     dispatch(getSolution());
     dispatch(getReasons());
@@ -149,7 +152,17 @@ const CreateCard = () => {
   const searchClient = async () => {
     await dispatch(getClient(phoneNumber));
   }
-  
+
+  const [openReason, setOpenReason] = useState(false);
+  const [openSolution, setOpenSolution] = useState(false);
+
+  const [filteredSolution, setFilteredSolution] = useState([
+      {
+          id: "placeholder",
+          title: "Выберите причину",
+      }
+  ]);
+
   return (
     <>
       <Grid padding={"30px"}>
@@ -275,51 +288,100 @@ const CreateCard = () => {
                 value={state?.ip_olt || ""}
                 sx={{ width: 'calc(50% - 7.5px)' }}
               />
-              <TextField
-                required
-                select
-                label={"Причина обращения"}
-                id='resone-for-contact'
-                name='reason'
-                value={state?.reason?.title || ""}
-                onChange={(e) => selectChangeHandler(e, reasons)}
-                sx={{ width: 'calc(50% - 7.5px)' }}
-              >
-                {reasons.map((item, index) => (
-                  <MenuItem
-                    value={item.title}
-                    key={index}
-                  >
-                    {item.title}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                  required
-                select
-                id='solution'
-                value={state?.solution?.title || ""}
-                label='Решение'
-                variant='outlined'
-                onChange={(e) => selectChangeHandler(e, solutions)}
-                sx={{ width: 'calc(50% - 7.5px)' }}
-                name={"solution"}
-              >
-                {!state?.reason?.id ? (
-                  <MenuItem value={''}>Выберите причину</MenuItem>
-                ) : (
-                  solutions.map((item, index) => {
-                    if (state?.reason?.id && state?.reason?.id === item?.reason?.id) {
-                      return (
-                        <MenuItem
-                          value={item.title}
-                          key={index}
-                        >{item.title}</MenuItem>
-                      )
-                    }
-                  })
-                )}
-              </TextField>
+              <Autocomplete
+                  open={openReason}
+                  onOpen={()=>setOpenReason(true)}
+                  onClose={()=>setOpenReason(false)}
+                  getOptionLabel={(option) => option.title}
+                  onChange={(event, newValue)=>{
+                    selectChangeHandler("reason", newValue);
+                  }}
+                  value={state?.reason || {id: '', title: ''}}
+                  options={reasons}
+                  loading={reasonLoading}
+                  renderInput={(params)=>(
+                      <TextField
+                          required
+                          {...params}
+                          name={"reason"}
+                          label={"Причина обращения"}
+                          slotProps={{
+                            input: {
+                              ...params.InputProps,
+                              endAdornment: (
+                                  <>
+                                    {reasonLoading ? <CircularProgress color={"inherit"} size={20}/> : null}
+                                    {params.InputProps.endAdornment}
+                                  </>
+                              )
+                            }
+                          }}
+                      />
+                  )}
+                sx={{
+                  width: 'calc(50% - 7.5px)',
+                }}
+              />
+              <Autocomplete
+                  open={openSolution}
+                  onOpen={()=>setOpenSolution(true)}
+                  onClose={()=>setOpenSolution(false)}
+                  getOptionLabel={(option) => option.title}
+                  onChange={(event, newValue)=>{
+                    selectChangeHandler("solution", newValue);
+                  }}
+                  value={state?.solution || {id: "", title: ""}}
+                  options={filteredSolution}
+                  loading={solutionLoading}
+                  renderInput={(params)=>(
+                      <TextField
+                          {...params}
+                          required
+                          name={"solution"}
+                          label={"Решение"}
+                          slotProps={{
+                            input: {
+                              ...params.InputProps,
+                              endAdornment: (
+                                  <>
+                                    {solutionLoading ? <CircularProgress color={"inherit"} size={20}/> : null}
+                                    {params.InputProps.endAdornment}
+                                  </>
+                              )
+                            }
+                          }}
+                      />
+                  )}
+                  sx={{
+                    width: 'calc(50% - 7.5px)',
+                  }}
+              />
+              {/*<TextField*/}
+              {/*    required*/}
+              {/*  select*/}
+              {/*  id='solution'*/}
+              {/*  value={state?.solution?.title || ""}*/}
+              {/*  label='Решение'*/}
+              {/*  variant='outlined'*/}
+              {/*  onChange={(e) => selectChangeHandler(e, solutions)}*/}
+              {/*  sx={{ width: 'calc(50% - 7.5px)' }}*/}
+              {/*  name={"solution"}*/}
+              {/*>*/}
+              {/*  {!state?.reason?.id ? (*/}
+              {/*    <MenuItem value={''}>Выберите причину</MenuItem>*/}
+              {/*  ) : (*/}
+              {/*    solutions.map((item, index) => {*/}
+              {/*      if (state?.reason?.id && state?.reason?.id === item?.reason?.id) {*/}
+              {/*        return (*/}
+              {/*          <MenuItem*/}
+              {/*            value={item.title}*/}
+              {/*            key={index}*/}
+              {/*          >{item.title}</MenuItem>*/}
+              {/*        )*/}
+              {/*      }*/}
+              {/*    })*/}
+              {/*  )}*/}
+              {/*</TextField>*/}
               <TextField
                 label='Комментарий'
                 minRows={3}
