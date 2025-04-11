@@ -44,12 +44,14 @@ const CreateCard = () => {
   }
   
   const selectChangeHandler = (name, value) => {
-      if (value?.id !== 'placeholder') {
-          setState(prevState => ({
-              ...prevState,
-              [name]: value,
-          }));
-      }
+    if (value?.id !== 'placeholder') {
+      setState(prevState => (
+        {
+          ...prevState,
+          [name]: value,
+        }
+      ));
+    }
   }
   
   const cards = useAppSelector(selectClients);
@@ -59,27 +61,38 @@ const CreateCard = () => {
   const reasonLoading = useAppSelector(selectReasonsLoading);
   const solutions = useAppSelector(selectSolutions);
   const solutionLoading = useAppSelector(selectSolutionsLoading);
-
-  useEffect(()=>{
-      if (state?.reason?.id){
-          const newSolutions = [];
-          solutions.map((item) => {
-              if (state?.reason?.id && state?.reason?.id === item?.reason?.id) {
-                 newSolutions.push(item);
-              }
-          });
-          if (newSolutions.length > 0){
-              setFilteredSolution(newSolutions);
-          }
-      }else{
-          setState(prevState => ({
-              ...prevState,
-              solution: null
-          }))
-          setFilteredSolution([{id: 'placeholder', title: 'Выберите причину'}]);
+  
+  useEffect(() => {
+    if (state?.reason?.id) {
+      const newSolutions = [];
+      solutions.map((item) => {
+        if (state?.reason?.id && state?.reason?.id === item?.reason?.id) {
+          newSolutions.push(item);
+        }
+      });
+      if (newSolutions.length > 0) {
+        setFilteredSolution(newSolutions);
       }
-  }, [state?.reason, solutions, dispatch])
-
+    } else {
+      setState(prevState => (
+        {
+          ...prevState,
+          solution: null
+        }
+      ))
+      setFilteredSolution([
+        {
+          id: 'placeholder',
+          title: 'Выберите причину'
+        }
+      ]);
+    }
+  }, [
+    state?.reason,
+    solutions,
+    dispatch
+  ])
+  
   useEffect(() => {
     dispatch(getSolution());
     dispatch(getReasons());
@@ -89,7 +102,7 @@ const CreateCard = () => {
       dispatch(resetClients());
     }
   }, [dispatch]);
-
+  
   useEffect(() => {
     if (cards[cardIndex]) {
       setState(prevState => (
@@ -138,6 +151,8 @@ const CreateCard = () => {
         mac_address: state?.mac_address,
         ip_olt: state?.ip_olt,
         mac_onu: state?.mac_onu,
+        account_id: `${state?.account_id}`,
+        n_result_id: `${state?.n_result_id}`,
       };
       
       await dispatch(createCard(cardMutation));
@@ -152,17 +167,17 @@ const CreateCard = () => {
   const searchClient = async () => {
     await dispatch(getClient(phoneNumber));
   }
-
+  
   const [openReason, setOpenReason] = useState(false);
   const [openSolution, setOpenSolution] = useState(false);
-
+  
   const [filteredSolution, setFilteredSolution] = useState([
-      {
-          id: "placeholder",
-          title: "Выберите причину",
-      }
+    {
+      id: "placeholder",
+      title: "Выберите причину",
+    }
   ]);
-
+  
   return (
     <>
       <Grid padding={"30px"}>
@@ -236,6 +251,7 @@ const CreateCard = () => {
                 onChange={inputChangeHandler}
                 sx={{ width: 'calc(50% - 7.5px)' }}
                 value={state?.call_from || ''}
+                required
               />
               <TextField
                 required
@@ -289,99 +305,85 @@ const CreateCard = () => {
                 sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <Autocomplete
-                  open={openReason}
-                  onOpen={()=>setOpenReason(true)}
-                  onClose={()=>setOpenReason(false)}
-                  getOptionLabel={(option) => option.title}
-                  onChange={(event, newValue)=>{
-                    selectChangeHandler("reason", newValue);
-                  }}
-                  value={state?.reason || {id: '', title: ''}}
-                  options={reasons}
-                  loading={reasonLoading}
-                  renderInput={(params)=>(
-                      <TextField
-                          required
-                          {...params}
-                          name={"reason"}
-                          label={"Причина обращения"}
-                          slotProps={{
-                            input: {
-                              ...params.InputProps,
-                              endAdornment: (
-                                  <>
-                                    {reasonLoading ? <CircularProgress color={"inherit"} size={20}/> : null}
-                                    {params.InputProps.endAdornment}
-                                  </>
-                              )
-                            }
-                          }}
-                      />
-                  )}
+                open={openReason}
+                onOpen={() => setOpenReason(true)}
+                onClose={() => setOpenReason(false)}
+                getOptionLabel={(option) => option.title}
+                onChange={(event, newValue) => {
+                  selectChangeHandler("reason", newValue);
+                }}
+                value={state?.reason || {
+                  id: '',
+                  title: ''
+                }}
+                options={reasons}
+                loading={reasonLoading}
+                renderInput={(params) => (
+                  <TextField
+                    required
+                    {...params}
+                    name={"reason"}
+                    label={"Причина обращения"}
+                    slotProps={{
+                      input: {
+                        ...params.InputProps,
+                        endAdornment: (
+                          <>
+                            {reasonLoading ? <CircularProgress
+                              color={"inherit"}
+                              size={20}
+                            /> : null}
+                            {params.InputProps.endAdornment}
+                          </>
+                        )
+                      }
+                    }}
+                  />
+                )}
                 sx={{
                   width: 'calc(50% - 7.5px)',
                 }}
               />
               <Autocomplete
-                  open={openSolution}
-                  onOpen={()=>setOpenSolution(true)}
-                  onClose={()=>setOpenSolution(false)}
-                  getOptionLabel={(option) => option.title}
-                  onChange={(event, newValue)=>{
-                    selectChangeHandler("solution", newValue);
-                  }}
-                  value={state?.solution || {id: "", title: ""}}
-                  options={filteredSolution}
-                  loading={solutionLoading}
-                  renderInput={(params)=>(
-                      <TextField
-                          {...params}
-                          required
-                          name={"solution"}
-                          label={"Решение"}
-                          slotProps={{
-                            input: {
-                              ...params.InputProps,
-                              endAdornment: (
-                                  <>
-                                    {solutionLoading ? <CircularProgress color={"inherit"} size={20}/> : null}
-                                    {params.InputProps.endAdornment}
-                                  </>
-                              )
-                            }
-                          }}
-                      />
-                  )}
-                  sx={{
-                    width: 'calc(50% - 7.5px)',
-                  }}
+                open={openSolution}
+                onOpen={() => setOpenSolution(true)}
+                onClose={() => setOpenSolution(false)}
+                getOptionLabel={(option) => option.title}
+                onChange={(event, newValue) => {
+                  selectChangeHandler("solution", newValue);
+                }}
+                value={state?.solution || {
+                  id: "",
+                  title: ""
+                }}
+                options={filteredSolution}
+                loading={solutionLoading}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    required
+                    name={"solution"}
+                    label={"Решение"}
+                    slotProps={{
+                      input: {
+                        ...params.InputProps,
+                        endAdornment: (
+                          <>
+                            {solutionLoading ? <CircularProgress
+                              color={"inherit"}
+                              size={20}
+                            /> : null}
+                            {params.InputProps.endAdornment}
+                          </>
+                        )
+                      }
+                    }}
+                  />
+                )}
+                sx={{
+                  width: 'calc(50% - 7.5px)',
+                }}
               />
-              {/*<TextField*/}
-              {/*    required*/}
-              {/*  select*/}
-              {/*  id='solution'*/}
-              {/*  value={state?.solution?.title || ""}*/}
-              {/*  label='Решение'*/}
-              {/*  variant='outlined'*/}
-              {/*  onChange={(e) => selectChangeHandler(e, solutions)}*/}
-              {/*  sx={{ width: 'calc(50% - 7.5px)' }}*/}
-              {/*  name={"solution"}*/}
-              {/*>*/}
-              {/*  {!state?.reason?.id ? (*/}
-              {/*    <MenuItem value={''}>Выберите причину</MenuItem>*/}
-              {/*  ) : (*/}
-              {/*    solutions.map((item, index) => {*/}
-              {/*      if (state?.reason?.id && state?.reason?.id === item?.reason?.id) {*/}
-              {/*        return (*/}
-              {/*          <MenuItem*/}
-              {/*            value={item.title}*/}
-              {/*            key={index}*/}
-              {/*          >{item.title}</MenuItem>*/}
-              {/*        )*/}
-              {/*      }*/}
-              {/*    })*/}
-              {/*  )}*/}
-              {/*</TextField>*/}
               <TextField
                 label='Комментарий'
                 minRows={3}
