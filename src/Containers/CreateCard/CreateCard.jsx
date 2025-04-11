@@ -226,7 +226,10 @@ const CreateCard = () => {
                   Поиск
                 </Button>
                 <TextField
-                  required
+                  required={![
+                    'Callback',
+                    'Желает подключиться'
+                  ].includes(state?.reason?.title)}
                   select
                   label='Абоненты'
                   id='card'
@@ -254,19 +257,26 @@ const CreateCard = () => {
                 required
               />
               <TextField
-                required
+                required={![
+                  'Callback',
+                  'Желает подключиться'
+                ].includes(state?.reason?.title)}
                 label={"Личный счет"}
                 value={state?.ls_abon || ''}
                 sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
-                required
+                required={![
+                  'Callback',
+                ].includes(state?.reason?.title)}
                 label={"ФИО"}
                 value={state?.full_name || ''}
                 sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
-                required
+                required={![
+                  'Callback',
+                ].includes(state?.reason?.title)}
                 label={"Адрес"}
                 value={state?.address || ''}
                 sx={{ width: 'calc(50% - 7.5px)' }}
@@ -283,13 +293,21 @@ const CreateCard = () => {
                 sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
-                required
+                required={![
+                  'Callback',
+                  'Желает подключиться',
+                  'Ждет подключения'
+                ].includes(state?.reason?.title)}
                 label={"Мак роутера"}
                 value={state?.mac_address || ''}
                 sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
-                required
+                required={![
+                  'Callback',
+                  'Желает подключиться',
+                  'Ждет подключения'
+                ].includes(state?.reason?.title)}
                 label={"Айпи адрес"}
                 value={state?.ip_address || ''}
                 sx={{ width: 'calc(50% - 7.5px)' }}
