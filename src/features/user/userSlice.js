@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { login, register } from './userThunk';
+import {getEmployees, login, register} from './userThunk';
 
 const initialState = {
   user: null,
@@ -7,6 +7,8 @@ const initialState = {
   loginError: null,
   registerError: null,
   registerLoading: false,
+  employees: [],
+  employeesLoading: false,
 };
 
 const UsersSlice = createSlice({
@@ -47,6 +49,16 @@ const UsersSlice = createSlice({
       state.registerError = error;
       state.registerLoading = false;
     });
+    builder.addCase(getEmployees.pending, (state) => {
+      state.employeesLoading = true;
+    });
+    builder.addCase(getEmployees.fulfilled, (state, {payload: employees}) => {
+      state.employees = employees
+      state.employeesLoading = false;
+    });
+    builder.addCase(getEmployees.rejected, (state) => {
+      state.employeesLoading = false;
+    });
   },
   selectors: {
     selectUser: (state) => state.user,
@@ -54,6 +66,8 @@ const UsersSlice = createSlice({
     selectLoginError: (state) => state.loginError,
     selectRegisterError: (state) => state.registerError,
     selectRegisterLoading: (state) => state.registerLoading,
+    selectEmployees: (state) => state.employees,
+    selectEmployeesLoading: (state) => state.employeesLoading,
   }
 });
 
@@ -63,6 +77,8 @@ export const {
   selectLoginLoading,
   selectLoginError,
   selectRegisterError,
-  selectRegisterLoading
+  selectRegisterLoading,
+  selectEmployees,
+  selectEmployeesLoading,
 } = UsersSlice.selectors;
 export const { logout } = UsersSlice.actions;

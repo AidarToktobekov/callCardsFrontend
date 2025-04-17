@@ -1,11 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import {
-  createCard,
-  getClient,
-  getList,
-  getReasons,
-  getSolution
-} from "./listThunk.js";
+import {createSlice} from "@reduxjs/toolkit";
+import {createCard, getClient, getList, getReasons, getSolution} from "./listThunk.js";
 
 const initialState = {
   list: [],

@@ -18,13 +18,14 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
+  TableRow, TextField,
   Typography
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import {exportToExcel} from "../../excelExporter.js";
 import PersonIcon from '@mui/icons-material/Person';
-import TuneIcon from '@mui/icons-material/Tune';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import EmojiObjectsIcon from "@mui/icons-material/EmojiObjects";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -35,18 +36,24 @@ import {
   selectSolutionsList,
   selectSolutionsListLoading
 } from "../../features/reasonsAndSolution/reasonsAndSolutionSlice.js";
+import {selectEmployees, selectEmployeesLoading, selectUser} from "../../features/user/userSlice.js";
+import {getEmployees} from "../../features/user/userThunk.js";
 
 
 const CardsList = () => {
   const dispatch = useAppDispatch();
   const list = useAppSelector(selectList);
   const loading = useAppSelector(selectListLoading);
+  const user = useAppSelector(selectUser);
 
   const reasons = useAppSelector(selectReasonsList);
   const reasonsLoading = useAppSelector(selectReasonsListLoading);
 
   const solutions = useAppSelector(selectSolutionsList);
   const solutionLoading = useAppSelector(selectSolutionsListLoading);
+
+  const employees = useAppSelector(selectEmployees);
+  const employeesLoading = useAppSelector(selectEmployeesLoading);
 
   const [tableHeight, setTableHeight] = useState(0);
   const [filteredList, setFilteredList] = useState(list);
@@ -73,10 +80,13 @@ const CardsList = () => {
   }, [list]);
 
   useEffect(() => {
+    if (user?.role === "admin"){
+      dispatch(getEmployees());
+    }
     dispatch(getReasonsList());
     dispatch(getSolutionsList());
     dispatch(getList());
-  }, [dispatch]);
+  }, [dispatch, user]);
 
   useEffect(() => {
     setTableHeight(changeTableHeight);
@@ -89,8 +99,13 @@ const CardsList = () => {
     setTableHeight(windowHeight - headerHeight - 135);
   };
 
+  const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [filteredReasons, setFilteredReasons] = useState([]);
   const [filteredSolutions, setFilteredSolutions] = useState([]);
+  const [filteredDate, setFilteredDate] = useState({
+    createdAt: '',
+    finishedAt: '',
+  });
 
   const handleToggle = (value, state ,setState) => () => {
     const currentIndex = state.indexOf(value);
@@ -108,12 +123,22 @@ const CardsList = () => {
   const resetFiltration = ()=>{
     setFilteredReasons([]);
     setFilteredSolutions([]);
+    setFilteredDate({
+      createdAt: '',
+      finishedAt: '',
+    });
+    setFilteredList(list);
   }
 
   const handleFiltration = ()=>{
-    let newList;
+    let newList = filteredList;
+    if (filteredEmployees.length > 0){
+      newList = newList.filter((item)=>
+          filteredEmployees.some(employee => item.sip === employee.sip)
+      );
+    }
     if (filteredReasons.length > 0){
-      newList = list.filter((item)=>
+      newList = newList.filter((item)=>
         filteredReasons.some(reason => item.reason_id === reason.id)
       );
     }
@@ -122,44 +147,96 @@ const CardsList = () => {
         filteredSolutions.some(solution => item.solution_id === solution.id)
       );
     }
-    console.log(newList)
+    if (filteredDate.createdAt){
+      newList = newList.filter((item) => {
+        const createdAt = new Date(item.created_at);
+        const from = new Date(filteredDate.createdAt);
+        const to = filteredDate.finishedAt ? new Date(filteredDate.finishedAt) : new Date();
+
+        return (createdAt >= from) && (createdAt <= to);
+      });
+    }
     setFilteredList(newList);
     handleClose();
   }
 
-  // {
-  //   "id": 3236,
-  //     "ls_abon": "175089374",
-  //     "account_id": "18673540701",
-  //     "n_result_id": "18673539901",
-  //     "created_at": "2025-04-16 06:02:53",
-  //     "spec_full_name": "СПК Мукашева Айдана ТП",
-  //     "sip": "629",
-  //     "full_name": "Ыбыкеева Мадина",
-  //     "phone_number": [
-  //   "996559000700",
-  //   "996555292806"
-  // ],
-  //     "call_from": "0708081084",
-  //     "address": "Чуйская обл., Аламудунский р-н, с. Беш-Кунгей, ул. Жапарова, д. 9",
-  //     "mac_address": "BC-60-6B-5B-58-AA",
-  //     "ip_address": "10.200.145.86",
-  //     "mac_onu": "",
-  //     "ip_olt": "",
-  //     "comment": "",
-  //     "reason_id": 28,
-  //     "reason_title": "Консультация",
-  //     "solution_id": 157,
-  //     "solution_title": "Консультация по ТВ",
-  //     "reason": {
-  //   "id": 28,
-  //       "title": "Консультация"
-  // },
-  //   "solution": {
-  //   "id": 157,
-  //       "title": "Консультация по ТВ"
-  // }
-  // },
+  const [filters, setFilters] = useState({
+    id: '',
+    name: '',
+    date: '',
+    sip: '',
+  })
+
+  const handleFiltrationByOrder = (type) => {
+    let newList = filteredList;
+    if (type === "id"){
+      if (filters.id === "up"){
+        newList = [...newList].sort((a, b) => b.id - a.id);
+        setFilters(prev=>({
+          ...prev,
+          [type]: 'down',
+        }));
+      }else{
+        newList = [...newList].sort((a, b) => a.id - b.id);
+        setFilters(prev=>({
+          ...prev,
+          [type]: 'up',
+        }))
+      }
+    }
+    if (type === "name"){
+      if (filters.name === "up"){
+        newList = [...newList].sort((a, b) =>
+            b.full_name.localeCompare(a.full_name)
+        );
+        setFilters(prev=>({
+          ...prev,
+          [type]: 'down',
+        }))
+      }else{
+        newList = [...newList].sort((a, b) =>
+            a.full_name.localeCompare(b.full_name)
+        );
+        setFilters(prev=>({
+          ...prev,
+          [type]: 'up',
+        }))
+      }
+    }
+
+    if (type === "date"){
+      if (filters.date === "up"){
+        newList = [...newList].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        setFilters(prev=>({
+          ...prev,
+          [type]: 'down',
+        }))
+      }else{
+        newList = [...newList].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        setFilters(prev=>({
+          ...prev,
+          [type]: 'up',
+        }))
+      }
+    }
+
+    if (type === "sip"){
+      if (filters.sip === "up"){
+        newList = [...newList].sort((a, b) => Number(b.sip) - Number(a.sip));
+        setFilters(prev=>({
+          ...prev,
+          [type]: 'down',
+        }))
+      }else{
+        newList = [...newList].sort((a, b) => Number(a.sip) - Number(b.sip));
+        setFilters(prev=>({
+          ...prev,
+          [type]: 'up',
+        }))
+      }
+    }
+    setFilteredList(newList);
+  }
 
   return (
     <>
@@ -173,7 +250,7 @@ const CardsList = () => {
         >
           Отчет по картам звонков
         </Typography>
-        <Button aria-describedby={id} variant={"outlined"} onClick={handleClick} sx={{
+        <Button aria-describedby={id} variant="outlined" onClick={handleClick} sx={{
           marginLeft: 'auto',
         }}>
           Фильтрация
@@ -216,39 +293,6 @@ const CardsList = () => {
                   onMouseEnter={() => setHovered({
                     state: true,
                     top: '10',
-                    type: 'employees',
-                  })}
-              >
-                <Grid sx={{
-                  width: '30px',
-                  height: '30px',
-                  borderRadius: '50%',
-                  backgroundColor: 'white',
-                  color: '#000',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  <PersonIcon />
-                </Grid>
-                <Typography>
-                  Сотрудники
-                </Typography>
-              </ListItemButton>
-            </ListItem>
-            <ListItem>
-              <ListItemButton
-                  sx={{
-                    display: 'flex',
-                    width: '100%',
-                    p: "8px 5px",
-                    gap: '15px',
-                    alignItems: 'center',
-                    borderRadius: '5px'
-                  }}
-                  onMouseEnter={() => setHovered({
-                    state: true,
-                    top: '60',
                     type: "reason",
                   })}
               >
@@ -281,7 +325,7 @@ const CardsList = () => {
                   }}
                   onMouseEnter={() => setHovered({
                     state: true,
-                    top: '110',
+                    top: '60',
                     type: 'solution',
                   })}
               >
@@ -314,7 +358,7 @@ const CardsList = () => {
                   }}
                   onMouseEnter={() => setHovered({
                     state: true,
-                    top: '160',
+                    top: '110',
                     type: 'date',
                   })}
               >
@@ -335,6 +379,42 @@ const CardsList = () => {
                 </Typography>
               </ListItemButton>
             </ListItem>
+            {user.role === 'admin' ?
+              <ListItem>
+                <ListItemButton
+                    sx={{
+                      display: 'flex',
+                      width: '100%',
+                      p: "8px 5px",
+                      gap: '15px',
+                      alignItems: 'center',
+                      borderRadius: '5px'
+                    }}
+                    onMouseEnter={() => setHovered({
+                      state: true,
+                      top: '160',
+                      type: 'employees',
+                    })}
+                >
+                  <Grid sx={{
+                    width: '30px',
+                    height: '30px',
+                    borderRadius: '50%',
+                    backgroundColor: 'white',
+                    color: '#000',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                    <PersonIcon />
+                  </Grid>
+                  <Typography>
+                    Сотрудники
+                  </Typography>
+                </ListItemButton>
+              </ListItem>
+              : null
+            }
           </List>
           <Grid container flexDirection={"column"} spacing={1} sx={{
             padding: "0 5px 8px"
@@ -355,41 +435,75 @@ const CardsList = () => {
             paddingRight: '10px',
           }}>
             <Grid sx={{
-              width: "300px",
-              height: "400px",
+              minWidth: "300px",
+              maxHeight: "300px",
               overflow: 'auto',
               background: "rgb(41,41,41)",
-            }}>
-              <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
+            }}
+            >
+                {hovered.type === "employees" ?
+                    employeesLoading ? (
+                            <CircularProgress />
+                        ) :
+                        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
+                          {employees.map((value) => (
+                              <ListItem
+                                  key={value.id}
+                                  disablePadding
+                              >
+                                <ListItemButton role={undefined}
+                                                onClick={handleToggle(value, filteredEmployees, setFilteredEmployees)} dense>
+                                  <ListItemIcon>
+                                    <Checkbox
+                                        edge="start"
+                                        checked={filteredEmployees.includes(value)}
+                                        tabIndex={-1}
+                                        disableRipple
+                                        inputProps={{'aria-labelledby': value.id}}
+                                    />
+                                  </ListItemIcon>
+                                  <ListItemText id={value.id} primary={value.full_name}/>
+                                </ListItemButton>
+                              </ListItem>
+                          ))}
+                        </List>
+
+                    : null}
                 {hovered.type === "reason" ?
                     reasonsLoading ? (
                         <CircularProgress />
                     ) :
-                    reasons.map((value) => (
-                      <ListItem
-                          key={value.id}
-                          disablePadding
-                      >
-                        <ListItemButton role={undefined} onClick={handleToggle(value, filteredReasons, setFilteredReasons)} dense>
-                          <ListItemIcon>
-                            <Checkbox
-                                edge="start"
-                                checked={filteredReasons.includes(value)}
-                                tabIndex={-1}
-                                disableRipple
-                                inputProps={{'aria-labelledby': value.id}}
-                            />
-                          </ListItemIcon>
-                          <ListItemText id={value.id} primary={value.title}/>
-                        </ListItemButton>
-                      </ListItem>
-                  )) : null}
+                    <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
+                      {reasons.map((value) => (
+                          <ListItem
+                              key={value.id}
+                              disablePadding
+                          >
+                            <ListItemButton role={undefined}
+                                            onClick={handleToggle(value, filteredReasons, setFilteredReasons)} dense>
+                              <ListItemIcon>
+                                <Checkbox
+                                    edge="start"
+                                    checked={filteredReasons.includes(value)}
+                                    tabIndex={-1}
+                                    disableRipple
+                                    inputProps={{'aria-labelledby': value.id}}
+                                />
+                              </ListItemIcon>
+                              <ListItemText id={value.id} primary={value.title}/>
+                            </ListItemButton>
+                          </ListItem>
+                      ))}
+                    </List>
+
+                  : null}
 
                 {hovered.type === "solution" ?
                     solutionLoading ? (
                             <CircularProgress />
                         ) :
-                        solutions.map((value) => (
+                        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
+                          {solutions.map((value) => (
                             <ListItem
                                 key={value.id}
                                 disablePadding
@@ -407,8 +521,46 @@ const CardsList = () => {
                                 <ListItemText id={value.id} primary={value.title}/>
                               </ListItemButton>
                             </ListItem>
-                        )) : null}
-              </List>
+                          ))}
+                        </List>
+                          : null}
+
+                {hovered.type === "date" ?
+                    <Grid container flexWrap={"nowrap"} spacing={"10px"} sx={{
+                      p: '15px'
+                    }}>
+                      <Grid>
+                        <Typography sx={{
+                          fontSize: '14px'
+                        }}>
+                          От
+                        </Typography>
+                        <TextField type={"date"} value={filteredDate.createdAt} onChange={(e)=>{
+                          setFilteredDate(prev=>({
+                            ...prev,
+                            createdAt: e.target.value,
+                          }));
+                        }} sx={{
+                          width: '100%',
+                        }}/>
+                      </Grid>
+                      <Grid>
+                        <Typography sx={{
+                          fontSize: '14px'
+                        }}>
+                          До
+                        </Typography>
+                        <TextField type={"date"} value={filteredDate.finishedAt} onChange={(e)=>{
+                          setFilteredDate(prev=>({
+                            ...prev,
+                            finishedAt: e.target.value,
+                          }));
+                        }} sx={{
+                          width: '100%',
+                        }}/>
+                      </Grid>
+                    </Grid>
+                     : null}
             </Grid>
           </Grid>
         </Popover>
@@ -440,7 +592,7 @@ const CardsList = () => {
                   <Typography>
                     ID
                   </Typography>
-                  <Button variant={"text"} sx={{
+                  <Button variant={"text"} onClick={()=>handleFiltrationByOrder("id")} sx={{
                     display: 'none',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -449,7 +601,11 @@ const CardsList = () => {
                     height: "25px",
                     minWidth: 'unset',
                   }}>
-                    <TuneIcon fontSize={"small"}/>
+                    {filters.id === "down" ?
+                        <KeyboardArrowDownIcon fontSize={"small"}/>
+                        :
+                        <KeyboardArrowUpIcon fontSize={"small"}/>
+                    }
                   </Button>
                 </Grid>
               </TableCell>
@@ -464,7 +620,7 @@ const CardsList = () => {
                   <Typography>
                     ФИО
                   </Typography>
-                  <Button variant={"text"} sx={{
+                  <Button variant={"text"} onClick={()=>handleFiltrationByOrder("name")}  sx={{
                     display: 'none',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -473,7 +629,11 @@ const CardsList = () => {
                     height: "25px",
                     minWidth: 'unset',
                   }}>
-                    <TuneIcon fontSize={"small"}/>
+                    {filters.name === "down" ?
+                        <KeyboardArrowDownIcon fontSize={"small"}/>
+                        :
+                        <KeyboardArrowUpIcon fontSize={"small"}/>
+                    }
                   </Button>
                 </Grid>
               </TableCell>
@@ -488,17 +648,6 @@ const CardsList = () => {
                   <Typography>
                     Звонок от
                   </Typography>
-                  <Button variant={"text"} sx={{
-                    display: 'none',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    p: 0,
-                    width: '25px',
-                    height: "25px",
-                    minWidth: 'unset',
-                  }}>
-                    <TuneIcon fontSize={"small"}/>
-                  </Button>
                 </Grid>
               </TableCell>
               <TableCell>
@@ -512,17 +661,6 @@ const CardsList = () => {
                   <Typography>
                     ЛС абонента
                   </Typography>
-                  <Button variant={"text"} sx={{
-                    display: 'none',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    p: 0,
-                    width: '25px',
-                    height: "25px",
-                    minWidth: 'unset',
-                  }}>
-                    <TuneIcon fontSize={"small"}/>
-                  </Button>
                 </Grid>
               </TableCell>
               <TableCell>
@@ -536,17 +674,6 @@ const CardsList = () => {
                   <Typography>
                     Номер телефона
                   </Typography>
-                  <Button variant={"text"} sx={{
-                    display: 'none',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    p: 0,
-                    width: '25px',
-                    height: "25px",
-                    minWidth: 'unset',
-                  }}>
-                    <TuneIcon fontSize={"small"}/>
-                  </Button>
                 </Grid>
               </TableCell>
               <TableCell>
@@ -560,7 +687,7 @@ const CardsList = () => {
                   <Typography>
                     Дата создания
                   </Typography>
-                  <Button variant={"text"} sx={{
+                  <Button variant={"text"} onClick={()=>handleFiltrationByOrder("date")} sx={{
                     display: 'none',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -569,7 +696,11 @@ const CardsList = () => {
                     height: "25px",
                     minWidth: 'unset',
                   }}>
-                    <TuneIcon fontSize={"small"}/>
+                    {filters.date === "down" ?
+                        <KeyboardArrowDownIcon fontSize={"small"}/>
+                        :
+                        <KeyboardArrowUpIcon fontSize={"small"}/>
+                    }
                   </Button>
                 </Grid>
               </TableCell>
@@ -584,17 +715,6 @@ const CardsList = () => {
                   <Typography>
                     Причина
                   </Typography>
-                  <Button variant={"text"} sx={{
-                    display: 'none',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    p: 0,
-                    width: '25px',
-                    height: "25px",
-                    minWidth: 'unset',
-                  }}>
-                    <TuneIcon fontSize={"small"}/>
-                  </Button>
                 </Grid>
               </TableCell>
               <TableCell>
@@ -608,17 +728,6 @@ const CardsList = () => {
                   <Typography>
                     Решение
                   </Typography>
-                  <Button variant={"text"} sx={{
-                    display: 'none',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    p: 0,
-                    width: '25px',
-                    height: "25px",
-                    minWidth: 'unset',
-                  }}>
-                    <TuneIcon fontSize={"small"}/>
-                  </Button>
                 </Grid>
               </TableCell>
               <TableCell>
@@ -632,7 +741,7 @@ const CardsList = () => {
                   <Typography>
                     СИП
                   </Typography>
-                  <Button variant={"text"} sx={{
+                  <Button variant={"text"} onClick={()=>handleFiltrationByOrder("sip")} sx={{
                     display: 'none',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -641,7 +750,11 @@ const CardsList = () => {
                     height: "25px",
                     minWidth: 'unset',
                   }}>
-                    <TuneIcon fontSize={"small"}/>
+                    {filters.sip === "down" ?
+                        <KeyboardArrowDownIcon fontSize={"small"}/>
+                        :
+                        <KeyboardArrowUpIcon fontSize={"small"}/>
+                    }
                   </Button>
                 </Grid>
               </TableCell>
@@ -656,17 +769,6 @@ const CardsList = () => {
                   <Typography>
                     Комментарий
                   </Typography>
-                  <Button variant={"text"} sx={{
-                    display: 'none',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    p: 0,
-                    width: '25px',
-                    height: "25px",
-                    minWidth: 'unset',
-                  }}>
-                    <TuneIcon fontSize={"small"}/>
-                  </Button>
                 </Grid>
               </TableCell>
             </TableRow>

@@ -31,3 +31,15 @@ export const register = createAsyncThunk(
     }
   }
 );
+
+export const getEmployees = createAsyncThunk(
+    'user/getEmployees',
+    async () => {
+        try {
+            const { data: req } = await axiosApi.get('/users');
+            return req;
+        } catch (e) {
+            throw new Error(e);
+        }
+    }
+);
