@@ -3,6 +3,7 @@ import {selectList, selectListLoading} from "../../features/list/listSlice.js";
 import {useEffect, useState} from "react";
 import {getList} from "../../features/list/listThunk.js";
 import {
+  Alert,
   Button,
   Checkbox,
   CircularProgress,
@@ -13,12 +14,14 @@ import {
   ListItemText,
   Paper,
   Popover,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TableRow, TextField,
+  TableRow,
+  TextField,
   Typography
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -38,7 +41,8 @@ import {
 } from "../../features/reasonsAndSolution/reasonsAndSolutionSlice.js";
 import {selectEmployees, selectEmployeesLoading, selectUser} from "../../features/user/userSlice.js";
 import {getEmployees} from "../../features/user/userThunk.js";
-
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
 const CardsList = () => {
   const dispatch = useAppDispatch();
@@ -74,6 +78,14 @@ const CardsList = () => {
 
   const open = Boolean(anchorEl);
   const id = 'filters-popup';
+
+  useEffect(() => {
+    setSearchFields({
+      employees: employees,
+      reasons: reasons,
+      solutions: solutions,
+    });
+  }, [ dispatch, employees, reasons, solutions, hovered.type]);
 
   useEffect(() => {
     setFilteredList(list);
@@ -131,7 +143,7 @@ const CardsList = () => {
   }
 
   const handleFiltration = ()=>{
-    let newList = filteredList;
+    let newList = list;
     if (filteredEmployees.length > 0){
       newList = newList.filter((item)=>
           filteredEmployees.some(employee => item.sip === employee.sip)
@@ -238,6 +250,62 @@ const CardsList = () => {
     setFilteredList(newList);
   }
 
+  const [searchFields, setSearchFields] = useState({
+    employees: [],
+    reasons: [],
+    solutions: [],
+  });
+  const handleChangeSearchFields = (e)=>{
+    const { name, value } = e.target;
+    if (!value){
+      setSearchFields({
+        employees: employees,
+        reasons: reasons,
+        solutions: solutions,
+      });
+    }else{
+      if(name === "employees"){
+        setSearchFields(prev=>({
+            ...prev,
+            [name]: employees.filter((item)=>
+              item.full_name.toLowerCase().includes(value.toLowerCase()),
+            )
+        }));
+      }else if(name === "reasons"){
+        setSearchFields(prev=>({
+          ...prev,
+          [name]: reasons.filter((item)=>
+              item.title.toLowerCase().includes(value.toLowerCase()),
+          )
+        }));
+      }else if(name === "solutions"){
+        setSearchFields(prev=>({
+          ...prev,
+          [name]: solutions.filter((item)=>
+              item.title.toLowerCase().includes(value.toLowerCase()),
+          )
+        }));
+      }
+    }
+  }
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(50);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedList = filteredList.slice(startIndex, startIndex + itemsPerPage);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  useEffect(() => {
+    if (itemsPerPage > 200) {
+      setSnackbarOpen(true);
+    }
+  }, [itemsPerPage]);
+
+  const handleCloseSnackBar = () => {
+    setSnackbarOpen(false);
+  };
+
   return (
     <>
       <Grid container spacing={2} p={"20px"}>
@@ -250,9 +318,80 @@ const CardsList = () => {
         >
           Отчет по картам звонков
         </Typography>
-        <Button aria-describedby={id} variant="outlined" onClick={handleClick} sx={{
-          marginLeft: 'auto',
+        <Grid container alignItems={"center"} spacing={2} sx={{
+          border: '1px solid #90caf9',
+          ml: "auto",
+          borderRadius: "5px",
+          color: '#90caf9',
+          fontFamily: 'Roboto, sans-serif',
+          px: 2,
         }}>
+          <Grid container alignItems={"center"} spacing={"5px"}>
+            Кол-во строк:
+              <TextField
+                  type="number"
+                  value={itemsPerPage}
+                  onChange={(e)=>setItemsPerPage(Number(e.target.value))}
+                  variant={"filled"}
+                  sx={{
+                    borderRadius: '5px',
+                  }}
+                  inputProps={{
+                    min: 1,
+                    sx: {
+                      color: '#90caf9',
+                      padding: "5px 5px",
+                      maxWidth: "50px",
+                      textAlign: "center",
+                    }
+              }}
+              />
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={5000}
+                onClose={handleCloseSnackBar}
+            >
+              <Alert
+                  onClose={handleCloseSnackBar}
+                  severity="error"
+                  variant="filled"
+                  sx={{ width: '100%' }}
+              >
+                При большом колличестве строк приложение будет виснуть!
+              </Alert>
+            </Snackbar>
+          </Grid>
+          <Grid>
+            {(currentPage - 1) * itemsPerPage + 1} - {currentPage * itemsPerPage > filteredList.length ?
+              filteredList.length : currentPage * itemsPerPage
+            }
+          </Grid>
+          <Grid>
+            <Button disabled={currentPage <= 1} onClick={()=> {
+              if (currentPage !== 1){
+                setCurrentPage(prev => prev - 1)
+              }
+            }} sx={{
+              minWidth: 'unset',
+              p: "5px",
+              borderRadius: '50%'
+            }}>
+              <ArrowLeftIcon></ArrowLeftIcon>
+            </Button>
+            <Button disabled={(currentPage - 1) * itemsPerPage + itemsPerPage > filteredList.length} onClick={()=> {
+              if((currentPage - 1) * itemsPerPage + itemsPerPage < filteredList.length) {
+                setCurrentPage(prev => prev + 1)
+              }
+            }} sx={{
+              minWidth: 'unset',
+              p: "5px",
+              borderRadius: '50%'
+            }}>
+              <ArrowRightIcon></ArrowRightIcon>
+            </Button>
+          </Grid>
+        </Grid>
+        <Button aria-describedby={id} variant="outlined" onClick={handleClick}>
           Фильтрация
         </Button>
         <Popover
@@ -436,8 +575,6 @@ const CardsList = () => {
           }}>
             <Grid sx={{
               minWidth: "300px",
-              maxHeight: "300px",
-              overflow: 'auto',
               background: "rgb(41,41,41)",
             }}
             >
@@ -445,14 +582,26 @@ const CardsList = () => {
                     employeesLoading ? (
                             <CircularProgress />
                         ) :
-                        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
-                          {employees.map((value) => (
+                      <Grid sx={{
+                        bgcolor: 'background.paper'
+                      }}>
+                        <Grid sx={{
+                          px: 1,
+                        }}>
+                          <TextField autoComplete={'off'} type={"text"} label={"ФИО сотрудника"} name={"employees"} onChange={handleChangeSearchFields} sx={{
+                            mb: "10px",
+                            width: "100%",
+                          }}/>
+                        </Grid>
+                        <List sx={{width: '100%', overflow: 'auto', maxHeight: "230px",}}>
+                          {searchFields.employees.map((value) => (
                               <ListItem
                                   key={value.id}
                                   disablePadding
                               >
                                 <ListItemButton role={undefined}
-                                                onClick={handleToggle(value, filteredEmployees, setFilteredEmployees)} dense>
+                                                onClick={handleToggle(value, filteredEmployees, setFilteredEmployees)}
+                                                dense>
                                   <ListItemIcon>
                                     <Checkbox
                                         edge="start"
@@ -467,43 +616,66 @@ const CardsList = () => {
                               </ListItem>
                           ))}
                         </List>
+                      </Grid>
 
                     : null}
                 {hovered.type === "reason" ?
                     reasonsLoading ? (
                         <CircularProgress />
                     ) :
-                    <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
-                      {reasons.map((value) => (
-                          <ListItem
-                              key={value.id}
-                              disablePadding
-                          >
-                            <ListItemButton role={undefined}
-                                            onClick={handleToggle(value, filteredReasons, setFilteredReasons)} dense>
-                              <ListItemIcon>
-                                <Checkbox
-                                    edge="start"
-                                    checked={filteredReasons.includes(value)}
-                                    tabIndex={-1}
-                                    disableRipple
-                                    inputProps={{'aria-labelledby': value.id}}
-                                />
-                              </ListItemIcon>
-                              <ListItemText id={value.id} primary={value.title}/>
-                            </ListItemButton>
-                          </ListItem>
-                      ))}
-                    </List>
-
+                        <Grid sx={{
+                          bgcolor: 'background.paper'
+                        }}>
+                          <Grid sx={{
+                            px: 1,
+                          }}>
+                            <TextField autoComplete={'off'} type={"text"} label={"Название причины"} name={"reasons"} onChange={handleChangeSearchFields} sx={{
+                              mb: "10px",
+                              width: "100%",
+                            }}/>
+                          </Grid>
+                          <List sx={{ width: '100%', maxWidth: 360, overflow: 'auto', maxHeight: "230px",}}>
+                            {searchFields.reasons.map((value) => (
+                                <ListItem
+                                    key={value.id}
+                                    disablePadding
+                                >
+                                  <ListItemButton role={undefined}
+                                                  onClick={handleToggle(value, filteredReasons, setFilteredReasons)} dense>
+                                    <ListItemIcon>
+                                      <Checkbox
+                                          edge="start"
+                                          checked={filteredReasons.includes(value)}
+                                          tabIndex={-1}
+                                          disableRipple
+                                          inputProps={{'aria-labelledby': value.id}}
+                                      />
+                                    </ListItemIcon>
+                                    <ListItemText id={value.id} primary={value.title}/>
+                                  </ListItemButton>
+                                </ListItem>
+                            ))}
+                          </List>
+                        </Grid>
                   : null}
 
                 {hovered.type === "solution" ?
                     solutionLoading ? (
                             <CircularProgress />
                         ) :
-                        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
-                          {solutions.map((value) => (
+                        <Grid sx={{
+                          bgcolor: 'background.paper'
+                        }}>
+                          <Grid sx={{
+                            px: 1,
+                          }}>
+                            <TextField autoComplete={'off'} type={"text"} label={"Название решения"} name={"solutions"} onChange={handleChangeSearchFields} sx={{
+                              mb: "10px",
+                              width: "100%",
+                            }}/>
+                          </Grid>
+                        <List sx={{ width: '100%', maxWidth: 360, overflow: 'auto', maxHeight: "230px",}}>
+                          {searchFields.solutions.map((value) => (
                             <ListItem
                                 key={value.id}
                                 disablePadding
@@ -523,6 +695,8 @@ const CardsList = () => {
                             </ListItem>
                           ))}
                         </List>
+                        </Grid>
+
                           : null}
 
                 {hovered.type === "date" ?
@@ -573,11 +747,21 @@ const CardsList = () => {
         width: '100%'
       }}
       >
-        <Table>
+        <Table stickyHeader>
           <TableHead>
             <TableRow sx={{
               "&>th":{
                 borderRight: '1px solid #515151',
+              },
+              "&>th>div>p":{
+                textAlign: 'center',
+              },
+              "&>th>div":{
+                gap: '10px',
+                alignItems: 'center',
+              },
+              "&>th>div>button":{
+                color: '#fff'
               }
             }}
             >
@@ -664,13 +848,7 @@ const CardsList = () => {
                 </Grid>
               </TableCell>
               <TableCell>
-                <Grid sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  "&:hover > button":{
-                    display: 'flex',
-                  }
-                }}>
+                <Grid>
                   <Typography>
                     Номер телефона
                   </Typography>
@@ -781,7 +959,7 @@ const CardsList = () => {
                   </TableCell>
                 </TableRow>
             ) : (
-                filteredList.map(item => (
+                paginatedList.map(item => (
                     <TableRow key={item.id}>
                       <TableCell>
                         {item.id}
