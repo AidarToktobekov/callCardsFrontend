@@ -7,7 +7,13 @@ const initialState = {
   loginError: null,
   registerError: null,
   registerLoading: false,
-  employees: [],
+  employees: [
+    {
+      id: 'daw',
+      full_name: 'Айдар',
+      sip: "600",
+    }
+  ],
   employeesLoading: false,
 };
 
