@@ -8,7 +8,20 @@ import {
 } from "./reasonsAndSolutionThunk.js";
 
 const initialState = {
-    reasons: [],
+    reasons: [
+        {
+            id: '1',
+            title: 'Б',
+        },
+        {
+            id: '2',
+            title: 'А',
+        },
+        {
+            id: '3',
+            title: 'В',
+        }
+    ],
     reasonsLoading: false,
     solutions: [],
     solutionsLoading: false,
