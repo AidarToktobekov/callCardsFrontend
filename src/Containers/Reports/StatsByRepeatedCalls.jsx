@@ -47,6 +47,21 @@ const StatsByRepeatedCalls = () => {
   const repeatedCalls = useAppSelector(selectRepeatedCalls);
   const loading = useAppSelector(selectRepeatedCallsLoading);
   const [filteredList, setFilteredList] = useState(repeatedCalls);
+  const [exportExcel, setExportExcel] = useState([]);
+  useEffect(() => {
+    const newArr = [];
+    filteredList.map(item=>{
+      newArr.push({
+        Адресс: item.address,
+        Кол_во: item.count,
+        Личный_счет: item.ls_abon,
+        Тел_Номер: item.phone_number.join(', '),
+        Причина: item.reason.title,
+        Решение: item.solution.title,
+      })
+    });
+    setExportExcel(newArr);
+  }, [filteredList]);
 
   useEffect(() => {
     setFilteredList(repeatedCalls);
@@ -356,7 +371,7 @@ const StatsByRepeatedCalls = () => {
               </Button>
             </Grid>
           </Grid>
-          <Button variant={"outlined"} onClick={()=>exportToExcel(filteredList, "Стат-ка_по_сотрудникам")}>
+          <Button variant={"outlined"} onClick={()=>exportToExcel(exportExcel, "Стат-ка_по_сотрудникам")}>
             Export excel
           </Button>
         </Grid>

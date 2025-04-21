@@ -48,6 +48,17 @@ const StatsByReasons = () => {
   const reasons = useAppSelector(selectReasonsList);
   const reasonLoading = useAppSelector(selectReasonsListLoading);
   const [filteredList, setFilteredList] = useState(treatmentReport);
+  const [exportExcel, setExportExcel] = useState([]);
+  useEffect(() => {
+    const newArr = [];
+    filteredList.map(item=>{
+      newArr.push({
+        Причина: item.reason,
+        Кол_во: item.count,
+      })
+    });
+    setExportExcel(newArr);
+  }, [filteredList]);
 
   useEffect(() => {
     setFilteredList(treatmentReport);
@@ -301,7 +312,7 @@ const StatsByReasons = () => {
               </Button>
             </Grid>
           </Grid>
-          <Button variant={"outlined"} onClick={()=>exportToExcel(filteredList, "Стат-ка_по_сотрудникам")}>
+          <Button variant={"outlined"} onClick={()=>exportToExcel(exportExcel, "Стат-ка_по_сотрудникам")}>
             Export excel
           </Button>
         </Grid>

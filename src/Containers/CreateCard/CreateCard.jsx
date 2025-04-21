@@ -261,7 +261,7 @@ const CreateCard = () => {
                   'Callback',
                   'Желает подключиться'
                 ].includes(state?.reason?.title)}
-                label={"Личный счет"}
+                label={"Лицевой счет"}
                 value={state?.ls_abon || ''}
                 sx={{ width: 'calc(50% - 7.5px)' }}
               />

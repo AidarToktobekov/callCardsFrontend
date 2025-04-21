@@ -61,6 +61,32 @@ const CardsList = () => {
 
   const [tableHeight, setTableHeight] = useState(0);
   const [filteredList, setFilteredList] = useState(list);
+  const [exportExcel, setExportExcel] = useState([]);
+  useEffect(() => {
+    const newArr = [];
+    filteredList.map(item=>{
+      newArr.push({
+        Айди_Аккаунта: item.account_id,
+        Вызов_От: item.call_from,
+        Комментарий: item.comment,
+        Дата_Создания: item.created_at,
+        ФИО: item.full_name,
+        ID: item.id,
+        ip_address: item.ip_address || "",
+        ip_olt: item.ip_olt || "",
+        mac_address: item.mac_address || "",
+        mac_onu: item.mac_onu || "",
+        n_result_id: item.n_result_id || "",
+        Адресс: item.address,
+        Личный_счет: item.ls_abon,
+        Тел_Номер: item.phone_number.join(', '),
+        Причина: item.reason.title,
+        Решение: item.solution?.title || "",
+        Сип: item.sip,
+      })
+    });
+    setExportExcel(newArr);
+  }, [filteredList]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [hovered, setHovered] = useState({
     state: false,
@@ -762,7 +788,7 @@ const CardsList = () => {
             </Grid>
           </Grid>
         </Popover>
-        <Button variant={"outlined"} onClick={()=> exportToExcel(filteredList, "Карты-звонков")}>
+        <Button variant={"outlined"} onClick={()=> exportToExcel(exportExcel, "Карты-звонков")}>
           Export excel
         </Button>
       </Grid>

@@ -53,6 +53,18 @@ const StatsByInactivesUsers = () => {
   const solutions = useAppSelector(selectSolutionsList);
   const solutionLoading = useAppSelector(selectSolutionsListLoading);
   const [filteredList, setFilteredList] = useState(solutionReport);
+  const [exportExcel, setExportExcel] = useState([]);
+  useEffect(() => {
+    const newArr = [];
+    filteredList.map(item=>{
+      newArr.push({
+        Причина: item.reason?.title || "",
+        Решение: item.solution?.title || "",
+        Кол_во: item.count,
+      })
+    });
+    setExportExcel(newArr);
+  }, [filteredList]);
 
   useEffect(() => {
     setFilteredList(solutionReport);
@@ -367,7 +379,7 @@ const StatsByInactivesUsers = () => {
               </Button>
             </Grid>
           </Grid>
-          <Button variant={"outlined"} onClick={()=>exportToExcel(filteredList, "Стат-ка_по_сотрудникам")}>
+          <Button variant={"outlined"} onClick={()=>exportToExcel(exportExcel, "Стат-ка_по_сотрудникам")}>
             Export excel
           </Button>
         </Grid>

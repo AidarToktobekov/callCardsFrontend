@@ -43,6 +43,18 @@ const StatsByEmployees = () => {
   const cardsReport = useAppSelector(selectCardsReport);
   const loading = useAppSelector(selectCardsReportLoading);
   const [filteredList, setFilteredList] = useState(cardsReport);
+  const [exportExcel, setExportExcel] = useState([]);
+  useEffect(() => {
+    const newArr = [];
+    filteredList.map(item=>{
+      newArr.push({
+        Сотрудник: item.spec_full_name,
+        СИП: item.sip,
+        Кол_во: item.count,
+      })
+    });
+    setExportExcel(newArr);
+  }, [filteredList]);
 
   useEffect(() => {
     setFilteredList(cardsReport);
@@ -315,7 +327,7 @@ const StatsByEmployees = () => {
           </Button>
         </Grid>
       </Grid>
-          <Button variant={"outlined"} onClick={()=>exportToExcel(filteredList, "Стат-ка_по_сотрудникам")}>
+          <Button variant={"outlined"} onClick={()=>exportToExcel(exportExcel, "Стат-ка_по_сотрудникам")}>
             Export excel
           </Button>
         </Grid>
