@@ -1,7 +1,13 @@
-import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
-import {selectRepeatedCalls, selectRepeatedCallsLoading,} from "../../features/reports/reportsSlice.js";
-import {useEffect, useState} from "react";
-import {getCardsReport, getRepeatedCalls,} from "../../features/reports/reportsThunk.js";
+import { useAppDispatch, useAppSelector } from "../../app/hooks.js";
+import {
+  selectRepeatedCalls,
+  selectRepeatedCallsLoading,
+} from "../../features/reports/reportsSlice.js";
+import { useEffect, useState } from "react";
+import {
+  getCardsReport,
+  getRepeatedCalls,
+} from "../../features/reports/reportsThunk.js";
 import {
   Button,
   Checkbox,
@@ -25,7 +31,7 @@ import {
   Typography
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import {exportToExcel} from "../../excelExporter.js";
+import { exportToExcel } from "../../excelExporter.js";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -35,7 +41,10 @@ import {
   selectSolutionsList,
   selectSolutionsListLoading
 } from "../../features/reasonsAndSolution/reasonsAndSolutionSlice.js";
-import {getReasonsList, getSolutionsList} from "../../features/reasonsAndSolution/reasonsAndSolutionThunk.js";
+import {
+  getReasonsList,
+  getSolutionsList
+} from "../../features/reasonsAndSolution/reasonsAndSolutionThunk.js";
 
 const StatsByRepeatedCalls = () => {
   const dispatch = useAppDispatch();
@@ -280,7 +289,7 @@ const StatsByRepeatedCalls = () => {
                 textAlign: 'center',
               }}
           >
-            Отчет по причинам и решениям
+            Отчет по повторным звонкам
           </Typography>
           <Button variant={"outlined"} sx={{
             ml: 'auto'

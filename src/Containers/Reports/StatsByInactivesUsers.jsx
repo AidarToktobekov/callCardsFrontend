@@ -7,7 +7,6 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Pagination,
   Paper,
   Popover,
   Table,
@@ -19,27 +18,37 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
-import {selectCardsInactives, selectCardsInactivesLoading,} from "../../features/reports/reportsSlice.js";
-import {useEffect, useState} from "react";
-import {getCardsInactives,} from "../../features/reports/reportsThunk.js";
+import { useAppDispatch, useAppSelector } from "../../app/hooks.js";
+import {
+  selectCardsInactives,
+  selectCardsInactivesLoading,
+} from "../../features/reports/reportsSlice.js";
+import { useEffect, useState } from "react";
+import { getCardsInactives, } from "../../features/reports/reportsThunk.js";
 import Grid from "@mui/material/Grid2";
-import {exportToExcel} from "../../excelExporter.js";
+import { exportToExcel } from "../../excelExporter.js";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import EmojiObjectsIcon from "@mui/icons-material/EmojiObjects";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PersonIcon from "@mui/icons-material/Person";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import {selectEmployees, selectEmployeesLoading, selectUser} from "../../features/user/userSlice.js";
+import {
+  selectEmployees,
+  selectEmployeesLoading,
+  selectUser
+} from "../../features/user/userSlice.js";
 import {
   selectReasonsList,
   selectReasonsListLoading,
   selectSolutionsList,
   selectSolutionsListLoading
 } from "../../features/reasonsAndSolution/reasonsAndSolutionSlice.js";
-import {getEmployees} from "../../features/user/userThunk.js";
-import {getReasonsList, getSolutionsList} from "../../features/reasonsAndSolution/reasonsAndSolutionThunk.js";
+import { getEmployees } from "../../features/user/userThunk.js";
+import {
+  getReasonsList,
+  getSolutionsList
+} from "../../features/reasonsAndSolution/reasonsAndSolutionThunk.js";
 
 const StatsByInactivesUsers = () => {
   const dispatch = useAppDispatch();
@@ -345,11 +354,6 @@ const StatsByInactivesUsers = () => {
               horizontal: 'left',
             }}
             PaperProps={{
-              onMouseLeave: () =>
-                  setHovered({
-                    state: false,
-                    top: '0',
-                  }),
               sx: {
                 overflow: 'visible',
               },

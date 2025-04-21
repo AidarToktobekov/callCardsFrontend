@@ -710,7 +710,14 @@ const CardsList = () => {
         width: '100%'
       }}
       >
-        <Table stickyHeader>
+        <Table
+          stickyHeader
+          sx={{
+            '& .MuiTableCell-root, .MuiTableCell-root p': {
+              textAlign: 'left'
+            },
+          }}
+        >
           <TableHead>
             <TableRow sx={{
               "&>th":{
@@ -803,7 +810,8 @@ const CardsList = () => {
                   justifyContent: 'space-between',
                   "&:hover > button":{
                     display: 'flex',
-                  }
+                  },
+                  minWidth: '100px'
                 }}>
                   <Typography>
                     ЛС абонента
@@ -823,7 +831,8 @@ const CardsList = () => {
                   justifyContent: 'space-between',
                   "&:hover > button":{
                     display: 'flex',
-                  }
+                  },
+                  minWidth: '140px'
                 }}>
                   <Typography>
                     Дата создания
