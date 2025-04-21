@@ -296,7 +296,8 @@ const CreateCard = () => {
                 required={![
                   'Callback',
                   'Желает подключиться',
-                  'Ждет подключения'
+                  'Ждет подключения',
+                  "Интерком"
                 ].includes(state?.reason?.title)}
                 label={"Мак роутера"}
                 value={state?.mac_address || ''}
@@ -306,7 +307,8 @@ const CreateCard = () => {
                 required={![
                   'Callback',
                   'Желает подключиться',
-                  'Ждет подключения'
+                  'Ждет подключения',
+                  'Интерком'
                 ].includes(state?.reason?.title)}
                 label={"Айпи адрес"}
                 value={state?.ip_address || ''}
