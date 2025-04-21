@@ -423,15 +423,19 @@ const StatsByEmployees = () => {
                               bgcolor: 'background.paper'
                             }}
                             >
-                              <Grid sx={{
+                              <Grid container spacing={1} flexDirection={"column"} sx={{
                                 px: 1,
                               }}
                               >
                                 <TextField autoComplete={'off'} type={"text"} label={"ФИО сотрудника"} name={"employees"}
                                            onChange={handleChangeSearchFields} sx={{
-                                  mb: "10px",
                                   width: "100%",
                                 }}/>
+                                <Button variant={"contained"} color={"error"} sx={{
+                                  width: "100%",
+                                }} onClick={()=>setFilteredEmployees([])}>
+                                  Очистить
+                                </Button>
                               </Grid>
                               <List sx={{width: '100%', overflow: 'auto', maxHeight: "230px",}}>
                                 {searchFields.employees.map((value) => (

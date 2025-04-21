@@ -31,7 +31,7 @@ import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import SettingsIcon from '@mui/icons-material/Settings';
 import {
   selectReasonsList,
   selectReasonsListLoading
@@ -360,7 +360,7 @@ const StatsByReasons = () => {
                       height: "25px",
                       minWidth: 'unset',
                     }}>
-                      <ManageAccountsIcon/>
+                      <SettingsIcon/>
                     </Button>
                     <Popover
                         id={id}
@@ -384,15 +384,19 @@ const StatsByReasons = () => {
                               bgcolor: 'background.paper'
                             }}
                             >
-                              <Grid sx={{
+                              <Grid container spacing={1} flexDirection={"column"} sx={{
                                 px: 1,
                               }}
                               >
                                 <TextField autoComplete={'off'} type={"text"} label={"Причина"} name={"reasons"}
                                            onChange={handleChangeSearchFields} sx={{
-                                  mb: "10px",
                                   width: "100%",
                                 }}/>
+                                <Button variant="contained" color={"error"} onClick={()=>setFilteredReasons([])} sx={{
+                                  width: '100%',
+                                }}>
+                                  Очистить
+                                </Button>
                               </Grid>
                               <List sx={{width: '100%', overflow: 'auto', maxHeight: "230px",}}>
                                 {searchFields.reasons.map((value) => (

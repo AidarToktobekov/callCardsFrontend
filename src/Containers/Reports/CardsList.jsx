@@ -585,13 +585,17 @@ const CardsList = () => {
                       <Grid sx={{
                         bgcolor: 'background.paper'
                       }}>
-                        <Grid sx={{
+                        <Grid container spacing={1} flexDirection={"column"} sx={{
                           px: 1,
                         }}>
                           <TextField autoComplete={'off'} type={"text"} label={"ФИО сотрудника"} name={"employees"} onChange={handleChangeSearchFields} sx={{
-                            mb: "10px",
                             width: "100%",
                           }}/>
+                          <Button variant={"contained"} color={"error"} sx={{
+                            width: "100%",
+                          }} onClick={()=>setFilteredEmployees([])}>
+                            Очистить
+                          </Button>
                         </Grid>
                         <List sx={{width: '100%', overflow: 'auto', maxHeight: "230px",}}>
                           {searchFields.employees.map((value) => (
@@ -626,13 +630,17 @@ const CardsList = () => {
                         <Grid sx={{
                           bgcolor: 'background.paper'
                         }}>
-                          <Grid sx={{
+                          <Grid container spacing={1} flexDirection={"column"} sx={{
                             px: 1,
                           }}>
                             <TextField autoComplete={'off'} type={"text"} label={"Название причины"} name={"reasons"} onChange={handleChangeSearchFields} sx={{
-                              mb: "10px",
                               width: "100%",
                             }}/>
+                            <Button variant={"contained"} color={"error"} sx={{
+                              width: "100%",
+                            }} onClick={()=>setFilteredReasons([])}>
+                              Очистить
+                            </Button>
                           </Grid>
                           <List sx={{ width: '100%', maxWidth: 360, overflow: 'auto', maxHeight: "230px",}}>
                             {searchFields.reasons.map((value) => (
@@ -666,13 +674,17 @@ const CardsList = () => {
                         <Grid sx={{
                           bgcolor: 'background.paper'
                         }}>
-                          <Grid sx={{
+                          <Grid container flexDirection={"column"} spacing={1} sx={{
                             px: 1,
                           }}>
                             <TextField autoComplete={'off'} type={"text"} label={"Название решения"} name={"solutions"} onChange={handleChangeSearchFields} sx={{
-                              mb: "10px",
                               width: "100%",
                             }}/>
+                            <Button variant={"contained"} color={"error"} sx={{
+                              width: "100%",
+                            }} onClick={()=>setFilteredSolutions([])}>
+                              Очистить
+                            </Button>
                           </Grid>
                         <List sx={{ width: '100%', maxWidth: 360, overflow: 'auto', maxHeight: "230px",}}>
                           {searchFields.solutions.map((value) => (
@@ -700,39 +712,51 @@ const CardsList = () => {
                           : null}
 
                 {hovered.type === "date" ?
-                    <Grid container flexWrap={"nowrap"} spacing={"10px"} sx={{
-                      p: '15px'
+                    <Grid container flexDirection={"column"} spacing={1} sx={{
+                      p: '15px',
                     }}>
-                      <Grid>
-                        <Typography sx={{
-                          fontSize: '14px'
-                        }}>
-                          От
-                        </Typography>
-                        <TextField type={"date"} value={filteredDate.createdAt} onChange={(e)=>{
-                          setFilteredDate(prev=>({
-                            ...prev,
-                            createdAt: e.target.value,
-                          }));
-                        }} sx={{
-                          width: '100%',
-                        }}/>
+                      <Grid container flexWrap={"nowrap"} spacing={"10px"} sx={{
+                        maxWidth: '350px',
+                      }}>
+                        <Grid>
+                          <Typography sx={{
+                            fontSize: '14px'
+                          }}>
+                            От
+                          </Typography>
+                          <TextField type={"date"} value={filteredDate.createdAt} onChange={(e)=>{
+                            setFilteredDate(prev=>({
+                              ...prev,
+                              createdAt: e.target.value,
+                            }));
+                          }} sx={{
+                            width: '100%',
+                          }}/>
+                        </Grid>
+                        <Grid>
+                          <Typography sx={{
+                            fontSize: '14px'
+                          }}>
+                            До
+                          </Typography>
+                          <TextField type={"date"} value={filteredDate.finishedAt} onChange={(e)=>{
+                            setFilteredDate(prev=>({
+                              ...prev,
+                              finishedAt: e.target.value,
+                            }));
+                          }} sx={{
+                            width: '100%',
+                          }}/>
+                        </Grid>
                       </Grid>
-                      <Grid>
-                        <Typography sx={{
-                          fontSize: '14px'
-                        }}>
-                          До
-                        </Typography>
-                        <TextField type={"date"} value={filteredDate.finishedAt} onChange={(e)=>{
-                          setFilteredDate(prev=>({
-                            ...prev,
-                            finishedAt: e.target.value,
-                          }));
-                        }} sx={{
-                          width: '100%',
-                        }}/>
-                      </Grid>
+                      <Button variant={"contained"} color={"error"} sx={{
+                        width: "100%",
+                      }} onClick={()=> setFilteredDate({
+                        createdAt: '',
+                        finishedAt: '',
+                      })}>
+                        Очистить
+                      </Button>
                     </Grid>
                      : null}
             </Grid>
