@@ -832,7 +832,7 @@ const CardsList = () => {
                   "&:hover > button":{
                     display: 'flex',
                   },
-                  minWidth: '140px'
+                  minWidth: '150px'
                 }}>
                   <Typography>
                     Дата создания
@@ -926,7 +926,9 @@ const CardsList = () => {
           <TableBody>
             {loading ? (
                 <TableRow>
-                  <TableCell colSpan={10} align="center">
+                  <TableCell colSpan={10} align="center" sx={{
+                    textAlign: 'center!important'
+                  }}>
                     <CircularProgress />
                   </TableCell>
                 </TableRow>
