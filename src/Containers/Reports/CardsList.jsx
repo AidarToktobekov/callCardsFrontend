@@ -1039,7 +1039,7 @@ const CardsList = () => {
                       </TableCell>
 
                       <TableCell align="center">
-                        {item.sip}
+                        {`${item.spec_full_name} (${item.sip})`}
                       </TableCell>
 
                       <TableCell align="center">
