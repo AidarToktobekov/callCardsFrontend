@@ -189,7 +189,7 @@ const StatsByInactivesUsers = () => {
     if (type === "reason"){
       if (filters.reason === "up"){
         newList = [...newList].sort((a, b) =>
-            b.reason.localeCompare(a.reason)
+            b.reason.title.localeCompare(a.reason.title)
         );
         setFilters(prev=>({
           ...prev,
@@ -198,7 +198,7 @@ const StatsByInactivesUsers = () => {
       }else{
 
         newList = [...newList].sort((a, b) =>
-            a.reason.localeCompare(b.reason)
+            a.reason.title.localeCompare(b.reason.title)
         );
         setFilters(prev=>({
           ...prev,
@@ -210,7 +210,7 @@ const StatsByInactivesUsers = () => {
     if (type === "solution"){
       if (filters.solution === "up"){
         newList = [...newList].sort((a, b) =>
-            b.solution.localeCompare(a.solution)
+            b.solution?.title.localeCompare(a.solution?.title)
         );
         setFilters(prev=>({
           ...prev,
@@ -219,7 +219,7 @@ const StatsByInactivesUsers = () => {
       }else{
 
         newList = [...newList].sort((a, b) =>
-            a.solution.localeCompare(b.solution)
+            a.solution?.title.localeCompare(b.solution?.title)
         );
         setFilters(prev=>({
           ...prev,
@@ -631,15 +631,15 @@ const StatsByInactivesUsers = () => {
               ) : (
                   paginatedList.map((item, i) => (
                       <TableRow key={i}>
-                        <TableCell>
+                        <TableCell align="center">
                           {item.reason.title}
                         </TableCell>
 
-                        <TableCell>
+                        <TableCell align="center">
                           {item.solution?.title}
                         </TableCell>
 
-                        <TableCell>
+                        <TableCell align="center">
                           {item.count}
                         </TableCell>
                       </TableRow>

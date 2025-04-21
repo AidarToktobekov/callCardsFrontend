@@ -464,11 +464,11 @@ const StatsByReasons = () => {
               ) : (
                   paginatedList.map((item, i) => (
                       <TableRow key={i}>
-                        <TableCell>
+                        <TableCell align="center">
                           {item.reason}
                         </TableCell>
 
-                        <TableCell>
+                        <TableCell align="center">
                           {item.count}
                         </TableCell>
                       </TableRow>

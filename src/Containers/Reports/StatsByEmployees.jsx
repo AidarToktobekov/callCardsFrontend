@@ -503,15 +503,15 @@ const StatsByEmployees = () => {
               ) : (
                   paginatedList.map((item, i) => (
                       <TableRow key={i}>
-                        <TableCell>
+                        <TableCell align="center">
                           {item.sip}
                         </TableCell>
 
-                        <TableCell>
+                        <TableCell align="center">
                           {item.spec_full_name}
                         </TableCell>
 
-                        <TableCell>
+                        <TableCell align="center">
                           {item.count}
                         </TableCell>
                       </TableRow>

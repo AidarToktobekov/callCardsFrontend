@@ -971,43 +971,43 @@ const StatsByInactivesUsers = () => {
             ) : (
                 paginatedList.map(item => (
                     <TableRow key={item.id}>
-                      <TableCell>
+                      <TableCell align="center">
                         {item.id}
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell align="center">
                         {item.full_name}
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell align="center">
                         {item.call_from}
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell align="center">
                         {item.ls_abon}
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell align="center">
                         {item.phone_number.join(', ')}
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell align="center">
                         {item.created_at}
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell align="center">
                         {item.reason?.title}
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell align="center">
                         {item.solution?.title}
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell align="center">
                         {item.sip}
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell align="center">
                         {item.comment}
                       </TableCell>
                     </TableRow>
