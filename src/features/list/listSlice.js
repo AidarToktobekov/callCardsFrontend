@@ -2,7 +2,11 @@ import {createSlice} from "@reduxjs/toolkit";
 import {createCard, getClient, getList, getReasons, getSolution} from "./listThunk.js";
 
 const initialState = {
-  list: [],
+  list: {
+    total_results: null,
+    total_pages: null,
+    result: [],
+  },
   listLoading: false,
   createCardLoading: false,
   clients: [],
@@ -65,9 +69,8 @@ const ListSlice = createSlice({
     builder.addCase(createCard.pending, (state) => {
       state.createCardLoading = true;
     });
-    builder.addCase(createCard.fulfilled, (state, { payload: req }) => {
+    builder.addCase(createCard.fulfilled, (state) => {
       state.createCardLoading = false;
-      console.log(req)
     });
     builder.addCase(createCard.rejected, (state) => {
       state.createCardLoading = false;

@@ -1,16 +1,28 @@
 import {
-  Alert,
-  Button, Checkbox, CircularProgress, List, ListItem, ListItemButton, ListItemIcon, ListItemText,
-  Paper, Popover, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography
+  Button,
+  Checkbox,
+  CircularProgress,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Pagination,
+  Paper,
+  Popover,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography
 } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "../../app/hooks.js";
-import {
-  selectCardsInactives, selectCardsInactivesLoading,
-} from "../../features/reports/reportsSlice.js";
-import { useEffect, useState } from "react";
-import {
-  getCardsInactives,
-} from "../../features/reports/reportsThunk.js";
+import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
+import {selectCardsInactives, selectCardsInactivesLoading,} from "../../features/reports/reportsSlice.js";
+import {useEffect, useState} from "react";
+import {getCardsInactives,} from "../../features/reports/reportsThunk.js";
 import Grid from "@mui/material/Grid2";
 import {exportToExcel} from "../../excelExporter.js";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
@@ -22,12 +34,12 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import {selectEmployees, selectEmployeesLoading, selectUser} from "../../features/user/userSlice.js";
 import {
   selectReasonsList,
-  selectReasonsListLoading, selectSolutionsList, selectSolutionsListLoading
+  selectReasonsListLoading,
+  selectSolutionsList,
+  selectSolutionsListLoading
 } from "../../features/reasonsAndSolution/reasonsAndSolutionSlice.js";
 import {getEmployees} from "../../features/user/userThunk.js";
 import {getReasonsList, getSolutionsList} from "../../features/reasonsAndSolution/reasonsAndSolutionThunk.js";
-import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 
 const StatsByInactivesUsers = () => {
   const dispatch = useAppDispatch();
@@ -36,8 +48,9 @@ const StatsByInactivesUsers = () => {
   const user = useAppSelector(selectUser);
   const inactivesCards = useAppSelector(selectCardsInactives);
   const loading = useAppSelector(selectCardsInactivesLoading);
-  const [filteredList, setFilteredList] = useState(inactivesCards);
+  const [filteredList, setFilteredList] = useState(inactivesCards.result);
   const [exportExcel, setExportExcel] = useState([]);
+  const [listPage, setListPage] = useState(1);
   useEffect(() => {
     const newArr = [];
     filteredList.map(item=>{
@@ -100,8 +113,12 @@ const StatsByInactivesUsers = () => {
   }, [ dispatch, employees, reasons, solutions, hovered.type]);
 
   useEffect(() => {
-    setFilteredList(inactivesCards);
+    setFilteredList(inactivesCards.result);
   }, [inactivesCards]);
+
+  useEffect(() => {
+    dispatch(getCardsInactives(listPage));
+  }, [listPage, dispatch]);
 
   useEffect(() => {
     if (user?.role === "admin"){
@@ -109,7 +126,6 @@ const StatsByInactivesUsers = () => {
     }
     dispatch(getReasonsList());
     dispatch(getSolutionsList());
-    dispatch(getCardsInactives());
   }, [dispatch, user]);
 
   useEffect(() => {
@@ -120,7 +136,7 @@ const StatsByInactivesUsers = () => {
   const changeTableHeight = () => {
     const headerHeight = document.querySelector('header').offsetHeight;
     const windowHeight = window.innerHeight;
-    setTableHeight(windowHeight - headerHeight - 135);
+    setTableHeight(windowHeight - headerHeight - 243);
   };
 
   const [filteredEmployees, setFilteredEmployees] = useState([]);
@@ -151,11 +167,11 @@ const StatsByInactivesUsers = () => {
       createdAt: '',
       finishedAt: '',
     });
-    setFilteredList(inactivesCards);
+    setFilteredList(inactivesCards.result);
   }
 
   const handleFiltration = ()=>{
-    let newList = inactivesCards;
+    let newList = inactivesCards.result;
     if (filteredEmployees.length > 0){
       newList = newList.filter((item)=>
           filteredEmployees.some(employee => item.sip === employee.sip)
@@ -301,26 +317,10 @@ const StatsByInactivesUsers = () => {
     }
   }
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(50);
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedList = filteredList.slice(startIndex, startIndex + itemsPerPage);
-
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  useEffect(() => {
-    if (itemsPerPage > 200) {
-      setSnackbarOpen(true);
-    }
-  }, [itemsPerPage]);
-
-  const handleCloseSnackBar = () => {
-    setSnackbarOpen(false);
-  };
-  
   return (
     <>
-      <Grid container spacing={2} p={"20px"}>
+      <Grid container spacing={2} p={"20px"}
+      >
         <Typography
             sx={{
               fontSize: "25px",
@@ -330,79 +330,6 @@ const StatsByInactivesUsers = () => {
         >
           Отчет по картам звонков
         </Typography>
-        <Grid container alignItems={"center"} spacing={2} sx={{
-          border: '1px solid #90caf9',
-          ml: "auto",
-          borderRadius: "5px",
-          color: '#90caf9',
-          fontFamily: 'Roboto, sans-serif',
-          px: 2,
-        }}>
-          <Grid container alignItems={"center"} spacing={"5px"}>
-            Кол-во строк:
-            <TextField
-                type="number"
-                value={itemsPerPage}
-                onChange={(e)=>setItemsPerPage(Number(e.target.value))}
-                variant={"filled"}
-                sx={{
-                  borderRadius: '5px',
-                }}
-                inputProps={{
-                  min: 1,
-                  sx: {
-                    color: '#90caf9',
-                    padding: "5px 5px",
-                    maxWidth: "50px",
-                    textAlign: "center",
-                  }
-                }}
-            />
-            <Snackbar
-                open={snackbarOpen}
-                autoHideDuration={5000}
-                onClose={handleCloseSnackBar}
-            >
-              <Alert
-                  onClose={handleCloseSnackBar}
-                  severity="error"
-                  variant="filled"
-                  sx={{ width: '100%' }}
-              >
-                При большом колличестве строк приложение будет виснуть!
-              </Alert>
-            </Snackbar>
-          </Grid>
-          <Grid>
-            {(currentPage - 1) * itemsPerPage + 1} - {currentPage * itemsPerPage > filteredList.length ?
-              filteredList.length : currentPage * itemsPerPage
-          }
-          </Grid>
-          <Grid>
-            <Button disabled={currentPage <= 1} onClick={()=> {
-              if (currentPage !== 1){
-                setCurrentPage(prev => prev - 1)
-              }
-            }} sx={{
-              minWidth: 'unset',
-              p: "5px",
-              borderRadius: '50%'
-            }}>
-              <ArrowLeftIcon></ArrowLeftIcon>
-            </Button>
-            <Button disabled={(currentPage - 1) * itemsPerPage + itemsPerPage > filteredList.length} onClick={()=> {
-              if((currentPage - 1) * itemsPerPage + itemsPerPage < filteredList.length) {
-                setCurrentPage(prev => prev + 1)
-              }
-            }} sx={{
-              minWidth: 'unset',
-              p: "5px",
-              borderRadius: '50%'
-            }}>
-              <ArrowRightIcon></ArrowRightIcon>
-            </Button>
-          </Grid>
-        </Grid>
         <Button aria-describedby={id} variant="outlined" onClick={handleClick}>
           Фильтрация
         </Button>
@@ -778,6 +705,9 @@ const StatsByInactivesUsers = () => {
           Export excel
         </Button>
       </Grid>
+      <Typography p={"10px 20px"}>
+        Всего: {inactivesCards.total_results}
+      </Typography>
       <TableContainer component={Paper} sx={{
         height: `${tableHeight}px`,
         width: '100%'
@@ -995,7 +925,7 @@ const StatsByInactivesUsers = () => {
                   </TableCell>
                 </TableRow>
             ) : (
-                paginatedList.map(item => (
+                filteredList.map(item => (
                     <TableRow key={item.id}>
                       <TableCell align="center">
                         {item.id}
@@ -1042,58 +972,15 @@ const StatsByInactivesUsers = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
-
-
-      {/*Отчет по неактивным пользователям*/}
-      {/*<Grid container justifyContent="space-between" p={"20px"}>*/}
-      {/*  <Typography*/}
-      {/*      sx={{*/}
-      {/*        fontSize: "25px",*/}
-      {/*        color: '#fff',*/}
-      {/*        textAlign: 'center',*/}
-      {/*      }}*/}
-      {/*  >*/}
-      {/*    Отчет по неактивным пользователям*/}
-      {/*  </Typography>*/}
-      {/*  <Button variant={"outlined"} onClick={()=> {*/}
-      {/*    exportToExcel(filteredList, "Стат-ка_по_не_активным")*/}
-      {/*  }}>*/}
-      {/*    Export excel*/}
-      {/*  </Button>*/}
-      {/*</Grid>*/}
-      {/*<Paper*/}
-      {/*  sx={{*/}
-      {/*    height: `${tableHeight}px`,*/}
-      {/*    width: '100%'*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  <DataGrid*/}
-      {/*    rows={inactivesCards}*/}
-      {/*    columns={columns}*/}
-      {/*    initialState={{}}*/}
-      {/*    pageSizeOptions={[*/}
-      {/*      20,*/}
-      {/*      50,*/}
-      {/*      100*/}
-      {/*    ]}*/}
-      {/*    pageSize={100}*/}
-      {/*    sx={{ border: 0 }}*/}
-      {/*    loading={loading}*/}
-      {/*    onFilterModelChange={(model)=>{*/}
-      {/*      const filteredRows = inactivesCards.filter((row) => {*/}
-      {/*        return model.items.every((filter) => {*/}
-      {/*          if (!filter.value) return true; // No filter applied*/}
-      {/*          return String(row[filter.field])*/}
-      {/*              .toLowerCase()*/}
-      {/*              .includes(filter.value.toLowerCase());*/}
-      {/*        });*/}
-      {/*      });*/}
-      {/*      setFilteredList(filteredRows);*/}
-      {/*    }}*/}
-      {/*  />*/}
-      {/*</Paper>*/}
-
+      <Grid sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        py: 2,
+      }}>
+        <Pagination count={inactivesCards.total_pages} color="primary" onChange={(e, value)=>setListPage(value)} sx={{
+          justifyContent: 'center',
+        }}/>
+      </Grid>
     </>
   );
 };

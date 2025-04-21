@@ -35,9 +35,9 @@ export const getSolutionReport = createAsyncThunk( "reports/getSolutionReport",
     });
 
 export const getRepeatedCalls = createAsyncThunk( "reports/getRepeatedCalls",
-    async()=>{
+    async(listPage)=>{
         try{
-            const {data: repeatedCalls} = await axiosApi.get("/cards/repeated_calls");
+            const {data: repeatedCalls} = await axiosApi.get(`/cards/repeated_calls?page=${listPage}&page_size=${100}`);
             return repeatedCalls || [];
         }
         catch(error){
@@ -46,9 +46,9 @@ export const getRepeatedCalls = createAsyncThunk( "reports/getRepeatedCalls",
     });
 
 export const getCardsInactives = createAsyncThunk( "reports/getCardsInactives",
-    async()=>{
+    async(listPage)=>{
         try{
-            const {data: cardsInactives} = await axiosApi.get("/cards/inactives");
+            const {data: cardsInactives} = await axiosApi.get(`/cards/inactives?page=${listPage}&page_size=${100}`);
             return cardsInactives || [];
         }
         catch(error){

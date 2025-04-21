@@ -3,7 +3,6 @@ import {selectList, selectListLoading} from "../../features/list/listSlice.js";
 import {useEffect, useState} from "react";
 import {getList} from "../../features/list/listThunk.js";
 import {
-  Alert,
   Button,
   Checkbox,
   CircularProgress,
@@ -12,9 +11,9 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Pagination,
   Paper,
   Popover,
-  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -41,8 +40,6 @@ import {
 } from "../../features/reasonsAndSolution/reasonsAndSolutionSlice.js";
 import {selectEmployees, selectEmployeesLoading, selectUser} from "../../features/user/userSlice.js";
 import {getEmployees} from "../../features/user/userThunk.js";
-import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
 const CardsList = () => {
   const dispatch = useAppDispatch();
@@ -60,8 +57,9 @@ const CardsList = () => {
   const employeesLoading = useAppSelector(selectEmployeesLoading);
 
   const [tableHeight, setTableHeight] = useState(0);
-  const [filteredList, setFilteredList] = useState(list);
+  const [filteredList, setFilteredList] = useState(list.result);
   const [exportExcel, setExportExcel] = useState([]);
+  const [listPage, setListPage] = useState(1);
   useEffect(() => {
     const newArr = [];
     filteredList.map(item=>{
@@ -114,8 +112,12 @@ const CardsList = () => {
   }, [ dispatch, employees, reasons, solutions, hovered.type]);
 
   useEffect(() => {
-    setFilteredList(list);
+    setFilteredList(list.result);
   }, [list]);
+
+  useEffect(() => {
+    dispatch(getList(listPage));
+  }, [dispatch, listPage]);
 
   useEffect(() => {
     if (user?.role === "admin"){
@@ -123,7 +125,6 @@ const CardsList = () => {
     }
     dispatch(getReasonsList());
     dispatch(getSolutionsList());
-    dispatch(getList());
   }, [dispatch, user]);
 
   useEffect(() => {
@@ -134,7 +135,7 @@ const CardsList = () => {
   const changeTableHeight = () => {
     const headerHeight = document.querySelector('header').offsetHeight;
     const windowHeight = window.innerHeight;
-    setTableHeight(windowHeight - headerHeight - 135);
+    setTableHeight(windowHeight - headerHeight - 243);
   };
 
   const [filteredEmployees, setFilteredEmployees] = useState([]);
@@ -165,11 +166,11 @@ const CardsList = () => {
       createdAt: '',
       finishedAt: '',
     });
-    setFilteredList(list);
+    setFilteredList(list.result);
   }
 
   const handleFiltration = ()=>{
-    let newList = list;
+    let newList = list.result;
     if (filteredEmployees.length > 0){
       newList = newList.filter((item)=>
           filteredEmployees.some(employee => item.sip === employee.sip)
@@ -315,26 +316,10 @@ const CardsList = () => {
     }
   }
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(50);
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedList = filteredList.slice(startIndex, startIndex + itemsPerPage);
-
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  useEffect(() => {
-    if (itemsPerPage > 200) {
-      setSnackbarOpen(true);
-    }
-  }, [itemsPerPage]);
-
-  const handleCloseSnackBar = () => {
-    setSnackbarOpen(false);
-  };
-
   return (
     <>
-      <Grid container spacing={2} p={"20px"}>
+      <Grid container spacing={2} p={"20px"}
+      >
         <Typography
             sx={{
               fontSize: "25px",
@@ -344,80 +329,9 @@ const CardsList = () => {
         >
           Отчет по картам звонков
         </Typography>
-        <Grid container alignItems={"center"} spacing={2} sx={{
-          border: '1px solid #90caf9',
+        <Button aria-describedby={id} variant="outlined" onClick={handleClick} sx={{
           ml: "auto",
-          borderRadius: "5px",
-          color: '#90caf9',
-          fontFamily: 'Roboto, sans-serif',
-          px: 2,
         }}>
-          <Grid container alignItems={"center"} spacing={"5px"}>
-            Кол-во строк:
-              <TextField
-                  type="number"
-                  value={itemsPerPage}
-                  onChange={(e)=>setItemsPerPage(Number(e.target.value))}
-                  variant={"filled"}
-                  sx={{
-                    borderRadius: '5px',
-                  }}
-                  inputProps={{
-                    min: 1,
-                    sx: {
-                      color: '#90caf9',
-                      padding: "5px 5px",
-                      maxWidth: "50px",
-                      textAlign: "center",
-                    }
-              }}
-              />
-            <Snackbar
-                open={snackbarOpen}
-                autoHideDuration={5000}
-                onClose={handleCloseSnackBar}
-            >
-              <Alert
-                  onClose={handleCloseSnackBar}
-                  severity="error"
-                  variant="filled"
-                  sx={{ width: '100%' }}
-              >
-                При большом колличестве строк приложение будет виснуть!
-              </Alert>
-            </Snackbar>
-          </Grid>
-          <Grid>
-            {(currentPage - 1) * itemsPerPage + 1} - {currentPage * itemsPerPage > filteredList.length ?
-              filteredList.length : currentPage * itemsPerPage
-            }
-          </Grid>
-          <Grid>
-            <Button disabled={currentPage <= 1} onClick={()=> {
-              if (currentPage !== 1){
-                setCurrentPage(prev => prev - 1)
-              }
-            }} sx={{
-              minWidth: 'unset',
-              p: "5px",
-              borderRadius: '50%'
-            }}>
-              <ArrowLeftIcon></ArrowLeftIcon>
-            </Button>
-            <Button disabled={(currentPage - 1) * itemsPerPage + itemsPerPage > filteredList.length} onClick={()=> {
-              if((currentPage - 1) * itemsPerPage + itemsPerPage < filteredList.length) {
-                setCurrentPage(prev => prev + 1)
-              }
-            }} sx={{
-              minWidth: 'unset',
-              p: "5px",
-              borderRadius: '50%'
-            }}>
-              <ArrowRightIcon></ArrowRightIcon>
-            </Button>
-          </Grid>
-        </Grid>
-        <Button aria-describedby={id} variant="outlined" onClick={handleClick}>
           Фильтрация
         </Button>
         <Popover
@@ -787,6 +701,10 @@ const CardsList = () => {
           Export excel
         </Button>
       </Grid>
+
+      <Typography p={"10px 20px"}>
+        Всего: {list.total_results}
+      </Typography>
       <TableContainer component={Paper} sx={{
         height: `${tableHeight}px`,
         width: '100%'
@@ -1004,7 +922,7 @@ const CardsList = () => {
                   </TableCell>
                 </TableRow>
             ) : (
-                paginatedList.map(item => (
+                filteredList.map(item => (
                     <TableRow key={item.id}>
                       <TableCell align="center">
                         {item.id}
@@ -1051,6 +969,15 @@ const CardsList = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Grid sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        py: 2,
+      }}>
+        <Pagination count={list.total_pages} color="primary" onChange={(e, value)=>setListPage(value)} sx={{
+          justifyContent: 'center',
+        }}/>
+      </Grid>
     </>
   );
 };

@@ -1,4 +1,4 @@
-export const API_URL = 'http://10.1.4.9:8010';
+export const API_URL = 'http://10.1.5.59:8010';
 
 export const PAGE_NAMES = {
   '/': 'Новая карточка',

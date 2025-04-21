@@ -3,7 +3,6 @@ import {selectRepeatedCalls, selectRepeatedCallsLoading,} from "../../features/r
 import {useEffect, useState} from "react";
 import {getCardsReport, getRepeatedCalls,} from "../../features/reports/reportsThunk.js";
 import {
-  Alert,
   Button,
   Checkbox,
   CircularProgress,
@@ -13,9 +12,9 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Pagination,
   Paper,
   Popover,
-  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -27,8 +26,6 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import {exportToExcel} from "../../excelExporter.js";
-import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -46,8 +43,10 @@ const StatsByRepeatedCalls = () => {
   
   const repeatedCalls = useAppSelector(selectRepeatedCalls);
   const loading = useAppSelector(selectRepeatedCallsLoading);
-  const [filteredList, setFilteredList] = useState(repeatedCalls);
+  const [filteredList, setFilteredList] = useState(repeatedCalls.result);
   const [exportExcel, setExportExcel] = useState([]);
+  const [listPage, setListPage] = useState(1);
+
   useEffect(() => {
     const newArr = [];
     filteredList.map(item=>{
@@ -64,7 +63,7 @@ const StatsByRepeatedCalls = () => {
   }, [filteredList]);
 
   useEffect(() => {
-    setFilteredList(repeatedCalls);
+    setFilteredList(repeatedCalls.result);
   }, [repeatedCalls]);
 
   useEffect(() => {
@@ -77,9 +76,11 @@ const StatsByRepeatedCalls = () => {
       document.body.addEventListener('resize', changeTableHeight);
     }
   }, [tableHeight]);
-  
+
   useEffect(() => {
-    dispatch(getRepeatedCalls());
+    dispatch(getRepeatedCalls(listPage));
+  }, [listPage, dispatch]);
+  useEffect(() => {
     dispatch(getReasonsList());
     dispatch(getSolutionsList());
   }, [dispatch]);
@@ -88,30 +89,13 @@ const StatsByRepeatedCalls = () => {
     const headerHeight = document.querySelector('header').offsetHeight;
     const windowHeight = window.innerHeight;
     
-    setTableHeight((windowHeight) - headerHeight - 135);
+    setTableHeight((windowHeight) - headerHeight - 243);
   }
 
   const reasons = useAppSelector(selectReasonsList);
   const reasonLoading = useAppSelector(selectReasonsListLoading);
   const solutions = useAppSelector(selectSolutionsList);
   const solutionLoading = useAppSelector(selectSolutionsListLoading);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(50);
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedList = filteredList.slice(startIndex, startIndex + itemsPerPage);
-
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  useEffect(() => {
-    if (itemsPerPage > 200) {
-      setSnackbarOpen(true);
-    }
-  }, [itemsPerPage]);
-
-  const handleCloseSnackBar = () => {
-    setSnackbarOpen(false);
-  };
 
   const [anchorElReason, setAnchorElReason] = useState(null);
   const [anchorElSolution, setAnchorElSolution] = useState(null);
@@ -155,7 +139,7 @@ const StatsByRepeatedCalls = () => {
   const [filteredSolutions, setFilteredSolutions] = useState([]);
 
   useEffect(() => {
-    let newList = repeatedCalls;
+    let newList = repeatedCalls.result;
     if (filteredReasons.length > 0){
       newList = newList.filter((item)=>
           filteredReasons.some(reason => item.reason.id === reason.id)
@@ -287,7 +271,8 @@ const StatsByRepeatedCalls = () => {
           variant={"h1"}
           maxWidth={"lg"}
       >
-        <Grid container justifyContent="space-between" spacing={1} p={"20px"}>
+        <Grid container justifyContent="space-between" spacing={1} p={"20px"}
+        >
           <Typography
               sx={{
                 fontSize: "25px",
@@ -297,84 +282,15 @@ const StatsByRepeatedCalls = () => {
           >
             Отчет по причинам и решениям
           </Typography>
-          <Grid container alignItems={"center"} spacing={2} sx={{
-            border: '1px solid #90caf9',
-            ml: "auto",
-            borderRadius: "5px",
-            color: '#90caf9',
-            fontFamily: 'Roboto, sans-serif',
-            px: 2,
-          }}
-          >
-            <Grid container alignItems={"center"} spacing={"5px"}>
-              Кол-во строк:
-              <TextField
-                  type="number"
-                  value={itemsPerPage}
-                  onChange={(e)=>setItemsPerPage(Number(e.target.value))}
-                  variant={"filled"}
-                  sx={{
-                    borderRadius: '5px',
-                  }}
-                  inputProps={{
-                    min: 1,
-                    sx: {
-                      color: '#90caf9',
-                      padding: "5px 5px",
-                      maxWidth: "50px",
-                      textAlign: "center",
-                    }
-                  }}
-              />
-              <Snackbar
-                  open={snackbarOpen}
-                  autoHideDuration={5000}
-                  onClose={handleCloseSnackBar}
-              >
-                <Alert
-                    onClose={handleCloseSnackBar}
-                    severity="error"
-                    variant="filled"
-                    sx={{ width: '100%' }}
-                >
-                  При большом колличестве строк приложение будет виснуть!
-                </Alert>
-              </Snackbar>
-            </Grid>
-            <Grid>
-              {(currentPage - 1) * itemsPerPage + 1} - {currentPage * itemsPerPage > filteredList.length ?
-                filteredList.length : currentPage * itemsPerPage
-            }
-            </Grid>
-            <Grid>
-              <Button disabled={currentPage <= 1} onClick={()=> {
-                if (currentPage !== 1){
-                  setCurrentPage(prev => prev - 1)
-                }
-              }} sx={{
-                minWidth: 'unset',
-                p: "5px",
-                borderRadius: '50%'
-              }}>
-                <ArrowLeftIcon></ArrowLeftIcon>
-              </Button>
-              <Button disabled={(currentPage - 1) * itemsPerPage + itemsPerPage > filteredList.length} onClick={()=> {
-                if((currentPage - 1) * itemsPerPage + itemsPerPage < filteredList.length) {
-                  setCurrentPage(prev => prev + 1)
-                }
-              }} sx={{
-                minWidth: 'unset',
-                p: "5px",
-                borderRadius: '50%'
-              }}>
-                <ArrowRightIcon></ArrowRightIcon>
-              </Button>
-            </Grid>
-          </Grid>
-          <Button variant={"outlined"} onClick={()=>exportToExcel(exportExcel, "Стат-ка_по_сотрудникам")}>
+          <Button variant={"outlined"} sx={{
+            ml: 'auto'
+          }} onClick={()=>exportToExcel(exportExcel, "Стат-ка_по_сотрудникам")}>
             Export excel
           </Button>
         </Grid>
+        <Typography p={"10px 20px"}>
+          Всего: {repeatedCalls.total_results}
+        </Typography>
         <TableContainer component={Paper} sx={{
           height: `${tableHeight}px`,
           width: '100%'
@@ -650,7 +566,7 @@ const StatsByRepeatedCalls = () => {
                     </TableCell>
                   </TableRow>
               ) : (
-                  paginatedList.map((item, i) => (
+                  repeatedCalls.result.map((item, i) => (
                       <TableRow key={i}>
                         <TableCell align="center">
                           {item.ls_abon}
@@ -678,6 +594,15 @@ const StatsByRepeatedCalls = () => {
             </TableBody>
           </Table>
         </TableContainer>
+      <Grid sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        py: 2,
+      }}>
+        <Pagination count={repeatedCalls.total_pages} color="primary" onChange={(e, value)=>setListPage(value)} sx={{
+          justifyContent: 'center',
+        }}/>
+      </Grid>
       </Container>
     </>
   );

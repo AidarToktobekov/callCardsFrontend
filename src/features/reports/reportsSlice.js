@@ -14,9 +14,17 @@ const initialState = {
     treatmentReportLoading: false,
     solutionReport: [],
     solutionReportLoading: false,
-    repeatedCalls: [],
+    repeatedCalls: {
+        total_results: null,
+        total_pages: null,
+        result: [],
+    },
     repeatedCallsLoading: false,
-    cardsInactives: [],
+    cardsInactives: {
+        total_results: null,
+        total_pages: null,
+        result: [],
+    },
     cardsInactivesLoading: false,
 };
 
