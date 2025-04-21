@@ -48,7 +48,7 @@ const StatsByInactivesUsers = () => {
   const user = useAppSelector(selectUser);
   const inactivesCards = useAppSelector(selectCardsInactives);
   const loading = useAppSelector(selectCardsInactivesLoading);
-  const [filteredList, setFilteredList] = useState(inactivesCards.result);
+  const [filteredList, setFilteredList] = useState(inactivesCards);
   const [exportExcel, setExportExcel] = useState([]);
   const [listPage, setListPage] = useState(1);
   useEffect(() => {
@@ -113,7 +113,7 @@ const StatsByInactivesUsers = () => {
   }, [ dispatch, employees, reasons, solutions, hovered.type]);
 
   useEffect(() => {
-    setFilteredList(inactivesCards.result);
+    setFilteredList(inactivesCards);
   }, [inactivesCards]);
 
   useEffect(() => {
@@ -136,7 +136,7 @@ const StatsByInactivesUsers = () => {
   const changeTableHeight = () => {
     const headerHeight = document.querySelector('header').offsetHeight;
     const windowHeight = window.innerHeight;
-    setTableHeight(windowHeight - headerHeight - 243);
+    setTableHeight(windowHeight - headerHeight - 147);
   };
 
   const [filteredEmployees, setFilteredEmployees] = useState([]);
@@ -167,11 +167,11 @@ const StatsByInactivesUsers = () => {
       createdAt: '',
       finishedAt: '',
     });
-    setFilteredList(inactivesCards.result);
+    setFilteredList(inactivesCards);
   }
 
   const handleFiltration = ()=>{
-    let newList = inactivesCards.result;
+    let newList = inactivesCards;
     if (filteredEmployees.length > 0){
       newList = newList.filter((item)=>
           filteredEmployees.some(employee => item.sip === employee.sip)
@@ -316,7 +316,9 @@ const StatsByInactivesUsers = () => {
       }
     }
   }
-
+  
+  console.log(filteredList);
+  
   return (
     <>
       <Grid container spacing={2} p={"20px"}
@@ -330,7 +332,7 @@ const StatsByInactivesUsers = () => {
         >
           Отчет по картам звонков
         </Typography>
-        <Button aria-describedby={id} variant="outlined" onClick={handleClick}>
+        <Button aria-describedby={id} variant="outlined" onClick={handleClick} sx={{marginLeft: 'auto'}}>
           Фильтрация
         </Button>
         <Popover
@@ -705,9 +707,6 @@ const StatsByInactivesUsers = () => {
           Export excel
         </Button>
       </Grid>
-      <Typography p={"10px 20px"}>
-        Всего: {inactivesCards.total_results}
-      </Typography>
       <TableContainer component={Paper} sx={{
         height: `${tableHeight}px`,
         width: '100%'
@@ -972,15 +971,6 @@ const StatsByInactivesUsers = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Grid sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        py: 2,
-      }}>
-        <Pagination count={inactivesCards.total_pages} color="primary" onChange={(e, value)=>setListPage(value)} sx={{
-          justifyContent: 'center',
-        }}/>
-      </Grid>
     </>
   );
 };

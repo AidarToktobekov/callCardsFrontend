@@ -20,11 +20,7 @@ const initialState = {
         result: [],
     },
     repeatedCallsLoading: false,
-    cardsInactives: {
-        total_results: null,
-        total_pages: null,
-        result: [],
-    },
+    cardsInactives: [],
     cardsInactivesLoading: false,
 };
 
