@@ -430,11 +430,6 @@ const CardsList = () => {
               horizontal: 'left',
             }}
             PaperProps={{
-              onMouseLeave: () =>
-                  setHovered({
-                    state: false,
-                    top: '0',
-                  }),
               sx: {
                 overflow: 'visible',
               },
