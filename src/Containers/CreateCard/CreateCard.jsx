@@ -9,8 +9,10 @@ import {
   selectClients,
   selectClientsLoading,
   selectCreateCardLoading,
-  selectReasons, selectReasonsLoading,
-  selectSolutions, selectSolutionsLoading
+  selectReasons,
+  selectReasonsLoading,
+  selectSolutions,
+  selectSolutionsLoading
 } from "../../features/list/listSlice.js";
 import {
   createCard, getClient, getReasons, getSolution
@@ -35,6 +37,13 @@ const CreateCard = () => {
       name,
       value
     } = e.target;
+    
+    if ([
+      'ls_abon',
+      'full_name',
+      'address'
+    ].includes(name) && state?.reason?.title !== 'Интерком') return;
+    
     setState(prevState => (
       {
         ...prevState,
@@ -51,6 +60,17 @@ const CreateCard = () => {
           [name]: value,
         }
       ));
+    }
+    
+    if (!!state?.full_name || state?.ls_abon || state?.address) {
+      setState(prevState => (
+        {
+          ...prevState,
+          full_name: '',
+          ls_abon: '',
+          address: '',
+        }
+      ))
     }
   }
   
@@ -213,7 +233,7 @@ const CreateCard = () => {
               >
                 <TextField
                   variant={"outlined"}
-                  label={"Номер или лицевой счет"}
+                  label={"Найти абонента..."}
                   value={phoneNumber}
                   onChange={changePhoneNumber}
                   sx={{ flexGrow: 1 }}
@@ -231,7 +251,7 @@ const CreateCard = () => {
                     'Желает подключиться'
                   ].includes(state?.reason?.title)}
                   select
-                  label='Абоненты'
+                  label='Найденные абоненты'
                   id='card'
                   name='card'
                   value={cards.length > 0 ? String(cardIndex) : ""}
@@ -248,82 +268,6 @@ const CreateCard = () => {
                   ))}
                 </TextField>
               </div>
-              <TextField
-                label={"Номер с которого звонили"}
-                name={"call_from"}
-                onChange={inputChangeHandler}
-                sx={{ width: 'calc(50% - 7.5px)' }}
-                value={state?.call_from || ''}
-                required
-              />
-              <TextField
-                required={![
-                  'Callback',
-                  'Желает подключиться'
-                ].includes(state?.reason?.title)}
-                label={"Лицевой счет"}
-                value={state?.ls_abon || ''}
-                sx={{ width: 'calc(50% - 7.5px)' }}
-              />
-              <TextField
-                required={![
-                  'Callback',
-                ].includes(state?.reason?.title)}
-                label={"ФИО"}
-                value={state?.full_name || ''}
-                sx={{ width: 'calc(50% - 7.5px)' }}
-              />
-              <TextField
-                required={![
-                  'Callback',
-                ].includes(state?.reason?.title)}
-                label={"Адрес"}
-                value={state?.address || ''}
-                sx={{ width: 'calc(50% - 7.5px)' }}
-              />
-              <Autocomplete
-                required
-                multiple
-                options={state?.phone_number}
-                value={Array.isArray(state?.phone_number) ? state.phone_number : []}
-                disableClearable
-                readOnly
-                renderInput={params =>
-                  <TextField {...params} label={"Номера"}></TextField>}
-                sx={{ width: 'calc(50% - 7.5px)' }}
-              />
-              <TextField
-                required={![
-                  'Callback',
-                  'Желает подключиться',
-                  'Ждет подключения',
-                  "Интерком"
-                ].includes(state?.reason?.title)}
-                label={"Мак роутера"}
-                value={state?.mac_address || ''}
-                sx={{ width: 'calc(50% - 7.5px)' }}
-              />
-              <TextField
-                required={![
-                  'Callback',
-                  'Желает подключиться',
-                  'Ждет подключения',
-                  'Интерком'
-                ].includes(state?.reason?.title)}
-                label={"Айпи адрес"}
-                value={state?.ip_address || ''}
-                sx={{ width: 'calc(50% - 7.5px)' }}
-              />
-              <TextField
-                label={"mac_onu"}
-                value={state?.mac_onu || ""}
-                sx={{ width: 'calc(50% - 7.5px)' }}
-              />
-              <TextField
-                label={"ip_olt"}
-                value={state?.ip_olt || ""}
-                sx={{ width: 'calc(50% - 7.5px)' }}
-              />
               <Autocomplete
                 open={openReason}
                 onOpen={() => setOpenReason(true)}
@@ -403,6 +347,88 @@ const CreateCard = () => {
                 sx={{
                   width: 'calc(50% - 7.5px)',
                 }}
+              />
+              <TextField
+                label={"Номер с которого звонили"}
+                name={"call_from"}
+                onChange={inputChangeHandler}
+                sx={{ width: 'calc(50% - 7.5px)' }}
+                value={state?.call_from || ''}
+                required
+              />
+              <TextField
+                required={![
+                  'Callback',
+                  'Желает подключиться'
+                ].includes(state?.reason?.title)}
+                name='ls_abon'
+                label={"Лицевой счет"}
+                value={state?.ls_abon || ''}
+                sx={{ width: 'calc(50% - 7.5px)' }}
+                onChange={inputChangeHandler}
+              />
+              <TextField
+                required={![
+                  'Callback',
+                ].includes(state?.reason?.title)}
+                name='full_name'
+                label={"ФИО"}
+                value={state?.full_name || ''}
+                sx={{ width: 'calc(50% - 7.5px)' }}
+                onChange={inputChangeHandler}
+              />
+              <TextField
+                required={![
+                  'Callback',
+                ].includes(state?.reason?.title)}
+                name='address'
+                label={"Адрес"}
+                value={state?.address || ''}
+                sx={{ width: 'calc(50% - 7.5px)' }}
+                onChange={inputChangeHandler}
+              />
+              <Autocomplete
+                required
+                multiple
+                options={state?.phone_number}
+                value={Array.isArray(state?.phone_number) ? state.phone_number : []}
+                disableClearable
+                readOnly
+                renderInput={params =>
+                  <TextField {...params} label={"Номера"}></TextField>}
+                sx={{ width: 'calc(50% - 7.5px)' }}
+              />
+              <TextField
+                required={![
+                  'Callback',
+                  'Желает подключиться',
+                  'Ждет подключения',
+                  "Интерком"
+                ].includes(state?.reason?.title)}
+                label={"Мак роутера"}
+                value={state?.mac_address || ''}
+                sx={{ width: 'calc(50% - 7.5px)' }}
+              />
+              <TextField
+                required={![
+                  'Callback',
+                  'Желает подключиться',
+                  'Ждет подключения',
+                  'Интерком'
+                ].includes(state?.reason?.title)}
+                label={"Айпи адрес"}
+                value={state?.ip_address || ''}
+                sx={{ width: 'calc(50% - 7.5px)' }}
+              />
+              <TextField
+                label={"mac_onu"}
+                value={state?.mac_onu || ""}
+                sx={{ width: 'calc(50% - 7.5px)' }}
+              />
+              <TextField
+                label={"ip_olt"}
+                value={state?.ip_olt || ""}
+                sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
                 label='Комментарий'
