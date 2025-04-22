@@ -45,6 +45,8 @@ import { getEmployees } from "../../features/user/userThunk.js";
 import {
   getReasonsList, getSolutionsList
 } from "../../features/reasonsAndSolution/reasonsAndSolutionThunk.js";
+import Calendar from "../../Components/Calendar/Calendar.jsx";
+import dayjs from "dayjs";
 
 const StatsByInactivesUsers = () => {
   const dispatch = useAppDispatch();
@@ -89,6 +91,15 @@ const StatsByInactivesUsers = () => {
   
   const employees = useAppSelector(selectEmployees);
   const employeesLoading = useAppSelector(selectEmployeesLoading);
+
+  const [searchDate, setSearchDate] = useState({
+    start: dayjs().startOf('month').format('YYYY-MM-DD'),
+    end: dayjs().endOf('month').format('YYYY-MM-DD'),
+  });
+
+  const searchCards = ()=>{
+    dispatch(getCardsInactives(searchDate));
+  }
   
   const [anchorEl, setAnchorEl] = useState(null);
   const [hovered, setHovered] = useState({
@@ -127,12 +138,6 @@ const StatsByInactivesUsers = () => {
   }, [inactivesCards]);
   
   useEffect(() => {
-    dispatch(getCardsInactives());
-  }, [
-    dispatch
-  ]);
-  
-  useEffect(() => {
     if (user?.role === "admin") {
       dispatch(getEmployees());
     }
@@ -151,7 +156,7 @@ const StatsByInactivesUsers = () => {
   const changeTableHeight = () => {
     const headerHeight = document.querySelector('header').offsetHeight;
     const windowHeight = window.innerHeight;
-    setTableHeight(windowHeight - headerHeight - 135);
+    setTableHeight(windowHeight - headerHeight - 154);
   };
   
   const [filteredEmployees, setFilteredEmployees] = useState([]);
@@ -345,8 +350,6 @@ const StatsByInactivesUsers = () => {
     }
   }
   
-  console.log(filteredList);
-  
   return (
     <>
       <Grid
@@ -363,11 +366,18 @@ const StatsByInactivesUsers = () => {
         >
           Отчет по картам звонков
         </Typography>
+        <Grid container spacing={2} alignItems="center" sx={{ marginLeft: 'auto' }}>
+          <Calendar setState={setSearchDate}/>
+          <Button variant={"contained"} color={"primary"} onClick={searchCards} loading={loading} sx={{
+            height: "56px",
+          }}>
+            Поиск
+          </Button>
+        </Grid>
         <Button
           aria-describedby={id}
           variant='outlined'
           onClick={handleClick}
-          sx={{ marginLeft: 'auto' }}
         >
           Фильтрация
         </Button>
