@@ -1,7 +1,10 @@
-import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
-import {selectRepeatedCalls, selectRepeatedCallsLoading,} from "../../features/reports/reportsSlice.js";
-import {useEffect, useState} from "react";
-import {getRepeatedCalls,} from "../../features/reports/reportsThunk.js";
+import { useAppDispatch, useAppSelector } from "../../app/hooks.js";
+import {
+  selectRepeatedCalls,
+  selectRepeatedCallsLoading,
+} from "../../features/reports/reportsSlice.js";
+import { useEffect, useState } from "react";
+import { getRepeatedCalls, } from "../../features/reports/reportsThunk.js";
 import {
   Button,
   Checkbox,
@@ -25,7 +28,7 @@ import {
   Typography
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import {exportToExcel} from "../../excelExporter.js";
+import { exportToExcel } from "../../excelExporter.js";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -35,7 +38,10 @@ import {
   selectSolutionsList,
   selectSolutionsListLoading
 } from "../../features/reasonsAndSolution/reasonsAndSolutionSlice.js";
-import {getReasonsList, getSolutionsList} from "../../features/reasonsAndSolution/reasonsAndSolutionThunk.js";
+import {
+  getReasonsList,
+  getSolutionsList
+} from "../../features/reasonsAndSolution/reasonsAndSolutionThunk.js";
 import dayjs from "dayjs";
 import Calendar from "../../Components/Calendar/Calendar.jsx";
 
@@ -47,16 +53,23 @@ const StatsByRepeatedCalls = () => {
   const loading = useAppSelector(selectRepeatedCallsLoading);
   const [filteredList, setFilteredList] = useState(repeatedCalls.result);
   const [exportExcel, setExportExcel] = useState([]);
-
+  
   const [searchDate, setSearchDate] = useState({
     start: dayjs().startOf('month').format('YYYY-MM-DD'),
     end: dayjs().endOf('month').format('YYYY-MM-DD'),
   });
-
-  const searchCards = ({date, listPage})=>{
+  
+  const searchCards = ({
+    date,
+    listPage
+  }) => {
     dispatch(getRepeatedCalls({
-      date: date,
-      listPage: listPage}));
+      date: {
+        ...date,
+        end: dayjs(date.end).add(1, 'day').format('YYYY-MM-DD')
+      },
+      listPage: listPage
+    }));
   }
   
   useEffect(() => {
@@ -84,7 +97,7 @@ const StatsByRepeatedCalls = () => {
       document.body.addEventListener('resize', changeTableHeight);
     }
   }, [tableHeight]);
-
+  
   useEffect(() => {
     dispatch(getReasonsList());
     dispatch(getSolutionsList());
@@ -318,13 +331,27 @@ const StatsByRepeatedCalls = () => {
               textAlign: 'center',
             }}
           >
-            Отчет по повторным звонкам
+            Повторные звонки
           </Typography>
-          <Grid container spacing={2} alignItems="center" sx={{ marginLeft: 'auto' }}>
+          <Grid
+            container
+            spacing={2}
+            alignItems='center'
+            sx={{ marginLeft: 'auto' }}
+          >
             <Calendar setState={setSearchDate}/>
-            <Button variant={"contained"} color={"primary"} onClick={()=>searchCards({date: searchDate, listPage: 1})} loading={loading} sx={{
-              height: "56px",
-            }}>
+            <Button
+              variant={"contained"}
+              color={"primary"}
+              onClick={() => searchCards({
+                date: searchDate,
+                listPage: 1
+              })}
+              loading={loading}
+              sx={{
+                height: "56px",
+              }}
+            >
               Поиск
             </Button>
           </Grid>
@@ -332,7 +359,7 @@ const StatsByRepeatedCalls = () => {
             variant={"outlined"}
             onClick={() => exportToExcel(exportExcel, "Стат-ка_по_сотрудникам")}
           >
-            Export excel
+            Экспорт
           </Button>
         </Grid>
         <Typography p={"10px 20px"}>
@@ -371,7 +398,7 @@ const StatsByRepeatedCalls = () => {
                   }
                 }}
               >
-                <TableCell sx={{minWidth: '100px'}}>
+                <TableCell sx={{ minWidth: '100px' }}>
                   <Typography>
                     Личный счет
                   </Typography>
@@ -729,7 +756,7 @@ const StatsByRepeatedCalls = () => {
                     <TableCell align='center'>
                       {item.solution?.title}
                     </TableCell>
-                    <TableCell sx={{textAlign: 'center!important'}}>
+                    <TableCell sx={{ textAlign: 'center!important' }}>
                       {item.count}
                     </TableCell>
                   </TableRow>
@@ -748,7 +775,10 @@ const StatsByRepeatedCalls = () => {
           <Pagination
             count={repeatedCalls.total_pages}
             color='primary'
-            onChange={(e, value) => searchCards({date: searchDate, listPage: value})}
+            onChange={(e, value) => searchCards({
+              date: searchDate,
+              listPage: value
+            })}
             sx={{
               justifyContent: 'center',
             }}

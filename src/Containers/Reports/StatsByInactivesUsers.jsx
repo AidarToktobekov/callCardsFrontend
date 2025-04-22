@@ -91,14 +91,17 @@ const StatsByInactivesUsers = () => {
   
   const employees = useAppSelector(selectEmployees);
   const employeesLoading = useAppSelector(selectEmployeesLoading);
-
+  
   const [searchDate, setSearchDate] = useState({
     start: dayjs().startOf('month').format('YYYY-MM-DD'),
     end: dayjs().endOf('month').format('YYYY-MM-DD'),
   });
-
-  const searchCards = ()=>{
-    dispatch(getCardsInactives(searchDate));
+  
+  const searchCards = () => {
+    dispatch(getCardsInactives({
+      ...searchDate,
+      end: dayjs(searchDate.end).add(1, 'day').format('YYYY-MM-DD')
+    }));
   }
   
   const [anchorEl, setAnchorEl] = useState(null);
@@ -364,13 +367,24 @@ const StatsByInactivesUsers = () => {
             textAlign: 'center',
           }}
         >
-          Отчет по картам звонков
+          Неактивные абоненты
         </Typography>
-        <Grid container spacing={2} alignItems="center" sx={{ marginLeft: 'auto' }}>
+        <Grid
+          container
+          spacing={2}
+          alignItems='center'
+          sx={{ marginLeft: 'auto' }}
+        >
           <Calendar setState={setSearchDate}/>
-          <Button variant={"contained"} color={"primary"} onClick={searchCards} loading={loading} sx={{
-            height: "56px",
-          }}>
+          <Button
+            variant={"contained"}
+            color={"primary"}
+            onClick={searchCards}
+            loading={loading}
+            sx={{
+              height: "56px",
+            }}
+          >
             Поиск
           </Button>
         </Grid>
@@ -379,7 +393,7 @@ const StatsByInactivesUsers = () => {
           variant='outlined'
           onClick={handleClick}
         >
-          Фильтрация
+          Фильтр
         </Button>
         <Popover
           id={id}
@@ -885,7 +899,7 @@ const StatsByInactivesUsers = () => {
           variant={"outlined"}
           onClick={() => exportToExcel(exportExcel, "Карты-звонков")}
         >
-          Export excel
+          Экспорт
         </Button>
       </Grid>
       <TableContainer
@@ -1173,7 +1187,7 @@ const StatsByInactivesUsers = () => {
                     {item.solution?.title}
                   </TableCell>
                   <TableCell align='center'>
-                    {item.sip}
+                    {`${item.spec_full_name} (${item.sip})`}
                   </TableCell>
                   <TableCell align='center'>
                     {item.comment}

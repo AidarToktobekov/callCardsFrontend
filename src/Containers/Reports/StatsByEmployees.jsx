@@ -251,7 +251,7 @@ const StatsByEmployees = () => {
                 textAlign: 'center',
               }}
           >
-            Отчет по сотрудникам
+            Подсчёт звонков по операторам
           </Typography>
           <Grid container alignItems={"center"} spacing={2} sx={{
             border: '1px solid #90caf9',
@@ -328,7 +328,7 @@ const StatsByEmployees = () => {
         </Grid>
       </Grid>
           <Button variant={"outlined"} onClick={()=>exportToExcel(exportExcel, "Стат-ка_по_сотрудникам")}>
-            Export excel
+            Экспорт
           </Button>
         </Grid>
         <TableContainer component={Paper} sx={{

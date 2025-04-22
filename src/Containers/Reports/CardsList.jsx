@@ -327,12 +327,12 @@ const CardsList = () => {
               textAlign: 'center',
             }}
         >
-          Отчет по картам звонков
+          Звонки
         </Typography>
         <Button aria-describedby={id} variant="outlined" onClick={handleClick} sx={{
           ml: "auto",
         }}>
-          Фильтрация
+          Фильтры
         </Button>
         <Popover
             id={id}
@@ -698,7 +698,7 @@ const CardsList = () => {
           </Grid>
         </Popover>
         <Button variant={"outlined"} onClick={()=> exportToExcel(exportExcel, "Карты-звонков")}>
-          Export excel
+          Экспорт
         </Button>
       </Grid>
 
