@@ -35,9 +35,9 @@ export const getSolutionReport = createAsyncThunk( "reports/getSolutionReport",
     });
 
 export const getRepeatedCalls = createAsyncThunk( "reports/getRepeatedCalls",
-    async({date, listPage})=>{
+    async({date})=>{
         try{
-            const {data: repeatedCalls} = await axiosApi.get(`/cards/repeated_calls?page=${listPage}&start_date=${date.start}&end_date=${date.end}`);
+            const {data: repeatedCalls} = await axiosApi.get(`/cards/repeated_calls?start_date=${date.start}&end_date=${date.end}`);
             return repeatedCalls || [];
         }
         catch(error){
@@ -46,9 +46,14 @@ export const getRepeatedCalls = createAsyncThunk( "reports/getRepeatedCalls",
     });
 
 export const getCardsInactives = createAsyncThunk( "reports/getCardsInactives",
-    async(date)=>{
+    async({date, reasons, solutions, employees})=>{
         try{
-            const {data: cardsInactives} = await axiosApi.get(`/cards/inactives?start_date=${date.start}&end_date=${date.end}`);
+
+            const {data: cardsInactives} = await axiosApi.get(`/cards/inactives?start_date=${date?.start}&end_date=${date?.end}
+                    ${reasons?.length ? `&reason=${reasons}` : ""}
+                    ${solutions?.length ? `&solution=${solutions}` : ""}
+                    ${employees?.length ? `&sip=${employees}` : ""}
+            `);
             return cardsInactives || [];
         }
         catch(error){

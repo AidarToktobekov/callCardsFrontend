@@ -40,6 +40,7 @@ import {
 } from "../../features/reasonsAndSolution/reasonsAndSolutionSlice.js";
 import {selectEmployees, selectEmployeesLoading, selectUser} from "../../features/user/userSlice.js";
 import {getEmployees} from "../../features/user/userThunk.js";
+import dayjs from "dayjs";
 
 const CardsList = () => {
   const dispatch = useAppDispatch();
@@ -116,7 +117,20 @@ const CardsList = () => {
   }, [list]);
 
   useEffect(() => {
-    dispatch(getList(listPage));
+    const reasonsIds = [];
+    const solutionsIds = [];
+    const employeesSip = [];
+
+    filteredReasons.map((item)=>{
+      reasonsIds.push(item.id);
+    });
+    filteredSolutions.map((item)=>{
+      solutionsIds.push(item.id);
+    });
+    filteredEmployees.map((item)=>{
+      employeesSip.push(item.sip);
+    });
+    dispatch(getList({listPage: listPage ,date: filteredDate, reasons: reasonsIds, employees: employeesSip, solutions: solutionsIds}));
   }, [dispatch, listPage]);
 
   useEffect(() => {
@@ -143,7 +157,7 @@ const CardsList = () => {
   const [filteredSolutions, setFilteredSolutions] = useState([]);
   const [filteredDate, setFilteredDate] = useState({
     createdAt: '',
-    finishedAt: '',
+    finishedAt: dayjs().format('YYYY-MM-DD'),
   });
 
   const handleToggle = (value, state ,setState) => () => {
@@ -169,33 +183,21 @@ const CardsList = () => {
     setFilteredList(list.result);
   }
 
-  const handleFiltration = ()=>{
-    let newList = list.result;
-    if (filteredEmployees.length > 0){
-      newList = newList.filter((item)=>
-          filteredEmployees.some(employee => item.sip === employee.sip)
-      );
-    }
-    if (filteredReasons.length > 0){
-      newList = newList.filter((item)=>
-        filteredReasons.some(reason => item.reason_id === reason.id)
-      );
-    }
-    if (filteredSolutions.length > 0){
-      newList = newList.filter((item)=>
-        filteredSolutions.some(solution => item.solution_id === solution.id)
-      );
-    }
-    if (filteredDate.createdAt){
-      newList = newList.filter((item) => {
-        const createdAt = new Date(item.created_at);
-        const from = new Date(filteredDate.createdAt);
-        const to = filteredDate.finishedAt ? new Date(filteredDate.finishedAt) : new Date();
+  const handleFiltration = async ()=>{
+    const reasonsIds = [];
+    const solutionsIds = [];
+    const employeesSip = [];
 
-        return (createdAt >= from) && (createdAt <= to);
-      });
-    }
-    setFilteredList(newList);
+    filteredReasons.map((item)=>{
+      reasonsIds.push(item.id);
+    });
+    filteredSolutions.map((item)=>{
+      solutionsIds.push(item.id);
+    });
+    filteredEmployees.map((item)=>{
+      employeesSip.push(item.sip);
+    });
+    await dispatch(getList({listPage: listPage ,date: filteredDate, reasons: reasonsIds, employees: employeesSip, solutions: solutionsIds}));
     handleClose();
   }
 

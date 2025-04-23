@@ -2,10 +2,15 @@ import {createAsyncThunk} from "@reduxjs/toolkit";
 import axiosApi from "../../axiosApi.js";
 
 export const getList = createAsyncThunk( "list/getAll",
-    async(listPage)=>{
+    async({listPage, date, reasons, solutions, employees})=>{
         try{
-            const {data: list} = await axiosApi.get(`/cards?page=${listPage}&page_size=${100}`);
-            console.log(await list)
+            const {data: list} = await axiosApi.get(
+                `/cards?page=${listPage}&page_size=${100}
+                    ${date?.createdAt && date?.finishedAt ? `&start_date=${date.createdAt}&end_date=${date.finishedAt}` : ""}
+                    ${reasons?.length ? `&reason=${reasons}` : ""}
+                    ${solutions?.length ? `&solution=${solutions}` : ""}
+                    ${employees?.length ? `&sip=${employees}` : ""}
+                    `);
             return list || [];
         }
         catch(error){

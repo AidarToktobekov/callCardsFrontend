@@ -18,33 +18,27 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "../../app/hooks.js";
-import {
-  selectCardsInactives, selectCardsInactivesLoading,
-} from "../../features/reports/reportsSlice.js";
-import { useEffect, useState } from "react";
-import { getCardsInactives, } from "../../features/reports/reportsThunk.js";
+import {useAppDispatch, useAppSelector} from "../../app/hooks.js";
+import {selectCardsInactives, selectCardsInactivesLoading,} from "../../features/reports/reportsSlice.js";
+import {useEffect, useState} from "react";
+import {getCardsInactives,} from "../../features/reports/reportsThunk.js";
 import Grid from "@mui/material/Grid2";
-import { exportToExcel } from "../../excelExporter.js";
+import {exportToExcel} from "../../excelExporter.js";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import EmojiObjectsIcon from "@mui/icons-material/EmojiObjects";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PersonIcon from "@mui/icons-material/Person";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import {
-  selectEmployees, selectEmployeesLoading, selectUser
-} from "../../features/user/userSlice.js";
+import {selectEmployees, selectEmployeesLoading, selectUser} from "../../features/user/userSlice.js";
 import {
   selectReasonsList,
   selectReasonsListLoading,
   selectSolutionsList,
   selectSolutionsListLoading
 } from "../../features/reasonsAndSolution/reasonsAndSolutionSlice.js";
-import { getEmployees } from "../../features/user/userThunk.js";
-import {
-  getReasonsList, getSolutionsList
-} from "../../features/reasonsAndSolution/reasonsAndSolutionThunk.js";
+import {getEmployees} from "../../features/user/userThunk.js";
+import {getReasonsList, getSolutionsList} from "../../features/reasonsAndSolution/reasonsAndSolutionThunk.js";
 import Calendar from "../../Components/Calendar/Calendar.jsx";
 import dayjs from "dayjs";
 
@@ -99,8 +93,7 @@ const StatsByInactivesUsers = () => {
   
   const searchCards = () => {
     dispatch(getCardsInactives({
-      ...searchDate,
-      end: dayjs(searchDate.end).add(1, 'day').format('YYYY-MM-DD')
+      date: searchDate,
     }));
   }
   
@@ -165,10 +158,6 @@ const StatsByInactivesUsers = () => {
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [filteredReasons, setFilteredReasons] = useState([]);
   const [filteredSolutions, setFilteredSolutions] = useState([]);
-  const [filteredDate, setFilteredDate] = useState({
-    createdAt: '',
-    finishedAt: '',
-  });
   
   const handleToggle = (value, state, setState) => () => {
     const currentIndex = state.indexOf(value);
@@ -186,38 +175,24 @@ const StatsByInactivesUsers = () => {
   const resetFiltration = () => {
     setFilteredReasons([]);
     setFilteredSolutions([]);
-    setFilteredDate({
-      createdAt: '',
-      finishedAt: '',
-    });
     setFilteredList(inactivesCards);
   }
   
-  const handleFiltration = () => {
-    let newList = inactivesCards;
-    if (filteredEmployees.length > 0) {
-      newList = newList.filter((item) => filteredEmployees.some(employee => item.sip === employee.sip));
-    }
-    if (filteredReasons.length > 0) {
-      newList = newList.filter((item) => filteredReasons.some(reason => item.reason_id === reason.id));
-    }
-    if (filteredSolutions.length > 0) {
-      newList = newList.filter((item) => filteredSolutions.some(solution => item.solution_id === solution.id));
-    }
-    if (filteredDate.createdAt) {
-      newList = newList.filter((item) => {
-        const createdAt = new Date(item.created_at);
-        const from = new Date(filteredDate.createdAt);
-        const to = filteredDate.finishedAt ? new Date(filteredDate.finishedAt) : new Date();
-        
-        return (
-          createdAt >= from
-        ) && (
-          createdAt <= to
-        );
-      });
-    }
-    setFilteredList(newList);
+  const handleFiltration = async() => {
+    const reasonsIds = [];
+    const solutionsIds = [];
+    const employeesSip = [];
+
+    filteredReasons.map((item)=>{
+      reasonsIds.push(item.id);
+    });
+    filteredSolutions.map((item)=>{
+      solutionsIds.push(item.id);
+    });
+    filteredEmployees.map((item)=>{
+      employeesSip.push(item.sip);
+    });
+    await dispatch(getCardsInactives({date: searchDate, reasons: reasonsIds, employees: employeesSip, solutions: solutionsIds}));
     handleClose();
   }
   
@@ -839,12 +814,12 @@ const StatsByInactivesUsers = () => {
                     </Typography>
                     <TextField
                       type={"date"}
-                      value={filteredDate.createdAt}
+                      value={searchDate.start}
                       onChange={(e) => {
-                        setFilteredDate(prev => (
+                        setSearchDate(prev => (
                           {
                             ...prev,
-                            createdAt: e.target.value,
+                            start: e.target.value,
                           }
                         ));
                       }}
@@ -863,12 +838,12 @@ const StatsByInactivesUsers = () => {
                     </Typography>
                     <TextField
                       type={"date"}
-                      value={filteredDate.finishedAt}
+                      value={searchDate.end}
                       onChange={(e) => {
-                        setFilteredDate(prev => (
+                        setSearchDate(prev => (
                           {
                             ...prev,
-                            finishedAt: e.target.value,
+                            end: e.target.value,
                           }
                         ));
                       }}
@@ -878,19 +853,6 @@ const StatsByInactivesUsers = () => {
                     />
                   </Grid>
                 </Grid>
-                <Button
-                  variant={"contained"}
-                  color={"error"}
-                  sx={{
-                    width: "100%",
-                  }}
-                  onClick={() => setFilteredDate({
-                    createdAt: '',
-                    finishedAt: '',
-                  })}
-                >
-                  Очистить
-                </Button>
               </Grid> : null}
             </Grid>
           </Grid>

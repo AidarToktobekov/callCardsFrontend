@@ -636,7 +636,7 @@ const StatsByInactivesUsers = () => {
             <TableBody>
               {loading ? (
                   <TableRow>
-                    <TableCell colSpan={2} align="center">
+                    <TableCell colSpan={3} align="center">
                       <CircularProgress />
                     </TableCell>
                   </TableRow>
