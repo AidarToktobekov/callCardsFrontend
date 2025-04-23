@@ -5,12 +5,17 @@ import {exportToExcel} from "./excelExporter.js";
 export const useExportExcel = ()=>{
     const [loadingExport, setLoadingExport] = useState(false);
 
-    const fetchCardsForUpload = async(type)=>{
+    const fetchCardsForUpload = async({type, date, reasons, solutions, employees})=>{
         setLoadingExport(true);
         let listCards;
 
         if(type === "Карточки"){
-            const {data: cards} = await axiosApi.get("/cards?page_size=10000000");
+            const {data: cards} = await axiosApi.get(`/cards?page_size=10000000
+                ${date?.createdAt && date?.finishedAt ? `&start_date=${date.createdAt}&end_date=${date.finishedAt}` : ""}
+                ${reasons?.length ? `&reason=${reasons}` : ""}
+                ${solutions?.length ? `&solution=${solutions}` : ""}
+                ${employees?.length ? `&sip=${employees}` : ""}
+            `);
 
             listCards = cards.result.map(item=>({
                 Айди_Аккаунта: item.account_id,

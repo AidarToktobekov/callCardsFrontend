@@ -92,20 +92,13 @@ const CardsList = () => {
   }, [list]);
 
   useEffect(() => {
-    const reasonsIds = [];
-    const solutionsIds = [];
-    const employeesSip = [];
-
-    filteredReasons.map((item)=>{
-      reasonsIds.push(item.id);
-    });
-    filteredSolutions.map((item)=>{
-      solutionsIds.push(item.id);
-    });
-    filteredEmployees.map((item)=>{
-      employeesSip.push(item.sip);
-    });
-    dispatch(getList({listPage: listPage ,date: filteredDate, reasons: reasonsIds, employees: employeesSip, solutions: solutionsIds}));
+    const reasonsIds = filteredReasons.map((item)=>item.id);
+    const solutionsIds = filteredSolutions.map((item)=> item.id);
+    const employeesSip = filteredEmployees.map((item)=>item.sip);
+    dispatch(getList({listPage: listPage ,date: {
+      ...filteredDate,
+        finishedAt: dayjs(filteredDate.finishedAt).add(1, 'day').format('YYYY-MM-DD'),
+      }, reasons: reasonsIds, employees: employeesSip, solutions: solutionsIds}));
   }, [dispatch, listPage]);
 
   useEffect(() => {
@@ -132,7 +125,7 @@ const CardsList = () => {
   const [filteredSolutions, setFilteredSolutions] = useState([]);
   const [filteredDate, setFilteredDate] = useState({
     createdAt: '',
-    finishedAt: dayjs().format('YYYY-MM-DD'),
+    finishedAt: '',
   });
 
   const handleToggle = (value, state ,setState) => () => {
@@ -172,7 +165,10 @@ const CardsList = () => {
     filteredEmployees.map((item)=>{
       employeesSip.push(item.sip);
     });
-    await dispatch(getList({listPage: listPage ,date: filteredDate, reasons: reasonsIds, employees: employeesSip, solutions: solutionsIds}));
+    await dispatch(getList({listPage: listPage ,date:  {
+        ...filteredDate,
+        finishedAt: dayjs(filteredDate.finishedAt).add(1, 'day').format('YYYY-MM-DD'),
+      }, reasons: reasonsIds, employees: employeesSip, solutions: solutionsIds}));
     handleClose();
   }
 
@@ -674,7 +670,21 @@ const CardsList = () => {
             </Grid>
           </Grid>
         </Popover>
-        <Button variant={"outlined"} onClick={()=> fetchCardsForUpload("Карточки")} loading={loadingExport}>
+        <Button variant={"outlined"} onClick={()=> {
+          const reasonsIds = filteredReasons.map((item)=>item.id);
+          const solutionsIds = filteredSolutions.map((item)=> item.id);
+          const employeesSip = filteredEmployees.map((item)=>item.sip);
+          fetchCardsForUpload({
+            type: "Карточки",
+            employees: employeesSip,
+            reasons: reasonsIds,
+            solutions: solutionsIds,
+            date:  {
+              ...filteredDate,
+              finishedAt: dayjs(filteredDate.finishedAt).add(1, 'day').format('YYYY-MM-DD'),
+            },
+          })
+        }} loading={loadingExport}>
           Экспорт
         </Button>
       </Grid>

@@ -93,7 +93,10 @@ const StatsByInactivesUsers = () => {
   
   const searchCards = () => {
     dispatch(getCardsInactives({
-      date: searchDate,
+      date: {
+        ...searchDate,
+        end: dayjs(searchDate.end).add(1, 'day').format('YYYY-MM-DD')
+      },
     }));
   }
   
