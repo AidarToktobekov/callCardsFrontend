@@ -28,7 +28,6 @@ import {
   Typography
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { exportToExcel } from "../../excelExporter.js";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -44,6 +43,7 @@ import {
 } from "../../features/reasonsAndSolution/reasonsAndSolutionThunk.js";
 import dayjs from "dayjs";
 import Calendar from "../../Components/Calendar/Calendar.jsx";
+import {useExportExcel} from "../../hooks.js";
 
 const StatsByRepeatedCalls = () => {
   const dispatch = useAppDispatch();
@@ -52,7 +52,7 @@ const StatsByRepeatedCalls = () => {
   const repeatedCalls = useAppSelector(selectRepeatedCalls);
   const loading = useAppSelector(selectRepeatedCallsLoading);
   const [filteredList, setFilteredList] = useState(repeatedCalls.result);
-  const [exportExcel, setExportExcel] = useState([]);
+  const {loadingExport, fetchCardsForUpload} = useExportExcel();
   
   const [searchDate, setSearchDate] = useState({
     start: dayjs().startOf('month').format('YYYY-MM-DD'),
@@ -71,22 +71,7 @@ const StatsByRepeatedCalls = () => {
       listPage: listPage
     }));
   }
-  
-  useEffect(() => {
-    const newArr = [];
-    filteredList.map(item => {
-      newArr.push({
-        Адресс: item.address,
-        Кол_во: item.count,
-        Личный_счет: item.ls_abon,
-        Тел_Номер: item.phone_number.join(', '),
-        Причина: item.reason.title,
-        Решение: item.solution.title,
-      })
-    });
-    setExportExcel(newArr);
-  }, [filteredList]);
-  
+
   useEffect(() => {
     setFilteredList(repeatedCalls.result);
   }, [repeatedCalls.result]);
@@ -357,7 +342,8 @@ const StatsByRepeatedCalls = () => {
           </Grid>
           <Button
             variant={"outlined"}
-            onClick={() => exportToExcel(exportExcel, "Стат-ка_по_сотрудникам")}
+            onClick={()=> fetchCardsForUpload("Повторные звонки")}
+            loading={loadingExport}
           >
             Экспорт
           </Button>
