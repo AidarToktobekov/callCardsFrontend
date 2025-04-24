@@ -42,7 +42,7 @@ const CreateCard = () => {
       'ls_abon',
       'full_name',
       'address'
-    ].includes(name) && state?.reason?.title !== 'Интерком') return;
+    ].includes(name) && state?.reason?.title !== 'Интерком' && state?.reason?.title !== 'Желает подключиться') return;
     
     setState(prevState => (
       {
