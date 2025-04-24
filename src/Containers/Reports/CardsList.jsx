@@ -943,7 +943,7 @@ const CardsList = () => {
                       </TableCell>
 
                       <TableCell align="center">
-                        {item.created_at}
+                        {dayjs(item.created_at).add(6, "hour").format('YYYY-MM-DD HH:mm:ss')}
                       </TableCell>
 
                       <TableCell align="center">

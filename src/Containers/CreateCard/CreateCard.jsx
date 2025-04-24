@@ -62,16 +62,16 @@ const CreateCard = () => {
       ));
     }
     
-    if (!!state?.full_name || state?.ls_abon || state?.address) {
-      setState(prevState => (
-        {
-          ...prevState,
-          full_name: '',
-          ls_abon: '',
-          address: '',
-        }
-      ))
-    }
+    // if (!!state?.full_name || state?.ls_abon || state?.address) {
+      // setState(prevState => (
+      //   {
+      //     ...prevState,
+      //     full_name: '',
+      //     ls_abon: '',
+      //     address: '',
+      //   }
+      // ))
+    // }
   }
   
   const cards = useAppSelector(selectClients);
@@ -248,7 +248,8 @@ const CreateCard = () => {
                 <TextField
                   required={![
                     'Callback',
-                    'Желает подключиться'
+                    'Желает подключиться',
+                      "Интерком"
                   ].includes(state?.reason?.title)}
                   select
                   label='Найденные абоненты'
