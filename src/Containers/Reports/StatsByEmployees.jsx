@@ -1,5 +1,4 @@
 import {
-  Alert,
   Button,
   Checkbox,
   CircularProgress,
@@ -11,7 +10,6 @@ import {
   ListItemText,
   Paper,
   Popover,
-  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -26,14 +24,13 @@ import {selectCardsReport, selectCardsReportLoading} from "../../features/report
 import {useEffect, useState} from "react";
 import Grid from "@mui/material/Grid2";
 import {exportToExcel} from "../../excelExporter.js";
-import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import {selectEmployees, selectEmployeesLoading, selectUser} from "../../features/user/userSlice.js";
 import {getEmployees} from "../../features/user/userThunk.js";
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import {getCardsReport} from "../../features/reports/reportsThunk.js";
+import Pagination from "../../Components/Pagination/Pagination.jsx";
 
 const StatsByEmployees = () => {
   
@@ -76,17 +73,6 @@ const StatsByEmployees = () => {
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedList = filteredList.slice(startIndex, startIndex + itemsPerPage);
-
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  useEffect(() => {
-    if (itemsPerPage > 200) {
-      setSnackbarOpen(true);
-    }
-  }, [itemsPerPage]);
-
-  const handleCloseSnackBar = () => {
-    setSnackbarOpen(false);
-  };
 
   const user = useAppSelector(selectUser);
 
@@ -253,80 +239,7 @@ const StatsByEmployees = () => {
           >
             Подсчёт звонков по операторам
           </Typography>
-          <Grid container alignItems={"center"} spacing={2} sx={{
-            border: '1px solid #90caf9',
-            ml: "auto",
-            borderRadius: "5px",
-            color: '#90caf9',
-            fontFamily: 'Roboto, sans-serif',
-            px: 2,
-          }}
-          >
-            <Grid container alignItems={"center"} spacing={"5px"}>
-              Кол-во строк:
-              <TextField
-                  type="number"
-                  value={itemsPerPage}
-                  onChange={(e)=>setItemsPerPage(Number(e.target.value))}
-                  variant={"filled"}
-                  sx={{
-                    borderRadius: '5px',
-                  }}
-                  inputProps={{
-                    min: 1,
-                    sx: {
-                      color: '#90caf9',
-                      padding: "5px 5px",
-                      maxWidth: "50px",
-                      textAlign: "center",
-                    }
-                  }}
-              />
-          <Snackbar
-              open={snackbarOpen}
-              autoHideDuration={5000}
-              onClose={handleCloseSnackBar}
-          >
-            <Alert
-                onClose={handleCloseSnackBar}
-                severity="error"
-                variant="filled"
-                sx={{ width: '100%' }}
-            >
-              При большом колличестве строк приложение будет виснуть!
-            </Alert>
-          </Snackbar>
-        </Grid>
-        <Grid>
-          {(currentPage - 1) * itemsPerPage + 1} - {currentPage * itemsPerPage > filteredList.length ?
-            filteredList.length : currentPage * itemsPerPage
-        }
-        </Grid>
-        <Grid>
-          <Button disabled={currentPage <= 1} onClick={()=> {
-            if (currentPage !== 1){
-              setCurrentPage(prev => prev - 1)
-            }
-          }} sx={{
-            minWidth: 'unset',
-            p: "5px",
-            borderRadius: '50%'
-          }}>
-            <ArrowLeftIcon></ArrowLeftIcon>
-          </Button>
-          <Button disabled={(currentPage - 1) * itemsPerPage + itemsPerPage > filteredList.length} onClick={()=> {
-            if((currentPage - 1) * itemsPerPage + itemsPerPage < filteredList.length) {
-              setCurrentPage(prev => prev + 1)
-            }
-          }} sx={{
-            minWidth: 'unset',
-            p: "5px",
-            borderRadius: '50%'
-          }}>
-            <ArrowRightIcon></ArrowRightIcon>
-          </Button>
-        </Grid>
-      </Grid>
+          <Pagination list={filteredList} setCurrentPage={setCurrentPage} currentPage={currentPage} itemsPerPage={itemsPerPage} setItemsPerPage={setItemsPerPage}/>
           <Button variant={"outlined"} onClick={()=>exportToExcel(exportExcel, "Стат-ка_по_сотрудникам")}>
             Экспорт
           </Button>
