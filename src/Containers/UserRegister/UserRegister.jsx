@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Stack,
@@ -6,16 +6,16 @@ import {
   Typography,
   Button,
   MenuItem,
-  Alert
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import Grid from "@mui/material/Grid2";
+  Alert,
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import Grid from '@mui/material/Grid2';
 import {
   selectRegisterError,
-  selectRegisterLoading
-} from "../../features/user/userSlice.js";
-import { register } from "../../features/user/userThunk.js";
+  selectRegisterLoading,
+} from '../../features/user/userSlice.js';
+import { register } from '../../features/user/userThunk.js';
 
 const UserRegister = () => {
   const dispatch = useAppDispatch();
@@ -23,40 +23,33 @@ const UserRegister = () => {
   const loading = useAppSelector(selectRegisterLoading);
   const error = useAppSelector(selectRegisterError);
   const [state, setState] = useState({
-    username: "",
-    name: "",
-    phone_number: "+996",
-    password: "",
-    confirmPassword: "",
+    username: '',
+    name: '',
+    phone_number: '+996',
+    password: '',
+    confirmPassword: '',
     sip: '',
     role: '',
   });
-  
+
   const inputChangeHandler = (event) => {
-    const {
-      name,
-      value
-    } = event.target;
-    
-    if (name !== "phone_number") {
-      setState((prevState) => (
-        {
-          ...prevState,
-          [name]: value,
-        }
-      ));
+    const { name, value } = event.target;
+
+    if (name !== 'phone_number') {
+      setState((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
     } else {
       if (value.trim().length >= 4) {
-        setState((prevState) => (
-          {
-            ...prevState,
-            [name]: value,
-          }
-        ));
+        setState((prevState) => ({
+          ...prevState,
+          [name]: value,
+        }));
       }
     }
   };
-  
+
   const submitFormHandler = async (event) => {
     event.preventDefault();
     try {
@@ -68,71 +61,53 @@ const UserRegister = () => {
         phone_number: state.phone_number.trim(),
         password: state.password.trim(),
       };
-      
+
       await dispatch(register(userMutation)).unwrap();
-      navigate("/");
+      navigate('/');
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   };
-  
+
   return (
-    <Stack
-      sx={{ width: "100%"}}
-      textAlign='center'
-    >
-      <Stack
-        alignItems='center'
-        justifyContent='center'
-        m={4}
-      >
+    <Stack sx={{ width: '100%' }} textAlign="center">
+      <Stack alignItems="center" justifyContent="center" m={4}>
         <Box
           sx={{
             mt: 1,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            maxWidth: "500px",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            maxWidth: '500px',
             width: '100%',
           }}
         >
-          <Typography
-            component='h1'
-            variant='h5'
-            gutterBottom
-          >
+          <Typography component="h1" variant="h5" gutterBottom>
             Регистрация
           </Typography>
           {error && (
-            <Alert
-              severity='error'
-              sx={{ my: 1 }}
-            >
+            <Alert severity="error" sx={{ my: 1 }}>
               {error.message}
             </Alert>
           )}
           <Box
-            component='form'
+            component="form"
             noValidate
             onSubmit={submitFormHandler}
             sx={{
               mt: 3,
-              width: "100%",
-              mx: "auto"
+              width: '100%',
+              mx: 'auto',
             }}
           >
-            <Grid
-              container
-              direction='column'
-              spacing={2}
-            >
+            <Grid container direction="column" spacing={2}>
               <Grid>
                 <TextField
                   required
-                  type='text'
-                  label='Логин'
-                  name='username'
-                  autoComplete='new-username'
+                  type="text"
+                  label="Логин"
+                  name="username"
+                  autoComplete="new-username"
                   value={state.username}
                   onChange={inputChangeHandler}
                   sx={{
@@ -143,10 +118,10 @@ const UserRegister = () => {
               <Grid>
                 <TextField
                   required
-                  type='text'
-                  label='ФИО'
-                  name='name'
-                  autoComplete='new-name'
+                  type="text"
+                  label="ФИО"
+                  name="name"
+                  autoComplete="new-name"
                   value={state.name}
                   onChange={inputChangeHandler}
                   sx={{
@@ -157,10 +132,10 @@ const UserRegister = () => {
               <Grid>
                 <TextField
                   required
-                  type='text'
-                  label='СИП'
-                  name='sip'
-                  autoComplete='new-sip'
+                  type="text"
+                  label="СИП"
+                  name="sip"
+                  autoComplete="new-sip"
                   value={state.sip}
                   onChange={inputChangeHandler}
                   sx={{
@@ -172,31 +147,27 @@ const UserRegister = () => {
                 <TextField
                   required
                   select
-                  type='text'
-                  label='Роль'
-                  name='role'
-                  autoComplete='new-role'
+                  type="text"
+                  label="Роль"
+                  name="role"
+                  autoComplete="new-role"
                   value={state.role}
                   onChange={inputChangeHandler}
                   sx={{
                     width: '100%',
                   }}
                 >
-                  <MenuItem value={"user"}>
-                    Пользователь
-                  </MenuItem>
-                  <MenuItem value={"admin"}>
-                    Администратор
-                  </MenuItem>
+                  <MenuItem value={'user'}>Пользователь</MenuItem>
+                  <MenuItem value={'admin'}>Администратор</MenuItem>
                 </TextField>
               </Grid>
               <Grid>
                 <TextField
                   required
-                  type='tel'
-                  label='Phone number'
-                  name='phone_number'
-                  autoComplete='new-phone_number'
+                  type="tel"
+                  label="Phone number"
+                  name="phone_number"
+                  autoComplete="new-phone_number"
                   value={state.phone_number}
                   onChange={inputChangeHandler}
                   sx={{
@@ -207,10 +178,10 @@ const UserRegister = () => {
               <Grid>
                 <TextField
                   required
-                  type='password'
-                  label='Пароль'
-                  name='password'
-                  autoComplete='new-password'
+                  type="password"
+                  label="Пароль"
+                  name="password"
+                  autoComplete="new-password"
                   value={state.password}
                   onChange={inputChangeHandler}
                   sx={{
@@ -220,12 +191,12 @@ const UserRegister = () => {
               </Grid>
             </Grid>
             <Button
-              type='submit'
+              type="submit"
               fullWidth
-              variant='contained'
+              variant="contained"
               sx={{
                 mt: 3,
-                mb: 2
+                mb: 2,
               }}
               loading={loading}
             >

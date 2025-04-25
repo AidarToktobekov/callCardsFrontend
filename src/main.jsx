@@ -1,12 +1,12 @@
-import { createRoot } from 'react-dom/client'
-import App from './App.jsx'
-import { Provider } from "react-redux";
-import { persistor, store } from "./app/store.js";
-import { BrowserRouter } from "react-router-dom";
-import { PersistGate } from "redux-persist/integration/react";
-import { addInterceptors } from "./axiosApi.js";
+import { createRoot } from 'react-dom/client';
+import App from './App.jsx';
+import { Provider } from 'react-redux';
+import { persistor, store } from './app/store.js';
+import { BrowserRouter } from 'react-router-dom';
+import { PersistGate } from 'redux-persist/integration/react';
+import { addInterceptors } from './axiosApi.js';
 import { ruRU } from '@mui/material/locale';
-import { createTheme, ThemeProvider } from "@mui/material";
+import { createTheme, ThemeProvider } from '@mui/material';
 
 addInterceptors(store);
 
@@ -15,11 +15,11 @@ const theme = createTheme(
     palette: {
       mode: 'dark',
       background: {
-        default: '#000000'
-      }
+        default: '#000000',
+      },
     },
   },
-  ruRU,
+  ruRU
 );
 
 createRoot(document.getElementById('root')).render(
@@ -27,7 +27,7 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <Provider store={store}>
         <PersistGate persistor={persistor}>
-          <App/>
+          <App />
         </PersistGate>
       </Provider>
     </BrowserRouter>

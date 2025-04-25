@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import {getEmployees, login, register} from './userThunk';
+import { getEmployees, login, register } from './userThunk';
 
 const initialState = {
   user: null,
@@ -11,8 +11,8 @@ const initialState = {
     {
       id: 'daw',
       full_name: 'Айдар',
-      sip: "600",
-    }
+      sip: '600',
+    },
   ],
   employeesLoading: false,
 };
@@ -58,8 +58,8 @@ const UsersSlice = createSlice({
     builder.addCase(getEmployees.pending, (state) => {
       state.employeesLoading = true;
     });
-    builder.addCase(getEmployees.fulfilled, (state, {payload: employees}) => {
-      state.employees = employees
+    builder.addCase(getEmployees.fulfilled, (state, { payload: employees }) => {
+      state.employees = employees;
       state.employeesLoading = false;
     });
     builder.addCase(getEmployees.rejected, (state) => {
@@ -74,7 +74,7 @@ const UsersSlice = createSlice({
     selectRegisterLoading: (state) => state.registerLoading,
     selectEmployees: (state) => state.employees,
     selectEmployeesLoading: (state) => state.employeesLoading,
-  }
+  },
 });
 
 export const userReducer = UsersSlice.reducer;

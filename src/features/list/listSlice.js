@@ -1,5 +1,11 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {createCard, getClient, getList, getReasons, getSolution} from "./listThunk.js";
+import { createSlice } from '@reduxjs/toolkit';
+import {
+  createCard,
+  getClient,
+  getList,
+  getReasons,
+  getSolution,
+} from './listThunk.js';
 
 const initialState = {
   list: {
@@ -18,10 +24,10 @@ const initialState = {
 };
 
 const ListSlice = createSlice({
-  name: "list",
+  name: 'list',
   initialState,
   reducers: {
-    resetClients: state => {
+    resetClients: (state) => {
       state.clients = [];
     },
   },
@@ -77,16 +83,16 @@ const ListSlice = createSlice({
     });
   },
   selectors: {
-    selectList: state => state.list,
-    selectListLoading: state => state.listLoading,
-    selectClients: state => state.clients,
-    selectClientsLoading: state => state.clientsLoading,
-    selectReasons: state => state.reasons,
-    selectReasonsLoading: state => state.reasonsLoading,
-    selectSolutions: state => state.solutions,
-    selectSolutionsLoading: state => state.solutionsLoading,
-    selectCreateCardLoading: state => state.createCardLoading,
-  }
+    selectList: (state) => state.list,
+    selectListLoading: (state) => state.listLoading,
+    selectClients: (state) => state.clients,
+    selectClientsLoading: (state) => state.clientsLoading,
+    selectReasons: (state) => state.reasons,
+    selectReasonsLoading: (state) => state.reasonsLoading,
+    selectSolutions: (state) => state.solutions,
+    selectSolutionsLoading: (state) => state.solutionsLoading,
+    selectCreateCardLoading: (state) => state.createCardLoading,
+  },
 });
 
 export const listReducer = ListSlice.reducer;
@@ -99,6 +105,6 @@ export const {
   selectReasonsLoading,
   selectSolutions,
   selectSolutionsLoading,
-  selectCreateCardLoading
+  selectCreateCardLoading,
 } = ListSlice.selectors;
 export const { resetClients } = ListSlice.actions;

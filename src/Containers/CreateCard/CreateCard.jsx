@@ -1,9 +1,15 @@
-import Grid from "@mui/material/Grid2";
+import Grid from '@mui/material/Grid2';
 import {
-  Alert, Autocomplete, Button, CircularProgress, Container, MenuItem, TextField
-} from "@mui/material";
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks.js";
+  Alert,
+  Autocomplete,
+  Button,
+  CircularProgress,
+  Container,
+  MenuItem,
+  TextField,
+} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks.js';
 import {
   resetClients,
   selectClients,
@@ -12,12 +18,15 @@ import {
   selectReasons,
   selectReasonsLoading,
   selectSolutions,
-  selectSolutionsLoading
-} from "../../features/list/listSlice.js";
+  selectSolutionsLoading,
+} from '../../features/list/listSlice.js';
 import {
-  createCard, getClient, getReasons, getSolution
-} from "../../features/list/listThunk.js";
-import { selectUser } from "../../features/user/userSlice.js";
+  createCard,
+  getClient,
+  getReasons,
+  getSolution,
+} from '../../features/list/listThunk.js';
+import { selectUser } from '../../features/user/userSlice.js';
 
 const CreateCard = () => {
   const user = useAppSelector(selectUser);
@@ -25,63 +34,55 @@ const CreateCard = () => {
   const loading = useAppSelector(selectCreateCardLoading);
   const [error, setError] = useState('');
   const [state, setState] = useState(null);
-  
+
   const [cardIndex, setCardIndex] = useState(0);
-  
+
   const handleCardChange = (e) => {
     setCardIndex(e.target.value);
   };
-  
+
   const inputChangeHandler = (e) => {
-    const {
-      name,
-      value
-    } = e.target;
-    
-    if ([
-      'ls_abon',
-      'full_name',
-      'address'
-    ].includes(name) && state?.reason?.title !== 'Интерком' && state?.reason?.title !== 'Желает подключиться') return;
-    
-    setState(prevState => (
-      {
-        ...prevState,
-        [name]: value
-      }
-    ));
-  }
-  
+    const { name, value } = e.target;
+
+    if (
+      ['ls_abon', 'full_name', 'address'].includes(name) &&
+      state?.reason?.title !== 'Интерком' &&
+      state?.reason?.title !== 'Желает подключиться'
+    )
+      return;
+
+    setState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
   const selectChangeHandler = (name, value) => {
     if (value?.id !== 'placeholder') {
-      setState(prevState => (
-        {
-          ...prevState,
-          [name]: value,
-        }
-      ));
+      setState((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
     }
-    
+
     if (!!state?.full_name || state?.ls_abon || state?.address) {
-      setState(prevState => (
-        {
-          ...prevState,
-          full_name: '',
-          ls_abon: '',
-          address: '',
-        }
-      ))
+      setState((prevState) => ({
+        ...prevState,
+        full_name: '',
+        ls_abon: '',
+        address: '',
+      }));
     }
-  }
-  
+  };
+
   const cards = useAppSelector(selectClients);
   const clientsLoading = useAppSelector(selectClientsLoading);
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState('');
   const reasons = useAppSelector(selectReasons);
   const reasonLoading = useAppSelector(selectReasonsLoading);
   const solutions = useAppSelector(selectSolutions);
   const solutionLoading = useAppSelector(selectSolutionsLoading);
-  
+
   useEffect(() => {
     if (state?.reason?.id) {
       const newSolutions = [];
@@ -94,67 +95,54 @@ const CreateCard = () => {
         setFilteredSolution(newSolutions);
       }
     } else {
-      setState(prevState => (
-        {
-          ...prevState,
-          solution: null
-        }
-      ))
+      setState((prevState) => ({
+        ...prevState,
+        solution: null,
+      }));
       setFilteredSolution([
         {
           id: 'placeholder',
-          title: 'Выберите причину'
-        }
+          title: 'Выберите причину',
+        },
       ]);
     }
-  }, [
-    state?.reason,
-    solutions,
-    dispatch
-  ])
-  
+  }, [state?.reason, solutions, dispatch]);
+
   useEffect(() => {
     dispatch(getSolution());
     dispatch(getReasons());
-    
+
     return () => {
       setState(null);
       dispatch(resetClients());
-    }
+    };
   }, [dispatch]);
-  
+
   useEffect(() => {
     if (cards[cardIndex]) {
-      setState(prevState => (
-        {
-          ...prevState,
-          ls_abon: cards[cardIndex].ls_abon,
-          full_name: cards[cardIndex].full_name,
-          phone_number: cards[cardIndex].phone_number,
-          address: cards[cardIndex].address,
-          ip_address: cards[cardIndex].ip_address,
-          mac_address: cards[cardIndex].mac_address,
-          account_id: cards[cardIndex].account_id,
-          n_result_id: cards[cardIndex].n_result_id,
-          mac_onu: cards[cardIndex].mac_onu,
-          ip_olt: cards[cardIndex].ip_olt,
-        }
-      ));
+      setState((prevState) => ({
+        ...prevState,
+        ls_abon: cards[cardIndex].ls_abon,
+        full_name: cards[cardIndex].full_name,
+        phone_number: cards[cardIndex].phone_number,
+        address: cards[cardIndex].address,
+        ip_address: cards[cardIndex].ip_address,
+        mac_address: cards[cardIndex].mac_address,
+        account_id: cards[cardIndex].account_id,
+        n_result_id: cards[cardIndex].n_result_id,
+        mac_onu: cards[cardIndex].mac_onu,
+        ip_olt: cards[cardIndex].ip_olt,
+      }));
     }
-  }, [
-    dispatch,
-    cardIndex,
-    cards
-  ]);
-  
-  
+  }, [dispatch, cardIndex, cards]);
+
   const changePhoneNumber = (e) => {
     setPhoneNumber(e.target.value);
   };
-  
+
   const submitFormHandler = async (event) => {
     event.preventDefault();
-    
+
     if (user) {
       const cardMutation = {
         ls_abon: state?.ls_abon,
@@ -174,52 +162,45 @@ const CreateCard = () => {
         account_id: `${state?.account_id}`,
         n_result_id: `${state?.n_result_id}`,
       };
-      
+
       await dispatch(createCard(cardMutation));
       await setState(null);
-      await setPhoneNumber("");
+      await setPhoneNumber('');
       await dispatch(resetClients());
     } else {
-      setError("Зарегстрируйтесь!")
+      setError('Зарегстрируйтесь!');
     }
   };
-  
+
   const searchClient = async () => {
     await dispatch(getClient(phoneNumber));
-  }
-  
+  };
+
   const [openReason, setOpenReason] = useState(false);
   const [openSolution, setOpenSolution] = useState(false);
-  
+
   const [filteredSolution, setFilteredSolution] = useState([
     {
-      id: "placeholder",
-      title: "Выберите причину",
-    }
+      id: 'placeholder',
+      title: 'Выберите причину',
+    },
   ]);
-  
+
   return (
     <>
-      <Grid padding={"30px"}>
-        <Container maxWidth='lg'>
+      <Grid padding={'30px'}>
+        <Container maxWidth="lg">
           {error && (
-            <Alert
-              severity='error'
-              sx={{ mb: 3 }}
-            >
+            <Alert severity="error" sx={{ mb: 3 }}>
               {error}
             </Alert>
           )}
-          <Grid
-            component={"form"}
-            onSubmit={submitFormHandler}
-            container
-          >
+          <Grid component={'form'} onSubmit={submitFormHandler} container>
             <Grid
               container
               sx={{
-                display: "flex",
-                gap: '15px'
+                display: 'flex',
+                gap: '15px',
               }}
             >
               <div
@@ -228,12 +209,12 @@ const CreateCard = () => {
                   flexWrap: 'wrap',
                   width: '100%',
                   gap: '20px',
-                  marginBottom: '15px'
+                  marginBottom: '15px',
                 }}
               >
                 <TextField
-                  variant={"outlined"}
-                  label={"Найти абонента..."}
+                  variant={'outlined'}
+                  label={'Найти абонента...'}
                   value={phoneNumber}
                   onChange={changePhoneNumber}
                   sx={{ flexGrow: 1 }}
@@ -241,29 +222,26 @@ const CreateCard = () => {
                 <Button
                   onClick={searchClient}
                   loading={clientsLoading}
-                  variant='outlined'
+                  variant="outlined"
                 >
                   Поиск
                 </Button>
                 <TextField
-                  required={![
-                    'Callback',
-                    'Желает подключиться',
-                      "Интерком"
-                  ].includes(state?.reason?.title)}
+                  required={
+                    !['Callback', 'Желает подключиться', 'Интерком'].includes(
+                      state?.reason?.title
+                    )
+                  }
                   select
-                  label='Найденные абоненты'
-                  id='card'
-                  name='card'
-                  value={cards.length > 0 ? String(cardIndex) : ""}
+                  label="Найденные абоненты"
+                  id="card"
+                  name="card"
+                  value={cards.length > 0 ? String(cardIndex) : ''}
                   onChange={handleCardChange}
                   sx={{ width: '100%' }}
                 >
                   {cards.map((card, index) => (
-                    <MenuItem
-                      key={index}
-                      value={index}
-                    >
+                    <MenuItem key={index} value={index}>
                       {card.full_name}
                     </MenuItem>
                   ))}
@@ -275,33 +253,34 @@ const CreateCard = () => {
                 onClose={() => setOpenReason(false)}
                 getOptionLabel={(option) => option.title}
                 onChange={(event, newValue) => {
-                  selectChangeHandler("reason", newValue);
+                  selectChangeHandler('reason', newValue);
                 }}
-                value={state?.reason || {
-                  id: '',
-                  title: ''
-                }}
+                value={
+                  state?.reason || {
+                    id: '',
+                    title: '',
+                  }
+                }
                 options={reasons}
                 loading={reasonLoading}
                 renderInput={(params) => (
                   <TextField
                     required
                     {...params}
-                    name={"reason"}
-                    label={"Причина обращения"}
+                    name={'reason'}
+                    label={'Причина обращения'}
                     slotProps={{
                       input: {
                         ...params.InputProps,
                         endAdornment: (
                           <>
-                            {reasonLoading ? <CircularProgress
-                              color={"inherit"}
-                              size={20}
-                            /> : null}
+                            {reasonLoading ? (
+                              <CircularProgress color={'inherit'} size={20} />
+                            ) : null}
                             {params.InputProps.endAdornment}
                           </>
-                        )
-                      }
+                        ),
+                      },
                     }}
                   />
                 )}
@@ -315,33 +294,34 @@ const CreateCard = () => {
                 onClose={() => setOpenSolution(false)}
                 getOptionLabel={(option) => option.title}
                 onChange={(event, newValue) => {
-                  selectChangeHandler("solution", newValue);
+                  selectChangeHandler('solution', newValue);
                 }}
-                value={state?.solution || {
-                  id: "",
-                  title: ""
-                }}
+                value={
+                  state?.solution || {
+                    id: '',
+                    title: '',
+                  }
+                }
                 options={filteredSolution}
                 loading={solutionLoading}
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     required
-                    name={"solution"}
-                    label={"Решение"}
+                    name={'solution'}
+                    label={'Решение'}
                     slotProps={{
                       input: {
                         ...params.InputProps,
                         endAdornment: (
                           <>
-                            {solutionLoading ? <CircularProgress
-                              color={"inherit"}
-                              size={20}
-                            /> : null}
+                            {solutionLoading ? (
+                              <CircularProgress color={'inherit'} size={20} />
+                            ) : null}
                             {params.InputProps.endAdornment}
                           </>
-                        )
-                      }
+                        ),
+                      },
                     }}
                   />
                 )}
@@ -350,40 +330,37 @@ const CreateCard = () => {
                 }}
               />
               <TextField
-                label={"Номер с которого звонили"}
-                name={"call_from"}
+                label={'Номер с которого звонили'}
+                name={'call_from'}
                 onChange={inputChangeHandler}
                 sx={{ width: 'calc(50% - 7.5px)' }}
                 value={state?.call_from || ''}
                 required
               />
               <TextField
-                required={![
-                  'Callback',
-                  'Желает подключиться'
-                ].includes(state?.reason?.title)}
-                name='ls_abon'
-                label={"Лицевой счет"}
+                required={
+                  !['Callback', 'Желает подключиться'].includes(
+                    state?.reason?.title
+                  )
+                }
+                name="ls_abon"
+                label={'Лицевой счет'}
                 value={state?.ls_abon || ''}
                 sx={{ width: 'calc(50% - 7.5px)' }}
                 onChange={inputChangeHandler}
               />
               <TextField
-                required={![
-                  'Callback',
-                ].includes(state?.reason?.title)}
-                name='full_name'
-                label={"ФИО"}
+                required={!['Callback'].includes(state?.reason?.title)}
+                name="full_name"
+                label={'ФИО'}
                 value={state?.full_name || ''}
                 sx={{ width: 'calc(50% - 7.5px)' }}
                 onChange={inputChangeHandler}
               />
               <TextField
-                required={![
-                  'Callback',
-                ].includes(state?.reason?.title)}
-                name='address'
-                label={"Адрес"}
+                required={!['Callback'].includes(state?.reason?.title)}
+                name="address"
+                label={'Адрес'}
                 value={state?.address || ''}
                 sx={{ width: 'calc(50% - 7.5px)' }}
                 onChange={inputChangeHandler}
@@ -392,63 +369,70 @@ const CreateCard = () => {
                 required
                 multiple
                 options={state?.phone_number}
-                value={Array.isArray(state?.phone_number) ? state.phone_number : []}
+                value={
+                  Array.isArray(state?.phone_number) ? state.phone_number : []
+                }
                 disableClearable
                 readOnly
-                renderInput={params =>
-                  <TextField {...params} label={"Номера"}></TextField>}
+                renderInput={(params) => (
+                  <TextField {...params} label={'Номера'}></TextField>
+                )}
                 sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
-                required={![
-                  'Callback',
-                  'Желает подключиться',
-                  'Ждет подключения',
-                  "Интерком"
-                ].includes(state?.reason?.title)}
-                label={"Мак роутера"}
+                required={
+                  ![
+                    'Callback',
+                    'Желает подключиться',
+                    'Ждет подключения',
+                    'Интерком',
+                  ].includes(state?.reason?.title)
+                }
+                label={'Мак роутера'}
                 value={state?.mac_address || ''}
                 sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
-                required={![
-                  'Callback',
-                  'Желает подключиться',
-                  'Ждет подключения',
-                  'Интерком'
-                ].includes(state?.reason?.title)}
-                label={"Айпи адрес"}
+                required={
+                  ![
+                    'Callback',
+                    'Желает подключиться',
+                    'Ждет подключения',
+                    'Интерком',
+                  ].includes(state?.reason?.title)
+                }
+                label={'Айпи адрес'}
                 value={state?.ip_address || ''}
                 sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
-                label={"mac_onu"}
-                value={state?.mac_onu || ""}
+                label={'mac_onu'}
+                value={state?.mac_onu || ''}
                 sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
-                label={"ip_olt"}
-                value={state?.ip_olt || ""}
+                label={'ip_olt'}
+                value={state?.ip_olt || ''}
                 sx={{ width: 'calc(50% - 7.5px)' }}
               />
               <TextField
-                label='Комментарий'
+                label="Комментарий"
                 minRows={3}
                 multiline
                 onChange={inputChangeHandler}
                 sx={{ width: '100%' }}
-                name={"comment"}
-                value={state?.comment || ""}
+                name={'comment'}
+                value={state?.comment || ''}
               />
             </Grid>
             <Button
-              variant={"outlined"}
-              size='large'
+              variant={'outlined'}
+              size="large"
               loading={loading}
-              type={"submit"}
+              type={'submit'}
               sx={{
                 width: '100%',
-                mt: '15px'
+                mt: '15px',
               }}
             >
               Создать

@@ -1,4 +1,4 @@
-import Grid from "@mui/material/Grid2";
+import Grid from '@mui/material/Grid2';
 import {
   Alert,
   Button,
@@ -6,54 +6,48 @@ import {
   Container,
   MenuItem,
   TextField,
-  Typography
-} from "@mui/material";
-import React, { useEffect, useState } from "react";
+  Typography,
+} from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import {
   createSolution,
-  getReasonsList
-} from "../../features/reasonsAndSolution/reasonsAndSolutionThunk.js";
-import { useAppDispatch, useAppSelector } from "../../app/hooks.js";
+  getReasonsList,
+} from '../../features/reasonsAndSolution/reasonsAndSolutionThunk.js';
+import { useAppDispatch, useAppSelector } from '../../app/hooks.js';
 import {
   selectCreateSolutionError,
   selectCreateSolutionLoading,
   selectReasonsList,
-  selectReasonsListLoading
-} from "../../features/reasonsAndSolution/reasonsAndSolutionSlice.js";
-import { useNavigate } from "react-router-dom";
+  selectReasonsListLoading,
+} from '../../features/reasonsAndSolution/reasonsAndSolutionSlice.js';
+import { useNavigate } from 'react-router-dom';
 
 const CreateSolution = () => {
-  
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectCreateSolutionLoading);
   const error = useAppSelector(selectCreateSolutionError);
   const navigate = useNavigate();
   const reasons = useAppSelector(selectReasonsList);
   const reasonLoading = useAppSelector(selectReasonsListLoading);
-  
+
   const [state, setState] = useState({
     title: '',
     reason_id: '',
   });
-  
+
   useEffect(() => {
     dispatch(getReasonsList());
-  }, [dispatch])
-  
+  }, [dispatch]);
+
   const inputChangeHandler = (e) => {
-    const {
-      name,
-      value
-    } = e.target;
-    
-    setState(prevState => (
-      {
-        ...prevState,
-        [name]: value,
-      }
-    ))
-  }
-  
+    const { name, value } = e.target;
+
+    setState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
   const submitFormHandler = async (e) => {
     e.preventDefault();
     try {
@@ -61,101 +55,91 @@ const CreateSolution = () => {
         title: state.title.trim(),
         reason_id: state.reason_id,
       };
-      
+
       await dispatch(createSolution(solution)).unwrap();
       navigate('/solution-and-reason');
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
-  
+  };
+
   return (
     <>
       <Grid>
-        <Container maxWidth={"lg"}>
+        <Container maxWidth={'lg'}>
           <Typography
-            variant='h3'
+            variant="h3"
             sx={{
-              fontSize: "25px",
-              textAlign: "center",
-              margin: "30px 0 0",
+              fontSize: '25px',
+              textAlign: 'center',
+              margin: '30px 0 0',
             }}
           >
             Создание решения
           </Typography>
           <Grid
-            component={"form"}
+            component={'form'}
             container
-            flexDirection={"column"}
+            flexDirection={'column'}
             spacing={2}
-            justifyContent={"center"}
+            justifyContent={'center'}
             onSubmit={submitFormHandler}
             sx={{
               maxWidth: '500px',
-              margin: "30px auto",
+              margin: '30px auto',
             }}
           >
             {error && (
-              <Alert
-                severity='error'
-                sx={{ my: 1 }}
-              >
+              <Alert severity="error" sx={{ my: 1 }}>
                 {error.error}
               </Alert>
             )}
             <Grid>
               <TextField
                 select
-                type='text'
-                label='Выберите причину'
-                name='reason_id'
-                autoComplete='new-reason-title'
+                type="text"
+                label="Выберите причину"
+                name="reason_id"
+                autoComplete="new-reason-title"
                 value={state.reason_id}
                 sx={{
-                  width: "100%",
+                  width: '100%',
                 }}
                 onChange={inputChangeHandler}
               >
                 {reasonLoading ? (
                   <Grid
-                    sx={{ padding: "10px" }}
+                    sx={{ padding: '10px' }}
                     container
-                    justifyContent={"center"}
+                    justifyContent={'center'}
                   >
-                    <CircularProgress/>
+                    <CircularProgress />
                   </Grid>
                 ) : (
-                  reasons.map(item => {
+                  reasons.map((item) => {
                     return (
-                      <MenuItem
-                        value={item.id}
-                        key={item.id}
-                      >
+                      <MenuItem value={item.id} key={item.id}>
                         {item.title}
                       </MenuItem>
-                    )
+                    );
                   })
                 )}
               </TextField>
             </Grid>
             <Grid>
               <TextField
-                type='text'
-                label='Назовите решение'
-                name='title'
-                autoComplete='new-reason-title'
+                type="text"
+                label="Назовите решение"
+                name="title"
+                autoComplete="new-reason-title"
                 value={state.title}
                 sx={{
-                  width: "100%",
+                  width: '100%',
                 }}
                 onChange={inputChangeHandler}
               />
             </Grid>
-            <Button
-              loading={loading}
-              type={"submit"}
-              variant='contained'
-            >
+            <Button loading={loading} type={'submit'} variant="contained">
               Сохранить
             </Button>
           </Grid>
