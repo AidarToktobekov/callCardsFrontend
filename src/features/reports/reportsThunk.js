@@ -49,7 +49,7 @@ export const getCardsInactives = createAsyncThunk( "reports/getCardsInactives",
     async({date, reasons, solutions, employees})=>{
         try{
 
-            const {data: cardsInactives} = await axiosApi.get(`/cards/inactives?start_date=${date?.start}&end_date=${date?.end}
+            const {data: cardsInactives} = await axiosApi.get(`/cards/inactives?start_date=${date?.createdAt}&end_date=${date?.finishedAt}
                     ${reasons?.length ? `&reason=${reasons}` : ""}
                     ${solutions?.length ? `&solution=${solutions}` : ""}
                     ${employees?.length ? `&sip=${employees}` : ""}

@@ -10,8 +10,8 @@ const Calendar = ({setState}) => {
     const handleChange = (newDate) => {
         setSelectedDate(newDate);
         setState({
-            start: newDate.startOf('month').format('YYYY-MM-DD'),
-            end: newDate.endOf('month').format('YYYY-MM-DD'),
+            createdAt: newDate.startOf('month').format('YYYY-MM-DD'),
+            finishedAt: newDate.endOf('month').format('YYYY-MM-DD'),
         });
     };
 
