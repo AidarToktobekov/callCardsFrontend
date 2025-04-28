@@ -17,6 +17,8 @@ import StatsByInactivesUsers from './Containers/Reports/StatsByInactivesUsers.js
 import StatsByReasons from './Containers/Reports/StatsByReasons.jsx';
 import StatsByRepeatedCalls from './Containers/Reports/StatsByRepeatedCalls.jsx';
 import StatsBySolutions from './Containers/Reports/StatsBySolutions.jsx';
+import Employees from "./Containers/Employees/Employees.jsx";
+import EditEmployees from "./Containers/Employees/EditEmployees.jsx";
 
 function App() {
   const user = useAppSelector(selectUser);
@@ -143,6 +145,26 @@ function App() {
               </>
             }
           />
+            <Route
+                path="/employees"
+                element={
+                    <>
+                        <ProtectedRoute isAllowed={user} protectionType={'admin'}>
+                            <Employees/>
+                        </ProtectedRoute>
+                    </>
+                }
+            />
+            <Route
+                path="/edit-employees/:id"
+                element={
+                    <>
+                        <ProtectedRoute isAllowed={user} protectionType={'admin'}>
+                            <EditEmployees/>
+                        </ProtectedRoute>
+                    </>
+                }
+            />
           <Route
             path="*"
             element={

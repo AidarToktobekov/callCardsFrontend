@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getEmployees, login, register } from './userThunk';
+import {getEmployee, getEmployees, login, register} from './userThunk';
 
 const initialState = {
   user: null,
@@ -14,6 +14,8 @@ const initialState = {
       sip: '600',
     },
   ],
+  employee: null,
+  employeeLoading: null,
   employeesLoading: false,
 };
 
@@ -55,6 +57,16 @@ const UsersSlice = createSlice({
       state.registerError = error;
       state.registerLoading = false;
     });
+    builder.addCase(getEmployee.pending, (state) => {
+      state.employeeLoading = true;
+    });
+    builder.addCase(getEmployee.fulfilled, (state, { payload: employee }) => {
+      state.employee = employee;
+      state.employeeLoading = false;
+    });
+    builder.addCase(getEmployee.rejected, (state) => {
+      state.employeeLoading = false;
+    });
     builder.addCase(getEmployees.pending, (state) => {
       state.employeesLoading = true;
     });
@@ -74,6 +86,8 @@ const UsersSlice = createSlice({
     selectRegisterLoading: (state) => state.registerLoading,
     selectEmployees: (state) => state.employees,
     selectEmployeesLoading: (state) => state.employeesLoading,
+    selectEmployee: (state) => state.employee,
+    selectEmployeeLoading: (state) => state.employeeLoading,
   },
 });
 
@@ -86,5 +100,7 @@ export const {
   selectRegisterLoading,
   selectEmployees,
   selectEmployeesLoading,
+  selectEmployee,
+  selectEmployeeLoading,
 } = UsersSlice.selectors;
 export const { logout } = UsersSlice.actions;

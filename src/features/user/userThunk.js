@@ -40,3 +40,13 @@ export const getEmployees = createAsyncThunk('user/getEmployees', async () => {
     throw new Error(e);
   }
 });
+
+export const getEmployee = createAsyncThunk('user/getEmployee', async (id) => {
+    try {
+        const { data: req } = await axiosApi.get(`/users/${id}`);
+        return req;
+    } catch (e) {
+        throw new Error(e);
+    }
+});
+

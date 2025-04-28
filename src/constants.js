@@ -10,4 +10,6 @@ export const PAGE_NAMES = {
   '/stats_by_solutions': 'Отчёты',
   '/stats_by_repeated_calls': 'Отчёты',
   '/stats_by_inactives_users': 'Отчёты',
+  '/employees': 'Сотрудники',
+  '/edit-employees': 'Редактирование сотрудника',
 };
