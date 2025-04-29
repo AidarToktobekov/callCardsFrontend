@@ -159,6 +159,7 @@ const UserRegister = () => {
                 >
                   <MenuItem value={'user'}>Пользователь</MenuItem>
                   <MenuItem value={'admin'}>Администратор</MenuItem>
+                  <MenuItem value={'senior_spec'}>Старший специалист</MenuItem>
                 </TextField>
               </Grid>
               <Grid>

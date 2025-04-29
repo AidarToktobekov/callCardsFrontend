@@ -1,5 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
-import {getEmployee, getEmployees, login, register} from './userThunk';
+import {
+  editEmployees,
+  getEmployee,
+  getEmployees,
+  login,
+  register,
+} from './userThunk';
 
 const initialState = {
   user: null,
@@ -17,6 +23,8 @@ const initialState = {
   employee: null,
   employeeLoading: null,
   employeesLoading: false,
+  editEmployee: null,
+  editEmployeeLoading: false,
 };
 
 const UsersSlice = createSlice({
@@ -77,6 +85,16 @@ const UsersSlice = createSlice({
     builder.addCase(getEmployees.rejected, (state) => {
       state.employeesLoading = false;
     });
+    builder.addCase(editEmployees.pending, (state) => {
+      state.editEmployeeLoading = true;
+    });
+    builder.addCase(editEmployees.fulfilled, (state, { payload: res }) => {
+      state.editEmployee = res;
+      state.editEmployeeLoading = false;
+    });
+    builder.addCase(editEmployees.rejected, (state) => {
+      state.editEmployeeLoading = false;
+    });
   },
   selectors: {
     selectUser: (state) => state.user,
@@ -88,6 +106,8 @@ const UsersSlice = createSlice({
     selectEmployeesLoading: (state) => state.employeesLoading,
     selectEmployee: (state) => state.employee,
     selectEmployeeLoading: (state) => state.employeeLoading,
+    selectEditEmployee: (state) => state.editEmployee,
+    selectEditEmployeeLoading: (state) => state.editEmployeeLoading,
   },
 });
 
@@ -102,5 +122,7 @@ export const {
   selectEmployeesLoading,
   selectEmployee,
   selectEmployeeLoading,
+  selectEditEmployee,
+  selectEditEmployeeLoading,
 } = UsersSlice.selectors;
 export const { logout } = UsersSlice.actions;

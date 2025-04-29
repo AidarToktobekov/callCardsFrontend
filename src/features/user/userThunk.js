@@ -42,11 +42,29 @@ export const getEmployees = createAsyncThunk('user/getEmployees', async () => {
 });
 
 export const getEmployee = createAsyncThunk('user/getEmployee', async (id) => {
-    try {
-        const { data: req } = await axiosApi.get(`/users/${id}`);
-        return req;
-    } catch (e) {
-        throw new Error(e);
-    }
+  try {
+    const { data: req } = await axiosApi.get(`/users/${id}`);
+    return req;
+  } catch (e) {
+    throw new Error(e);
+  }
 });
 
+export const editEmployees = createAsyncThunk(
+  'user/editEmployees',
+  async (userMutation) => {
+    try {
+      let password;
+      if (userMutation.password) {
+        password = await axiosApi.post('/reset_password', {
+          newPassword: userMutation.password,
+          id: userMutation.id,
+        });
+      }
+      const { data: profile } = await axiosApi.put(`/edit_profile/${userMutation?.id}`);
+      return { password: password?.data, profile };
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
+);

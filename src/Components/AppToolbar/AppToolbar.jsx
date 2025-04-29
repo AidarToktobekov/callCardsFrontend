@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useAppDispatch, useAppSelector } from '../../app/hooks.js';
-import { PAGE_NAMES } from '../../constants.js';
+import { getPageTitle, PAGE_NAMES } from '../../constants.js';
 
 const AppToolbar = () => {
   const location = useLocation();
@@ -20,6 +20,7 @@ const AppToolbar = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
+  const title = getPageTitle(location.pathname);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -45,7 +46,7 @@ const AppToolbar = () => {
         <AppBar position="static">
           <Toolbar>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              {PAGE_NAMES[location.pathname] || ''}
+              {title}
             </Typography>
             {!!user && (
               <div style={{ marginLeft: 'auto' }}>

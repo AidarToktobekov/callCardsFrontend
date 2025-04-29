@@ -1,4 +1,6 @@
-export const API_URL = 'http://10.1.4.9:8010';
+import { matchPath } from 'react-router-dom';
+
+export const API_URL = 'http://10.1.4.9:8011';
 
 export const PAGE_NAMES = {
   '/': 'Новая карточка',
@@ -11,5 +13,14 @@ export const PAGE_NAMES = {
   '/stats_by_repeated_calls': 'Отчёты',
   '/stats_by_inactives_users': 'Отчёты',
   '/employees': 'Сотрудники',
-  '/edit-employees': 'Редактирование сотрудника',
+  '/edit-employees/:id': 'Редактирование сотрудника',
 };
+
+export function getPageTitle(pathname) {
+  for (const pattern in PAGE_NAMES) {
+    if (matchPath({ path: pattern, end: true }, pathname)) {
+      return PAGE_NAMES[pattern];
+    }
+  }
+  return '';
+}
