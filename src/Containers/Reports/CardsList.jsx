@@ -450,7 +450,7 @@ const CardsList = () => {
                     {`${item.spec_full_name} (${item.sip})`}
                   </TableCell>
                   <TableCell align="center">
-                    {item.senior_specs.join(', ')}
+                    {item.senior_specs?.join(', ')}
                   </TableCell>
                   <TableCell align="center">{item.comment}</TableCell>
                 </TableRow>
