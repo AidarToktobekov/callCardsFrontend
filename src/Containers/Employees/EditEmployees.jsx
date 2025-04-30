@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { selectEditEmployeeLoading, } from '../../features/user/userSlice.js';
 import React, { useEffect, useState } from 'react';
 import { editEmployees, } from '../../features/user/userThunk.js';
-import { Alert, Box, Button, MenuItem, Stack, TextField } from '@mui/material';
+import { Box, Button, MenuItem, Stack, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useFetchEmployeeForEdit } from "../../hooks.js";
 
@@ -177,7 +177,7 @@ const EditEmployee = () => {
                 <TextField
                   required
                   type='tel'
-                  label='Phone number'
+                  label='Номер телефона'
                   name='phone_number'
                   autoComplete='off'
                   value={state?.phone_number || ''}
