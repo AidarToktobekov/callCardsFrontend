@@ -1,99 +1,92 @@
-import {useAppDispatch, useAppSelector} from '../../app/hooks.js';
-import {useNavigate, useParams} from 'react-router-dom';
-import {
-  selectEditEmployeeLoading,
-  selectEmployeeForEdit,
-  selectEmployeeForEditLoading,
-} from '../../features/user/userSlice.js';
-import React, {useEffect, useState} from 'react';
-import {editEmployees, getEmployee} from '../../features/user/userThunk.js';
-import {Alert, Box, Button, MenuItem, Stack, TextField} from '@mui/material';
+import { useAppDispatch, useAppSelector } from '../../app/hooks.js';
+import { useNavigate, useParams } from 'react-router-dom';
+import { selectEditEmployeeLoading, } from '../../features/user/userSlice.js';
+import React, { useEffect, useState } from 'react';
+import { editEmployees, } from '../../features/user/userThunk.js';
+import { Alert, Box, Button, MenuItem, Stack, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid2';
+import { useFetchEmployeeForEdit } from "../../hooks.js";
 
 const EditEmployee = () => {
   const { id } = useParams();
-  const employee = useAppSelector(selectEmployeeForEdit);
-  const employeeLoading = useAppSelector(selectEmployeeForEditLoading);
+  const {
+    employeeForEdit,
+    employeeForEditLoading,
+    fetchEmployeeForEdit
+  } = useFetchEmployeeForEdit();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const loading = useAppSelector(selectEditEmployeeLoading);
-  const [error, setError] = useState(null);
-  const [state, setState] = useState({
-    id: '',
-    username: '',
-    name: '',
-    phone_number: '',
-    newPassword: '',
-    confirmPassword: '',
-    sip: '',
-    role: '',
-  });
-
+  const [state, setState] = useState();
+  
   useEffect(() => {
     if (id) {
-      dispatch(getEmployee(id));
+      void fetchEmployeeForEdit(id);
     }
-  }, [dispatch, id]);
-
+    return () => setState(null);
+  }, [
+    dispatch,
+    id
+  ]);
+  
   useEffect(() => {
-    if (employee?.[0]) {
-      setState({
-        id: employee?.[0].id,
-        username: employee?.[0].username,
-        name: employee?.[0].full_name,
-        phone_number: employee?.[0].phone_number,
-        newPassword: '',
-        confirmPassword: '',
-        sip: employee?.[0].sip,
-        role: employee?.[0].role,
-      });
-    }
-  }, [employee]);
-
+    setState(employeeForEdit);
+  }, [employeeForEdit]);
+  
   const inputChangeHandler = (event) => {
-    const { name, value } = event.target;
+    const {
+      name,
+      value
+    } = event.target;
     if (name !== 'phone_number') {
-      setState((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
-    } else {
-      if (value.trim().length >= 4) {
-        setState((prevState) => ({
+      setState((prevState) => (
+        {
           ...prevState,
           [name]: value,
-        }));
+        }
+      ));
+    } else {
+      if (value.trim().length >= 4) {
+        setState((prevState) => (
+          {
+            ...prevState,
+            [name]: value,
+          }
+        ));
       }
     }
   };
-
+  
   const submitFormHandler = async (event) => {
     event.preventDefault();
     try {
-      if (state.password && state.password !== state.confirmPassword) {
-        return setError({ message: 'Пороли не совпадают!' });
-      }
-
       const userMutation = {
         id: state.id,
         username: state.username.trim(),
-        full_name: state.name.trim(),
+        full_name: state.full_name.trim(),
         sip: state.sip.trim(),
         role: state.role,
         phone_number: state.phone_number.trim(),
         password: state.password?.trim(),
       };
-
+      
       await dispatch(editEmployees(userMutation)).unwrap();
       navigate('/employees');
     } catch (e) {
       console.log(e);
     }
   };
-
+  
   return (
-    <Stack sx={{ width: '100%' }} textAlign="center">
-      <Stack alignItems="center" justifyContent="center" m={4}>
+    <Stack
+      sx={{ width: '100%' }}
+      textAlign='center'
+    >
+      <Stack
+        alignItems='center'
+        justifyContent='center'
+        m={4}
+      >
         <Box
           sx={{
             mt: 1,
@@ -104,13 +97,8 @@ const EditEmployee = () => {
             width: '100%',
           }}
         >
-          {error && (
-            <Alert severity="error" sx={{ my: 1 }}>
-              {error.message}
-            </Alert>
-          )}
           <Box
-            component="form"
+            component='form'
             noValidate
             onSubmit={submitFormHandler}
             sx={{
@@ -119,15 +107,19 @@ const EditEmployee = () => {
               mx: 'auto',
             }}
           >
-            <Grid container direction="column" spacing={2}>
+            <Grid
+              container
+              direction='column'
+              spacing={2}
+            >
               <Grid>
                 <TextField
                   required
-                  type="text"
-                  label="Логин"
-                  name="username"
-                  autoComplete="new-username"
-                  value={state.username}
+                  type='text'
+                  label='Логин'
+                  name='username'
+                  autoComplete='off'
+                  value={state?.username || ''}
                   onChange={inputChangeHandler}
                   sx={{
                     width: '100%',
@@ -137,11 +129,11 @@ const EditEmployee = () => {
               <Grid>
                 <TextField
                   required
-                  type="text"
-                  label="ФИО"
-                  name="name"
-                  autoComplete="new-name"
-                  value={state.name}
+                  type='text'
+                  label='ФИО'
+                  name='full_name'
+                  autoComplete='off'
+                  value={state?.full_name || ''}
                   onChange={inputChangeHandler}
                   sx={{
                     width: '100%',
@@ -151,11 +143,11 @@ const EditEmployee = () => {
               <Grid>
                 <TextField
                   required
-                  type="text"
-                  label="СИП"
-                  name="sip"
-                  autoComplete="new-sip"
-                  value={state.sip}
+                  type='text'
+                  label='СИП'
+                  name='sip'
+                  autoComplete='off'
+                  value={state?.sip || ''}
                   onChange={inputChangeHandler}
                   sx={{
                     width: '100%',
@@ -166,11 +158,11 @@ const EditEmployee = () => {
                 <TextField
                   required
                   select
-                  type="text"
-                  label="Роль"
-                  name="role"
-                  autoComplete="new-role"
-                  value={state.role}
+                  type='text'
+                  label='Роль'
+                  name='role'
+                  autoComplete='off'
+                  value={state?.role || ''}
                   onChange={inputChangeHandler}
                   sx={{
                     width: '100%',
@@ -184,11 +176,11 @@ const EditEmployee = () => {
               <Grid>
                 <TextField
                   required
-                  type="tel"
-                  label="Phone number"
-                  name="phone_number"
-                  autoComplete="new-phone_number"
-                  value={state.phone_number}
+                  type='tel'
+                  label='Phone number'
+                  name='phone_number'
+                  autoComplete='off'
+                  value={state?.phone_number || ''}
                   onChange={inputChangeHandler}
                   sx={{
                     width: '100%',
@@ -198,25 +190,11 @@ const EditEmployee = () => {
               <Grid>
                 <TextField
                   required
-                  type="password"
-                  label="Пароль"
-                  name="password"
-                  autoComplete="new-password"
-                  value={state.password}
-                  onChange={inputChangeHandler}
-                  sx={{
-                    width: '100%',
-                  }}
-                />
-              </Grid>
-              <Grid>
-                <TextField
-                  required
-                  type="password"
-                  label="Подтвердите пороль"
-                  name="confirmPassword"
-                  autoComplete="new-confirmPassword"
-                  value={state.confirmPassword || ''}
+                  type='password'
+                  label='Пароль'
+                  name='password'
+                  autoComplete='off'
+                  value={state?.password || ''}
                   onChange={inputChangeHandler}
                   sx={{
                     width: '100%',
@@ -225,14 +203,14 @@ const EditEmployee = () => {
               </Grid>
             </Grid>
             <Button
-              type="submit"
+              type='submit'
               fullWidth
-              variant="contained"
+              variant='contained'
               sx={{
                 mt: 3,
                 mb: 2,
               }}
-              loading={loading || employeeLoading}
+              loading={loading || employeeForEditLoading}
             >
               Сохранить
             </Button>

@@ -50,16 +50,6 @@ export const getEmployee = createAsyncThunk('user/getEmployee', async (id) => {
   }
 });
 
-export const getEmployeeForEdit = createAsyncThunk('user/getEmployeeForEdit', async (id) => {
-    try {
-        const { data: req } = await axiosApi.get(`/users/${id}`);
-        return req;
-    } catch (e) {
-        throw new Error(e);
-    }
-});
-
-
 export const editEmployees = createAsyncThunk(
   'user/editEmployees',
   async (userMutation) => {

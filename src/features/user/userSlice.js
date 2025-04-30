@@ -3,7 +3,7 @@ import {
   checkInSeniorSpec,
   deleteUser,
   editEmployees,
-  getEmployee, getEmployeeForEdit,
+  getEmployee,
   getEmployees,
   login,
   register,
@@ -15,17 +15,9 @@ const initialState = {
   loginError: null,
   registerError: null,
   registerLoading: false,
-  employees: [
-    {
-      id: 'daw',
-      full_name: 'Айдар',
-      sip: '600',
-    },
-  ],
+  employees: [],
   employee: [],
   employeeLoading: null,
-  employeeForEdit: [],
-  employeeForEditLoading: false,
   employeesLoading: false,
   editEmployee: null,
   editEmployeeLoading: false,
@@ -81,16 +73,6 @@ const UsersSlice = createSlice({
     });
     builder.addCase(getEmployee.rejected, (state) => {
       state.employeeLoading = false;
-    });
-    builder.addCase(getEmployeeForEdit.pending, (state) => {
-      state.employeeForEditLoading = true;
-    });
-    builder.addCase(getEmployeeForEdit.fulfilled, (state, { payload: employee }) => {
-      state.employeeForEdit = employee;
-      state.employeeForEditLoading = false;
-    });
-    builder.addCase(getEmployeeForEdit.rejected, (state) => {
-      state.employeeForEditLoading = false;
     });
     builder.addCase(getEmployees.pending, (state) => {
       state.employeesLoading = true;
