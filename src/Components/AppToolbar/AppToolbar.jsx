@@ -1,18 +1,11 @@
-import {
-  AppBar,
-  Box,
-  IconButton,
-  Menu,
-  MenuItem,
-  Toolbar,
-  Typography,
-} from '@mui/material';
-import { logout, selectUser } from '../../features/user/userSlice.js';
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import {AppBar, Box, Button, IconButton, Menu, MenuItem, Toolbar, Typography,} from '@mui/material';
+import {logout, selectCheckedSeniorLoading, selectEmployee, selectUser,} from '../../features/user/userSlice.js';
+import {useEffect, useState} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useAppDispatch, useAppSelector } from '../../app/hooks.js';
-import { getPageTitle, PAGE_NAMES } from '../../constants.js';
+import {useAppDispatch, useAppSelector} from '../../app/hooks.js';
+import {getPageTitle} from '../../constants.js';
+import {checkInSeniorSpec, getEmployee,} from '../../features/user/userThunk.js';
 
 const AppToolbar = () => {
   const location = useLocation();
@@ -21,6 +14,12 @@ const AppToolbar = () => {
   const dispatch = useAppDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const title = getPageTitle(location.pathname);
+  const checkedSeniorLoading = useAppSelector(selectCheckedSeniorLoading);
+  const employee = useAppSelector(selectEmployee);
+
+  useEffect(() => {
+    dispatch(getEmployee(user?.id));
+  }, [dispatch, user?.id]);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -35,11 +34,15 @@ const AppToolbar = () => {
     setAnchorEl(null);
   };
 
+  const checkSenior = employee[0]?.checked_in;
   const handleLogout = async () => {
     await dispatch(logout());
     navigate('/sign-in');
   };
-
+  const handleCheckIn = async () => {
+    await dispatch(checkInSeniorSpec({ id: user.id, checkSenior }));
+    await dispatch(getEmployee(user?.id));
+  };
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -48,8 +51,18 @@ const AppToolbar = () => {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               {title}
             </Typography>
+            {user?.role === 'senior_spec' && (
+              <Button
+                variant={'contained'}
+                color={checkSenior ? 'error' : 'primary'}
+                loading={checkedSeniorLoading}
+                onClick={handleCheckIn}
+              >
+                {checkSenior ? 'Завершить смену' : 'Начать смену'}
+              </Button>
+            )}
             {!!user && (
-              <div style={{ marginLeft: 'auto' }}>
+              <div style={{ marginLeft: '20px' }}>
                 <IconButton
                   size="large"
                   aria-label="account of current user"
@@ -88,11 +101,14 @@ const AppToolbar = () => {
                   <MenuItem onClick={() => handleClick('/stats_by_cards')}>
                     Отчёты
                   </MenuItem>
-                  {user?.role === 'admin' && (
-                    <MenuItem onClick={() => handleClick('/sign-up')}>
+                  {user?.role === 'admin' && [
+                    <MenuItem key={1} onClick={() => handleClick('/sign-up')}>
                       Новый пользователь
-                    </MenuItem>
-                  )}
+                    </MenuItem>,
+                    <MenuItem key={2} onClick={() => handleClick('/employees')}>
+                      Пользователи
+                    </MenuItem>,
+                  ]}
                   <MenuItem onClick={handleLogout}>Выйти</MenuItem>
                 </Menu>
               </div>

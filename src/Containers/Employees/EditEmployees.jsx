@@ -1,9 +1,13 @@
-import {useAppDispatch, useAppSelector} from '../../app/hooks.js';
-import {useNavigate, useParams} from 'react-router-dom';
-import {selectEditEmployeeLoading, selectEmployee, selectEmployeeLoading,} from '../../features/user/userSlice.js';
-import React, {useEffect, useState} from 'react';
-import {editEmployees, getEmployee,} from '../../features/user/userThunk.js';
-import {Alert, Box, Button, MenuItem, Stack, TextField} from '@mui/material';
+import { useAppDispatch, useAppSelector } from '../../app/hooks.js';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  selectEditEmployeeLoading,
+  selectEmployee,
+  selectEmployeeLoading,
+} from '../../features/user/userSlice.js';
+import React, { useEffect, useState } from 'react';
+import { editEmployees, getEmployee } from '../../features/user/userThunk.js';
+import { Alert, Box, Button, MenuItem, Stack, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 
 const EditEmployee = () => {
@@ -15,6 +19,7 @@ const EditEmployee = () => {
   const loading = useAppSelector(selectEditEmployeeLoading);
   const [error, setError] = useState(null);
   const [state, setState] = useState({
+    id: '',
     username: '',
     name: '',
     phone_number: '',
@@ -25,12 +30,15 @@ const EditEmployee = () => {
   });
 
   useEffect(() => {
-    dispatch(getEmployee(id));
-  }, []);
+    if (id) {
+      dispatch(getEmployee(id));
+    }
+  }, [dispatch, id]);
 
   useEffect(() => {
     if (employee?.[0]) {
       setState({
+        id: employee?.[0].id,
         username: employee?.[0].username,
         name: employee?.[0].full_name,
         phone_number: employee?.[0].phone_number,
@@ -44,7 +52,6 @@ const EditEmployee = () => {
 
   const inputChangeHandler = (event) => {
     const { name, value } = event.target;
-    console.log(name, value);
     if (name !== 'phone_number') {
       setState((prevState) => ({
         ...prevState,
@@ -68,6 +75,7 @@ const EditEmployee = () => {
       }
 
       const userMutation = {
+        id: state.id,
         username: state.username.trim(),
         full_name: state.name.trim(),
         sip: state.sip.trim(),
@@ -76,9 +84,8 @@ const EditEmployee = () => {
         password: state.password?.trim(),
       };
 
-      console.log(userMutation);
       await dispatch(editEmployees(userMutation)).unwrap();
-      navigate('/');
+      navigate('/employees');
     } catch (e) {
       console.log(e);
     }
@@ -171,6 +178,7 @@ const EditEmployee = () => {
                 >
                   <MenuItem value={'user'}>Пользователь</MenuItem>
                   <MenuItem value={'admin'}>Администратор</MenuItem>
+                  <MenuItem value={'senior_spec'}>Старший специалист</MenuItem>
                 </TextField>
               </Grid>
               <Grid>
@@ -224,7 +232,7 @@ const EditEmployee = () => {
                 mt: 3,
                 mb: 2,
               }}
-              loading={loading}
+              loading={loading || employeeLoading}
             >
               Сохранить
             </Button>

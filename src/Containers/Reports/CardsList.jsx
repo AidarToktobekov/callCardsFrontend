@@ -389,6 +389,11 @@ const CardsList = () => {
                 </Grid>
               </TableCell>
               <TableCell>
+                <Grid>
+                  <Typography>Старший смены</Typography>
+                </Grid>
+              </TableCell>
+              <TableCell>
                 <Grid
                   sx={{
                     display: 'flex',
@@ -407,7 +412,7 @@ const CardsList = () => {
             {loading ? (
               <TableRow>
                 <TableCell
-                  colSpan={10}
+                  colSpan={11}
                   align="center"
                   sx={{
                     textAlign: 'center!important',
@@ -444,7 +449,9 @@ const CardsList = () => {
                   <TableCell align="center">
                     {`${item.spec_full_name} (${item.sip})`}
                   </TableCell>
-
+                  <TableCell align="center">
+                    {item.senior_specs.join(', ')}
+                  </TableCell>
                   <TableCell align="center">{item.comment}</TableCell>
                 </TableRow>
               ))

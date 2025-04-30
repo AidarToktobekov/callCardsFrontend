@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
+  checkInSeniorSpec,
+  deleteUser,
   editEmployees,
   getEmployee,
   getEmployees,
@@ -20,11 +22,13 @@ const initialState = {
       sip: '600',
     },
   ],
-  employee: null,
+  employee: [],
   employeeLoading: null,
   employeesLoading: false,
   editEmployee: null,
   editEmployeeLoading: false,
+  checkedSeniorLoading: false,
+  deleteLoading: false,
 };
 
 const UsersSlice = createSlice({
@@ -42,6 +46,7 @@ const UsersSlice = createSlice({
     });
     builder.addCase(login.fulfilled, (state, { payload: res }) => {
       state.user = {
+        id: res.id,
         username: res.username,
         name: res.full_name,
         role: res.role,
@@ -95,6 +100,24 @@ const UsersSlice = createSlice({
     builder.addCase(editEmployees.rejected, (state) => {
       state.editEmployeeLoading = false;
     });
+    builder.addCase(checkInSeniorSpec.pending, (state) => {
+      state.checkedSeniorLoading = true;
+    });
+    builder.addCase(checkInSeniorSpec.fulfilled, (state) => {
+      state.checkedSeniorLoading = false;
+    });
+    builder.addCase(checkInSeniorSpec.rejected, (state) => {
+      state.checkedSeniorLoading = false;
+    });
+    builder.addCase(deleteUser.pending, (state) => {
+      state.deleteLoading = true;
+    });
+    builder.addCase(deleteUser.fulfilled, (state) => {
+      state.deleteLoading = false;
+    });
+    builder.addCase(deleteUser.rejected, (state) => {
+      state.deleteLoading = false;
+    });
   },
   selectors: {
     selectUser: (state) => state.user,
@@ -108,6 +131,8 @@ const UsersSlice = createSlice({
     selectEmployeeLoading: (state) => state.employeeLoading,
     selectEditEmployee: (state) => state.editEmployee,
     selectEditEmployeeLoading: (state) => state.editEmployeeLoading,
+    selectCheckedSeniorLoading: (state) => state.checkedSeniorLoading,
+    selectDeleteLoading: (state) => state.deleteLoading,
   },
 });
 
@@ -124,5 +149,7 @@ export const {
   selectEmployeeLoading,
   selectEditEmployee,
   selectEditEmployeeLoading,
+  selectCheckedSeniorLoading,
+  selectDeleteLoading,
 } = UsersSlice.selectors;
 export const { logout } = UsersSlice.actions;

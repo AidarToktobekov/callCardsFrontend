@@ -417,6 +417,11 @@ const StatsByInactivesUsers = () => {
                   </Button>
                 </Grid>
               </TableCell>
+              <TableCell sx={{ minWidth: '70px' }}>
+                <Grid>
+                  <Typography>Старший смены</Typography>
+                </Grid>
+              </TableCell>
               <TableCell>
                 <Grid
                   sx={{
@@ -436,7 +441,7 @@ const StatsByInactivesUsers = () => {
             {loading ? (
               <TableRow>
                 <TableCell
-                  colSpan={10}
+                  colSpan={11}
                   align="center"
                   sx={{
                     textAlign: 'center!important',
@@ -460,6 +465,9 @@ const StatsByInactivesUsers = () => {
                   <TableCell align="center">{item.solution?.title}</TableCell>
                   <TableCell align="center">
                     {`${item.spec_full_name} (${item.sip})`}
+                  </TableCell>
+                  <TableCell align="center">
+                    {item?.senior_specs?.join(', ')}
                   </TableCell>
                   <TableCell align="center">{item.comment}</TableCell>
                 </TableRow>

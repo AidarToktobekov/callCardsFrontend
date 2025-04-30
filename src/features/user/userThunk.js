@@ -54,17 +54,39 @@ export const editEmployees = createAsyncThunk(
   'user/editEmployees',
   async (userMutation) => {
     try {
-      let password;
-      if (userMutation.password) {
-        password = await axiosApi.post('/reset_password', {
-          newPassword: userMutation.password,
-          id: userMutation.id,
-        });
-      }
-      const { data: profile } = await axiosApi.put(`/edit_profile/${userMutation?.id}`);
-      return { password: password?.data, profile };
+      const { data: profile } = await axiosApi.put(
+        `/users/${userMutation?.id}`,
+        userMutation
+      );
+
+      return profile;
     } catch (e) {
       throw new Error(e);
     }
   }
 );
+
+export const checkInSeniorSpec = createAsyncThunk(
+  'user/checkInSeniorSpec',
+  async ({ id, checkSenior }) => {
+    try {
+      const { data: res } = await axiosApi.post(
+        `/users/${id}/${checkSenior ? 'check_out' : 'check_in'}`
+      );
+
+      return res;
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
+);
+
+export const deleteUser = createAsyncThunk('user/deleteUser', async (user) => {
+  try {
+    const { data: res } = await axiosApi.delete(`/users/${user?.id}`);
+
+    return res;
+  } catch (e) {
+    throw new Error(e);
+  }
+});
