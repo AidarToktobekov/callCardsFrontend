@@ -1,6 +1,6 @@
 import { matchPath } from 'react-router-dom';
 
-export const API_URL = 'http://10.1.4.9:8010';
+export const API_URL = 'http://10.1.5.92:8010';
 
 export const PAGE_NAMES = {
   '/': 'Новая карточка',

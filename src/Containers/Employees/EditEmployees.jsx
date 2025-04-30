@@ -1,19 +1,19 @@
-import { useAppDispatch, useAppSelector } from '../../app/hooks.js';
-import { useNavigate, useParams } from 'react-router-dom';
+import {useAppDispatch, useAppSelector} from '../../app/hooks.js';
+import {useNavigate, useParams} from 'react-router-dom';
 import {
   selectEditEmployeeLoading,
-  selectEmployee,
-  selectEmployeeLoading,
+  selectEmployeeForEdit,
+  selectEmployeeForEditLoading,
 } from '../../features/user/userSlice.js';
-import React, { useEffect, useState } from 'react';
-import { editEmployees, getEmployee } from '../../features/user/userThunk.js';
-import { Alert, Box, Button, MenuItem, Stack, TextField } from '@mui/material';
+import React, {useEffect, useState} from 'react';
+import {editEmployees, getEmployee} from '../../features/user/userThunk.js';
+import {Alert, Box, Button, MenuItem, Stack, TextField} from '@mui/material';
 import Grid from '@mui/material/Grid2';
 
 const EditEmployee = () => {
   const { id } = useParams();
-  const employee = useAppSelector(selectEmployee);
-  const employeeLoading = useAppSelector(selectEmployeeLoading);
+  const employee = useAppSelector(selectEmployeeForEdit);
+  const employeeLoading = useAppSelector(selectEmployeeForEditLoading);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const loading = useAppSelector(selectEditEmployeeLoading);

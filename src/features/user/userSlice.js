@@ -3,7 +3,7 @@ import {
   checkInSeniorSpec,
   deleteUser,
   editEmployees,
-  getEmployee,
+  getEmployee, getEmployeeForEdit,
   getEmployees,
   login,
   register,
@@ -24,6 +24,8 @@ const initialState = {
   ],
   employee: [],
   employeeLoading: null,
+  employeeForEdit: [],
+  employeeForEditLoading: false,
   employeesLoading: false,
   editEmployee: null,
   editEmployeeLoading: false,
@@ -80,6 +82,16 @@ const UsersSlice = createSlice({
     builder.addCase(getEmployee.rejected, (state) => {
       state.employeeLoading = false;
     });
+    builder.addCase(getEmployeeForEdit.pending, (state) => {
+      state.employeeForEditLoading = true;
+    });
+    builder.addCase(getEmployeeForEdit.fulfilled, (state, { payload: employee }) => {
+      state.employeeForEdit = employee;
+      state.employeeForEditLoading = false;
+    });
+    builder.addCase(getEmployeeForEdit.rejected, (state) => {
+      state.employeeForEditLoading = false;
+    });
     builder.addCase(getEmployees.pending, (state) => {
       state.employeesLoading = true;
     });
@@ -131,6 +143,8 @@ const UsersSlice = createSlice({
     selectEmployeeLoading: (state) => state.employeeLoading,
     selectEditEmployee: (state) => state.editEmployee,
     selectEditEmployeeLoading: (state) => state.editEmployeeLoading,
+    selectEmployeeForEdit: (state) => state.employeeForEdit,
+    selectEmployeeForEditLoading: (state) => state.employeeForEditLoading,
     selectCheckedSeniorLoading: (state) => state.checkedSeniorLoading,
     selectDeleteLoading: (state) => state.deleteLoading,
   },
@@ -151,5 +165,7 @@ export const {
   selectEditEmployeeLoading,
   selectCheckedSeniorLoading,
   selectDeleteLoading,
+  selectEmployeeForEdit,
+  selectEmployeeForEditLoading,
 } = UsersSlice.selectors;
 export const { logout } = UsersSlice.actions;
