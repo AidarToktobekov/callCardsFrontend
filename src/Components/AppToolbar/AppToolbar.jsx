@@ -1,11 +1,28 @@
-import {AppBar, Box, Button, IconButton, Menu, MenuItem, Toolbar, Typography,} from '@mui/material';
-import {logout, selectCheckedSeniorLoading, selectEmployee, selectUser,} from '../../features/user/userSlice.js';
-import {useEffect, useState} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
+import {
+  AppBar,
+  Box,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography,
+} from '@mui/material';
+import {
+  logout,
+  selectCheckedSeniorLoading,
+  selectEmployee,
+  selectUser,
+} from '../../features/user/userSlice.js';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
-import {useAppDispatch, useAppSelector} from '../../app/hooks.js';
-import {getPageTitle} from '../../constants.js';
-import {checkInSeniorSpec, getEmployee,} from '../../features/user/userThunk.js';
+import { useAppDispatch, useAppSelector } from '../../app/hooks.js';
+import { getPageTitle } from '../../constants.js';
+import {
+  checkInSeniorSpec,
+  getEmployee,
+} from '../../features/user/userThunk.js';
 
 const AppToolbar = () => {
   const location = useLocation();
@@ -101,16 +118,16 @@ const AppToolbar = () => {
                   <MenuItem onClick={() => handleClick('/stats_by_cards')}>
                     Отчёты
                   </MenuItem>
-                  {user?.role === 'admin' &&
+                  {user?.role === 'admin' && (
                     <MenuItem onClick={() => handleClick('/sign-up')}>
                       Новый пользователь
                     </MenuItem>
-                  }
-                  {(user?.role === 'admin' || user?.role === 'senior_spec') &&
-                      <MenuItem onClick={() => handleClick('/employees')}>
-                        Пользователи
-                      </MenuItem>
-                  }
+                  )}
+                  {(user?.role === 'admin' || user?.role === 'senior_spec') && (
+                    <MenuItem onClick={() => handleClick('/employees')}>
+                      Пользователи
+                    </MenuItem>
+                  )}
                   <MenuItem onClick={handleLogout}>Выйти</MenuItem>
                 </Menu>
               </div>
