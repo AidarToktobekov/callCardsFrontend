@@ -101,14 +101,16 @@ const AppToolbar = () => {
                   <MenuItem onClick={() => handleClick('/stats_by_cards')}>
                     Отчёты
                   </MenuItem>
-                  {user?.role === 'admin' && [
-                    <MenuItem key={1} onClick={() => handleClick('/sign-up')}>
+                  {user?.role === 'admin' &&
+                    <MenuItem onClick={() => handleClick('/sign-up')}>
                       Новый пользователь
-                    </MenuItem>,
-                    <MenuItem key={2} onClick={() => handleClick('/employees')}>
-                      Пользователи
-                    </MenuItem>,
-                  ]}
+                    </MenuItem>
+                  }
+                  {(user?.role === 'admin' || user?.role === 'senior_spec') &&
+                      <MenuItem onClick={() => handleClick('/employees')}>
+                        Пользователи
+                      </MenuItem>
+                  }
                   <MenuItem onClick={handleLogout}>Выйти</MenuItem>
                 </Menu>
               </div>

@@ -9,6 +9,10 @@ const ProtectedRoute = ({ isAllowed, children, protectionType }) => {
     return <Navigate to="/" />;
   }
 
+  if (protectionType === 'senior_spec' && isAllowed.role === 'user') {
+    return <Navigate to="/" />;
+  }
+
   return children;
 };
 

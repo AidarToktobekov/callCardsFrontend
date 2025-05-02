@@ -149,7 +149,7 @@ function App() {
             path="/employees"
             element={
               <>
-                <ProtectedRoute isAllowed={user} protectionType={'admin'}>
+                <ProtectedRoute isAllowed={user} protectionType={'senior_spec'}>
                   <Employees />
                 </ProtectedRoute>
               </>
@@ -159,7 +159,7 @@ function App() {
             path="/edit-employees/:id"
             element={
               <>
-                <ProtectedRoute isAllowed={user} protectionType={'admin'}>
+                <ProtectedRoute isAllowed={user} protectionType={'senior_spec'}>
                   <EditEmployees />
                 </ProtectedRoute>
               </>

@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from '../../app/hooks.js';
 import { useNavigate, useParams } from 'react-router-dom';
-import { selectEditEmployeeLoading, } from '../../features/user/userSlice.js';
+import {logout, selectEditEmployeeLoading, selectUser,} from '../../features/user/userSlice.js';
 import React, { useEffect, useState } from 'react';
 import { editEmployees, } from '../../features/user/userThunk.js';
 import { Box, Button, MenuItem, Stack, TextField } from '@mui/material';
@@ -18,6 +18,7 @@ const EditEmployee = () => {
   const navigate = useNavigate();
   const loading = useAppSelector(selectEditEmployeeLoading);
   const [state, setState] = useState();
+  const user = useAppSelector(selectUser);
   
   useEffect(() => {
     if (id) {
@@ -71,7 +72,11 @@ const EditEmployee = () => {
       };
       
       await dispatch(editEmployees(userMutation)).unwrap();
-      navigate('/employees');
+      if (user.id === state.id){
+        dispatch(logout());
+      }else{
+        navigate('/employees');
+      }
     } catch (e) {
       console.log(e);
     }
