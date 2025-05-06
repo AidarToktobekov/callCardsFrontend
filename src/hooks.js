@@ -73,8 +73,8 @@ export const useExportExcel = () => {
         Кол_во: item.count,
         Личный_счет: item.ls_abon,
         Тел_Номер: item.phone_number.join(', '),
-        Причина: item.reason.title,
-        Решение: item.solution.title,
+        Причина: item.reason?.title,
+        Решение: item.solution?.title,
       }));
     }
     exportToExcel(listCards, type);
