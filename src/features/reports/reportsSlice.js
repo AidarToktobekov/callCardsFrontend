@@ -63,7 +63,7 @@ const ReportsSlice = createSlice({
       state.solutionReportLoading = false;
     });
     builder.addCase(getRepeatedCalls.pending, (state) => {
-      state.solutionReportLoading = true;
+      state.repeatedCallsLoading = true;
     });
     builder.addCase(getRepeatedCalls.fulfilled, (state, { payload: list }) => {
       state.repeatedCallsLoading = false;

@@ -53,7 +53,6 @@ const StatsByRepeatedCalls = () => {
   const loading = useAppSelector(selectRepeatedCallsLoading);
   const [filteredList, setFilteredList] = useState(repeatedCalls.result);
   const { loadingExport, fetchCardsForUpload } = useExportExcel();
-
   const [searchDate, setSearchDate] = useState({
     start: dayjs().startOf('month').format('YYYY-MM-DD'),
     end: dayjs().endOf('month').format('YYYY-MM-DD'),
