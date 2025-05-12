@@ -64,11 +64,8 @@ export const useExportExcel = () => {
         Сип: item.sip,
       }));
     } else if (type === 'Повторные звонки') {
-      const { data: cards } = await axiosApi.get(
-        '/cards/repeated_calls?page_size=10000000'
-      );
 
-      listCards = cards.result.map((item) => ({
+      listCards = list.map((item) => ({
         Адресс: item.address,
         Кол_во: item.count,
         Личный_счет: item.ls_abon,

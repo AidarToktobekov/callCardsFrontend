@@ -308,7 +308,7 @@ const StatsByRepeatedCalls = () => {
           </Grid>
           <Button
             variant={'outlined'}
-            onClick={() => fetchCardsForUpload({ type: 'Повторные звонки' })}
+            onClick={() => fetchCardsForUpload({ type: 'Повторные звонки', list: filteredList})}
             loading={loadingExport}
           >
             Экспорт
