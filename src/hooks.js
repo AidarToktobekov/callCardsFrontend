@@ -15,7 +15,6 @@ export const useExportExcel = () => {
   }) => {
     setLoadingExport(true);
     let listCards;
-
     if (type === 'Неактивка') {
       listCards = list.map((item) => ({
         Айди_Аккаунта: item.account_id,
@@ -64,8 +63,12 @@ export const useExportExcel = () => {
         Сип: item.sip,
       }));
     } else if (type === 'Повторные звонки') {
-
-      listCards = list.map((item) => ({
+      const { data: repeatedCalls } = await axiosApi.get(
+        `/cards/repeated_calls?page_size=10000000&start_date=${date.start}&end_date=${date.end}
+            ${solutions?.length ? `&solution=${solutions}` : ''}
+            ${reasons?.length ? `&reason=${reasons}` : ''}
+        `);
+      listCards = repeatedCalls.result.map((item) => ({
         Адресс: item.address,
         Кол_во: item.count,
         Личный_счет: item.ls_abon,

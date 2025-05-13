@@ -43,11 +43,13 @@ export const getSolutionReport = createAsyncThunk(
 
 export const getRepeatedCalls = createAsyncThunk(
   'reports/getRepeatedCalls',
-  async ({ date, listPage }) => {
+  async ({ date, listPage, solutions, reasons  }) => {
     try {
       const { data: repeatedCalls } = await axiosApi.get(
-        `/cards/repeated_calls?start_date=${date.start}&end_date=${date.end}&page=${listPage}`
-      );
+        `/cards/repeated_calls?start_date=${date.start}&end_date=${date.end}&page=${listPage}
+            ${solutions?.length ? `&solution=${solutions}` : ''}
+            ${reasons?.length ? `&reason=${reasons}` : ''}
+        `);
       return repeatedCalls || [];
     } catch (error) {
       console.log(error);

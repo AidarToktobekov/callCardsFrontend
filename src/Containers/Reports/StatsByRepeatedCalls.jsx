@@ -57,21 +57,31 @@ const StatsByRepeatedCalls = () => {
     start: dayjs().startOf('month').format('YYYY-MM-DD'),
     end: dayjs().endOf('month').format('YYYY-MM-DD'),
   });
+  const reasons = useAppSelector(selectReasonsList);
+  const reasonLoading = useAppSelector(selectReasonsListLoading);
+  const solutions = useAppSelector(selectSolutionsList);
+  const solutionLoading = useAppSelector(selectSolutionsListLoading);
+  const [filteredReasons, setFilteredReasons] = useState([]);
+  const [filteredSolutions, setFilteredSolutions] = useState([]);
 
-  const searchCards = ({ date, listPage }) => {
-    dispatch(
+  const searchCards = async ({ date, listPage }) => {
+    const reasonsIds = filteredReasons.map(item=>item.id);
+    const solutionsIds = filteredSolutions.map(item=>item.id);
+    await dispatch(
       getRepeatedCalls({
         date: {
           ...date,
           end: dayjs(date.end).add(1, 'day').format('YYYY-MM-DD'),
         },
+        reasons: reasonsIds,
+        solutions: solutionsIds,
         listPage: listPage,
       })
     );
   };
 
   useEffect(() => {
-    setFilteredList(repeatedCalls.result);
+   setFilteredList(repeatedCalls.result);
   }, [repeatedCalls.result]);
 
   useEffect(() => {
@@ -93,10 +103,6 @@ const StatsByRepeatedCalls = () => {
     setTableHeight(windowHeight - headerHeight - 262);
   };
 
-  const reasons = useAppSelector(selectReasonsList);
-  const reasonLoading = useAppSelector(selectReasonsListLoading);
-  const solutions = useAppSelector(selectSolutionsList);
-  const solutionLoading = useAppSelector(selectSolutionsListLoading);
 
   const [anchorElReason, setAnchorElReason] = useState(null);
   const [anchorElSolution, setAnchorElSolution] = useState(null);
@@ -135,24 +141,6 @@ const StatsByRepeatedCalls = () => {
     setTableHeight(changeTableHeight);
     document.body.addEventListener('resize', changeTableHeight);
   }, []);
-
-  const [filteredReasons, setFilteredReasons] = useState([]);
-  const [filteredSolutions, setFilteredSolutions] = useState([]);
-
-  useEffect(() => {
-    let newList = repeatedCalls.result;
-    if (filteredReasons.length > 0) {
-      newList = newList.filter((item) =>
-        filteredReasons.some((reason) => item.reason.id === reason.id)
-      );
-    }
-    if (filteredSolutions.length > 0) {
-      newList = newList.filter((item) =>
-        filteredSolutions.some((solution) => item.solution?.id === solution.id)
-      );
-    }
-    setFilteredList(newList);
-  }, [filteredReasons, filteredSolutions, repeatedCalls]);
 
   const handleToggle = (value, state, setState) => () => {
     const currentIndex = state.indexOf(value);
@@ -198,7 +186,7 @@ const StatsByRepeatedCalls = () => {
     if (type === 'solution') {
       if (filters.solution === 'up') {
         newList = [...newList].sort((a, b) =>
-          b.solution.title.localeCompare(a.solution.title)
+          b.solution?.title.localeCompare(a.solution.title)
         );
         setFilters((prev) => ({
           ...prev,
@@ -206,7 +194,7 @@ const StatsByRepeatedCalls = () => {
         }));
       } else {
         newList = [...newList].sort((a, b) =>
-          a.solution.title.localeCompare(b.solution.title)
+          a.solution?.title.localeCompare(b.solution.title)
         );
         setFilters((prev) => ({
           ...prev,
@@ -307,7 +295,16 @@ const StatsByRepeatedCalls = () => {
           </Grid>
           <Button
             variant={'outlined'}
-            onClick={() => fetchCardsForUpload({ type: 'Повторные звонки', list: filteredList})}
+            onClick={() => fetchCardsForUpload({
+                type: 'Повторные звонки',
+                date: {
+                  ...searchDate,
+                  end: dayjs(searchDate.end).add(1, 'day').format('YYYY-MM-DD'),
+                },
+                solutions: filteredSolutions.map((item) =>item.id),
+                reasons: filteredReasons.map((item) =>item.id),
+              }
+            )}
             loading={loadingExport}
           >
             Экспорт
