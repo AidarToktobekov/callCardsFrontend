@@ -1,27 +1,51 @@
 import './App.css';
-import CardsList from './Containers/Reports/CardsList.jsx';
 import { Route, Routes } from 'react-router-dom';
-import CreateCard from './Containers/CreateCard/CreateCard.jsx';
-import UserLogin from './Containers/UserLogin/UserLogin.jsx';
-import UserRegister from './Containers/UserRegister/UserRegister.jsx';
 import { Typography } from '@mui/material';
 import Layout from './Components/Layout/Layout.jsx';
-import StatsByEmployees from './Containers/Reports/StatsByEmployees.jsx';
 import ProtectedRoute from './Components/ProtactedRoute/ProtactedRoute.jsx';
 import { useAppSelector } from './app/hooks.js';
 import { selectUser } from './features/user/userSlice.js';
-import SolutionReasonLists from './Containers/SolutionsAndReasons/SolutionReasonLists.jsx';
-import CreateReason from './Containers/SolutionsAndReasons/CreateReason.jsx';
-import CreateSolution from './Containers/SolutionsAndReasons/CreateSolution.jsx';
-import StatsByInactivesUsers from './Containers/Reports/StatsByInactivesUsers.jsx';
-import StatsByReasons from './Containers/Reports/StatsByReasons.jsx';
-import StatsByRepeatedCalls from './Containers/Reports/StatsByRepeatedCalls.jsx';
-import StatsBySolutions from './Containers/Reports/StatsBySolutions.jsx';
-import Employees from './Containers/Employees/Employees.jsx';
-import EditEmployees from './Containers/Employees/EditEmployees.jsx';
+import { lazy, Suspense } from 'react';
 
 function App() {
   const user = useAppSelector(selectUser);
+
+  const CreateCard = lazy(
+    () => import('./Containers/CreateCard/CreateCard.jsx')
+  );
+  const StatsByEmployees = lazy(
+    () => import('./Containers/Reports/StatsByEmployees.jsx')
+  );
+  const UserLogin = lazy(() => import('./Containers/UserLogin/UserLogin.jsx'));
+  const UserRegister = lazy(
+    () => import('./Containers/UserRegister/UserRegister.jsx')
+  );
+  const CardsList = lazy(() => import('./Containers/Reports/CardsList.jsx'));
+  const StatsByReasons = lazy(
+    () => import('./Containers/Reports/StatsByReasons.jsx')
+  );
+  const StatsBySolutions = lazy(
+    () => import('./Containers/Reports/StatsBySolutions.jsx')
+  );
+  const StatsByRepeatedCalls = lazy(
+    () => import('./Containers/Reports/StatsByRepeatedCalls.jsx')
+  );
+  const StatsByInactivesUsers = lazy(
+    () => import('./Containers/Reports/StatsByInactivesUsers.jsx')
+  );
+  const SolutionReasonLists = lazy(
+    () => import('./Containers/SolutionsAndReasons/SolutionReasonLists.jsx')
+  );
+  const CreateReason = lazy(
+    () => import('./Containers/SolutionsAndReasons/CreateReason.jsx')
+  );
+  const CreateSolution = lazy(
+    () => import('./Containers/SolutionsAndReasons/CreateSolution.jsx')
+  );
+  const Employees = lazy(() => import('./Containers/Employees/Employees.jsx'));
+  const EditEmployees = lazy(
+    () => import('./Containers/Employees/EditEmployees.jsx')
+  );
 
   return (
     <>
@@ -31,9 +55,11 @@ function App() {
             path="/"
             element={
               <>
-                <ProtectedRoute isAllowed={user} protectionType={'auth'}>
-                  <CreateCard></CreateCard>
-                </ProtectedRoute>
+                <Suspense fallback={<></>}>
+                  <ProtectedRoute isAllowed={user} protectionType={'auth'}>
+                    <CreateCard />
+                  </ProtectedRoute>
+                </Suspense>
               </>
             }
           />
@@ -41,9 +67,11 @@ function App() {
             path="/stats_by_employees"
             element={
               <>
-                <ProtectedRoute isAllowed={user} protectionType={'admin'}>
-                  <StatsByEmployees></StatsByEmployees>
-                </ProtectedRoute>
+                <Suspense fallback={<></>}>
+                  <ProtectedRoute isAllowed={user} protectionType={'admin'}>
+                    <StatsByEmployees />
+                  </ProtectedRoute>
+                </Suspense>
               </>
             }
           />
@@ -51,7 +79,9 @@ function App() {
             path="/sign-in"
             element={
               <>
-                <UserLogin></UserLogin>
+                <Suspense fallback={<></>}>
+                  <UserLogin></UserLogin>
+                </Suspense>
               </>
             }
           />
@@ -59,9 +89,11 @@ function App() {
             path="/sign-up"
             element={
               <>
-                <ProtectedRoute isAllowed={user} protectionType={'admin'}>
-                  <UserRegister></UserRegister>
-                </ProtectedRoute>
+                <Suspense fallback={<></>}>
+                  <ProtectedRoute isAllowed={user} protectionType={'admin'}>
+                    <UserRegister></UserRegister>
+                  </ProtectedRoute>
+                </Suspense>
               </>
             }
           />
@@ -69,9 +101,11 @@ function App() {
             path="/stats_by_cards"
             element={
               <>
-                <ProtectedRoute isAllowed={user} protectionType={'auth'}>
-                  <CardsList></CardsList>
-                </ProtectedRoute>
+                <Suspense fallback={<></>}>
+                  <ProtectedRoute isAllowed={user} protectionType={'auth'}>
+                    <CardsList></CardsList>
+                  </ProtectedRoute>
+                </Suspense>
               </>
             }
           />
@@ -79,9 +113,11 @@ function App() {
             path="/stats_by_reasons"
             element={
               <>
-                <ProtectedRoute isAllowed={user} protectionType={'auth'}>
-                  <StatsByReasons></StatsByReasons>
-                </ProtectedRoute>
+                <Suspense fallback={<></>}>
+                  <ProtectedRoute isAllowed={user} protectionType={'auth'}>
+                    <StatsByReasons></StatsByReasons>
+                  </ProtectedRoute>
+                </Suspense>
               </>
             }
           />
@@ -89,9 +125,11 @@ function App() {
             path="/stats_by_solutions"
             element={
               <>
-                <ProtectedRoute isAllowed={user} protectionType={'auth'}>
-                  <StatsBySolutions></StatsBySolutions>
-                </ProtectedRoute>
+                <Suspense fallback={<></>}>
+                  <ProtectedRoute isAllowed={user} protectionType={'auth'}>
+                    <StatsBySolutions></StatsBySolutions>
+                  </ProtectedRoute>
+                </Suspense>
               </>
             }
           />
@@ -99,9 +137,11 @@ function App() {
             path="/stats_by_repeated_calls"
             element={
               <>
-                <ProtectedRoute isAllowed={user} protectionType={'auth'}>
-                  <StatsByRepeatedCalls></StatsByRepeatedCalls>
-                </ProtectedRoute>
+                <Suspense fallback={<></>}>
+                  <ProtectedRoute isAllowed={user} protectionType={'auth'}>
+                    <StatsByRepeatedCalls></StatsByRepeatedCalls>
+                  </ProtectedRoute>
+                </Suspense>
               </>
             }
           />
@@ -109,9 +149,11 @@ function App() {
             path="/stats_by_inactives_users"
             element={
               <>
-                <ProtectedRoute isAllowed={user} protectionType={'auth'}>
-                  <StatsByInactivesUsers></StatsByInactivesUsers>
-                </ProtectedRoute>
+                <Suspense fallback={<></>}>
+                  <ProtectedRoute isAllowed={user} protectionType={'auth'}>
+                    <StatsByInactivesUsers></StatsByInactivesUsers>
+                  </ProtectedRoute>
+                </Suspense>
               </>
             }
           />
@@ -119,9 +161,11 @@ function App() {
             path="/solution-and-reason"
             element={
               <>
-                <ProtectedRoute isAllowed={user} protectionType={'admin'}>
-                  <SolutionReasonLists></SolutionReasonLists>
-                </ProtectedRoute>
+                <Suspense fallback={<></>}>
+                  <ProtectedRoute isAllowed={user} protectionType={'admin'}>
+                    <SolutionReasonLists></SolutionReasonLists>
+                  </ProtectedRoute>
+                </Suspense>
               </>
             }
           />
@@ -129,9 +173,11 @@ function App() {
             path="/create-reason"
             element={
               <>
-                <ProtectedRoute isAllowed={user} protectionType={'admin'}>
-                  <CreateReason></CreateReason>
-                </ProtectedRoute>
+                <Suspense fallback={<></>}>
+                  <ProtectedRoute isAllowed={user} protectionType={'admin'}>
+                    <CreateReason></CreateReason>
+                  </ProtectedRoute>
+                </Suspense>
               </>
             }
           />
@@ -139,9 +185,11 @@ function App() {
             path="/create-solution"
             element={
               <>
-                <ProtectedRoute isAllowed={user} protectionType={'admin'}>
-                  <CreateSolution></CreateSolution>
-                </ProtectedRoute>
+                <Suspense fallback={<></>}>
+                  <ProtectedRoute isAllowed={user} protectionType={'admin'}>
+                    <CreateSolution></CreateSolution>
+                  </ProtectedRoute>
+                </Suspense>
               </>
             }
           />
@@ -149,9 +197,14 @@ function App() {
             path="/employees"
             element={
               <>
-                <ProtectedRoute isAllowed={user} protectionType={'senior_spec'}>
-                  <Employees />
-                </ProtectedRoute>
+                <Suspense fallback={<></>}>
+                  <ProtectedRoute
+                    isAllowed={user}
+                    protectionType={'senior_spec'}
+                  >
+                    <Employees />
+                  </ProtectedRoute>
+                </Suspense>
               </>
             }
           />
@@ -159,9 +212,14 @@ function App() {
             path="/edit-employees/:id"
             element={
               <>
-                <ProtectedRoute isAllowed={user} protectionType={'senior_spec'}>
-                  <EditEmployees />
-                </ProtectedRoute>
+                <Suspense fallback={<></>}>
+                  <ProtectedRoute
+                    isAllowed={user}
+                    protectionType={'senior_spec'}
+                  >
+                    <EditEmployees />
+                  </ProtectedRoute>
+                </Suspense>
               </>
             }
           />

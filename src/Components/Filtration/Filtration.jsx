@@ -16,7 +16,7 @@ import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import EmojiObjectsIcon from '@mui/icons-material/EmojiObjects';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import PersonIcon from '@mui/icons-material/Person';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks.js';
 import {
   selectReasonsList,
@@ -849,4 +849,4 @@ const Filtration = ({
   );
 };
 
-export default Filtration;
+export default memo(Filtration);
