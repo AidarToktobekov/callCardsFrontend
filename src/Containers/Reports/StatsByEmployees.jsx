@@ -160,7 +160,7 @@ const StatsByEmployees = () => {
     if (type === 'name') {
       if (filters.name === 'up') {
         newList = [...newList].sort((a, b) =>
-          b.spec_full_name.localeCompare(a.spec_full_name)
+          b.spec_full_name?.localeCompare(a.spec_full_name)
         );
         setFilters((prev) => ({
           ...prev,
@@ -168,7 +168,7 @@ const StatsByEmployees = () => {
         }));
       } else {
         newList = [...newList].sort((a, b) =>
-          a.spec_full_name.localeCompare(b.spec_full_name)
+          a.spec_full_name?.localeCompare(b.spec_full_name)
         );
         setFilters((prev) => ({
           ...prev,

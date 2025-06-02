@@ -53,6 +53,7 @@ const CardsList = () => {
     reasonsIds,
     employeesSip,
     solutionsIds,
+    ls_abon,
   }) => {
     await dispatch(
       getList({
@@ -61,6 +62,7 @@ const CardsList = () => {
         reasons: reasonsIds,
         employees: employeesSip,
         solutions: solutionsIds,
+        ls_abon,
       })
     );
   };

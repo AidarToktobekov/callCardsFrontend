@@ -150,6 +150,7 @@ const StatsByInactivesUsers = () => {
     reasonsIds,
     employeesSip,
     solutionsIds,
+    ls_abon,
   }) => {
     await dispatch(
       getCardsInactives({
@@ -157,6 +158,7 @@ const StatsByInactivesUsers = () => {
         reasons: reasonsIds,
         employees: employeesSip,
         solutions: solutionsIds,
+        ls_abon,
       })
     );
   };

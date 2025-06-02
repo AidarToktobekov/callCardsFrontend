@@ -43,13 +43,15 @@ export const getSolutionReport = createAsyncThunk(
 
 export const getRepeatedCalls = createAsyncThunk(
   'reports/getRepeatedCalls',
-  async ({ date, listPage, solutions, reasons  }) => {
+  async ({ date, listPage, solutions, reasons, ls_abon }) => {
     try {
       const { data: repeatedCalls } = await axiosApi.get(
         `/cards/repeated_calls?start_date=${date.start}&end_date=${date.end}&page=${listPage}
             ${solutions?.length ? `&solution=${solutions}` : ''}
             ${reasons?.length ? `&reason=${reasons}` : ''}
-        `);
+            ${ls_abon ? `&ls_abon=${ls_abon}` : ''}
+        `
+      );
       return repeatedCalls || [];
     } catch (error) {
       console.log(error);
@@ -59,10 +61,11 @@ export const getRepeatedCalls = createAsyncThunk(
 
 export const getCardsInactives = createAsyncThunk(
   'reports/getCardsInactives',
-  async ({ date, reasons, solutions, employees }) => {
+  async ({ date, reasons, solutions, employees, ls_abon }) => {
     try {
       const { data: cardsInactives } =
         await axiosApi.get(`/cards/inactives?start_date=${date?.createdAt}&end_date=${date?.finishedAt}
+                    ${ls_abon ? `&search_ls-abon=${ls_abon}` : ''}
                     ${reasons?.length ? `&reason=${reasons}` : ''}
                     ${solutions?.length ? `&solution=${solutions}` : ''}
                     ${employees?.length ? `&sip=${employees}` : ''}

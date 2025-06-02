@@ -3,10 +3,11 @@ import axiosApi from '../../axiosApi.js';
 
 export const getList = createAsyncThunk(
   'list/getAll',
-  async ({ listPage, date, reasons, solutions, employees }) => {
+  async ({ listPage, date, reasons, solutions, employees, ls_abon }) => {
     try {
       const { data: list } = await axiosApi.get(
         `/cards?page=${listPage}&page_size=${100}
+                    ${ls_abon ? `&ls_abon=${ls_abon}` : ''}
                     ${date?.createdAt && date?.finishedAt ? `&start_date=${date.createdAt}&end_date=${date.finishedAt}` : ''}
                     ${reasons?.length ? `&reason=${reasons}` : ''}
                     ${solutions?.length ? `&solution=${solutions}` : ''}

@@ -67,7 +67,8 @@ export const useExportExcel = () => {
         `/cards/repeated_calls?page_size=10000000&start_date=${date.start}&end_date=${date.end}
             ${solutions?.length ? `&solution=${solutions}` : ''}
             ${reasons?.length ? `&reason=${reasons}` : ''}
-        `);
+        `
+      );
       listCards = repeatedCalls.result.map((item) => ({
         Адресс: item.address,
         Кол_во: item.count,

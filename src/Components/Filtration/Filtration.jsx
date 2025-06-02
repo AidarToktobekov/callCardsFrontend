@@ -97,6 +97,7 @@ const Filtration = ({
       employees: employees,
       reasons: reasons,
       solutions: solutions,
+      ls_abon: '',
     });
   }, [dispatch, employees, reasons, solutions, hovered.type]);
 
@@ -154,6 +155,7 @@ const Filtration = ({
     employees: [],
     reasons: [],
     solutions: [],
+    ls_abon: '',
   });
   const handleChangeSearchFields = (e) => {
     const { name, value } = e.target;
@@ -162,6 +164,7 @@ const Filtration = ({
         employees: employees,
         reasons: reasons,
         solutions: solutions,
+        search: '',
       });
     } else {
       if (name === 'employees') {
@@ -185,6 +188,11 @@ const Filtration = ({
             item.title.toLowerCase().includes(value.toLowerCase())
           ),
         }));
+      } else if (name === 'ls_abon') {
+        setSearchFields((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
       }
     }
   };
@@ -203,7 +211,7 @@ const Filtration = ({
     filteredEmployees.map((item) => {
       employeesSip.push(item.sip);
     });
-    filtrationRequest({
+    await filtrationRequest({
       filteredDate: {
         ...filteredDate,
         finishedAt: dayjs(filteredDate.finishedAt)
@@ -213,6 +221,7 @@ const Filtration = ({
       reasonsIds,
       employeesSip,
       solutionsIds,
+      ls_abon: searchFields.ls_abon,
     });
     handleClose();
   };
@@ -391,6 +400,41 @@ const Filtration = ({
               </ListItemButton>
             </ListItem>
           ) : null}
+          <ListItem>
+            <ListItemButton
+              sx={{
+                display: 'flex',
+                width: '100%',
+                p: '8px 5px',
+                gap: '15px',
+                alignItems: 'center',
+                borderRadius: '5px',
+              }}
+              onMouseEnter={() =>
+                setHovered({
+                  state: true,
+                  top: '210',
+                  type: 'search',
+                })
+              }
+            >
+              <Grid
+                sx={{
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '50%',
+                  backgroundColor: 'white',
+                  color: '#000',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <CalendarMonthIcon />
+              </Grid>
+              <Typography>Поиск по л.с.</Typography>
+            </ListItemButton>
+          </ListItem>
         </List>
         <Grid
           container
@@ -730,6 +774,49 @@ const Filtration = ({
                   Очистить
                 </Button>
               </Grid>
+            ) : null}
+
+            {hovered.type === 'search' ? (
+              solutionLoading ? (
+                <CircularProgress />
+              ) : (
+                <Grid
+                  sx={{
+                    bgcolor: 'background.paper',
+                  }}
+                >
+                  <Grid
+                    container
+                    flexDirection={'column'}
+                    spacing={1}
+                    sx={{
+                      px: 1,
+                      py: 2,
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        padding: '5px 0',
+                        textAlign: 'center',
+                        fontSize: '18px',
+                      }}
+                    >
+                      Поиск по лич. счету
+                    </Typography>
+                    <TextField
+                      autoComplete={'off'}
+                      type={'text'}
+                      label={'Л.С. абонента'}
+                      name={'ls_abon'}
+                      onChange={handleChangeSearchFields}
+                      value={searchFields.ls_abon || ''}
+                      sx={{
+                        width: '100%',
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+              )
             ) : null}
           </Grid>
         </Grid>

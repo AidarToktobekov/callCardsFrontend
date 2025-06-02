@@ -65,8 +65,8 @@ const StatsByRepeatedCalls = () => {
   const [filteredSolutions, setFilteredSolutions] = useState([]);
 
   const searchCards = async ({ date, listPage }) => {
-    const reasonsIds = filteredReasons.map(item=>item.id);
-    const solutionsIds = filteredSolutions.map(item=>item.id);
+    const reasonsIds = filteredReasons.map((item) => item.id);
+    const solutionsIds = filteredSolutions.map((item) => item.id);
     await dispatch(
       getRepeatedCalls({
         date: {
@@ -74,6 +74,7 @@ const StatsByRepeatedCalls = () => {
           end: dayjs(date.end).add(1, 'day').format('YYYY-MM-DD'),
         },
         reasons: reasonsIds,
+        ls_abon: searchFields.ls_abon,
         solutions: solutionsIds,
         listPage: listPage,
       })
@@ -81,7 +82,7 @@ const StatsByRepeatedCalls = () => {
   };
 
   useEffect(() => {
-   setFilteredList(repeatedCalls.result);
+    setFilteredList(repeatedCalls.result);
   }, [repeatedCalls.result]);
 
   useEffect(() => {
@@ -103,7 +104,7 @@ const StatsByRepeatedCalls = () => {
     setTableHeight(windowHeight - headerHeight - 262);
   };
 
-
+  const [anchorElLs_Abon, setAnchorElLs_Abon] = useState(null);
   const [anchorElReason, setAnchorElReason] = useState(null);
   const [anchorElSolution, setAnchorElSolution] = useState(null);
 
@@ -112,6 +113,8 @@ const StatsByRepeatedCalls = () => {
       setAnchorElSolution(event.currentTarget);
     } else if (type === 'reason') {
       setAnchorElReason(event.currentTarget);
+    } else if (type === 'ls_abon') {
+      setAnchorElLs_Abon(event.currentTarget);
     }
   };
 
@@ -120,13 +123,17 @@ const StatsByRepeatedCalls = () => {
       setAnchorElReason(null);
     } else if (type === 'solution') {
       setAnchorElSolution(null);
+    } else if (type === 'ls_abon') {
+      setAnchorElLs_Abon(null);
     }
   };
 
   const open = {
     reason: Boolean(anchorElReason),
     solution: Boolean(anchorElSolution),
+    ls_abon: Boolean(anchorElLs_Abon),
   };
+  const idLS_AbonPopover = 'ls_abon-filters-popup';
   const idReasonPopover = 'reason-filters-popup';
   const idSolutionPopover = 'solution-filters-popup';
 
@@ -134,6 +141,7 @@ const StatsByRepeatedCalls = () => {
     setSearchFields({
       reasons: reasons,
       solutions: solutions,
+      ls_abon: '',
     });
   }, [dispatch, reasons, solutions]);
 
@@ -228,10 +236,12 @@ const StatsByRepeatedCalls = () => {
   const [searchFields, setSearchFields] = useState({
     reasons: [],
     solutions: [],
+    ls_abon: '',
   });
 
   const handleChangeSearchFields = (e) => {
     const { name, value } = e.target;
+    console.log(value, name);
     if (!value) {
       setSearchFields({
         reasons: reasons,
@@ -251,6 +261,11 @@ const StatsByRepeatedCalls = () => {
           [name]: solutions.filter((item) =>
             item.title.toLowerCase().includes(value.toLowerCase())
           ),
+        }));
+      } else if (name === 'ls_abon') {
+        setSearchFields((prev) => ({
+          ...prev,
+          [name]: value,
         }));
       }
     }
@@ -295,16 +310,17 @@ const StatsByRepeatedCalls = () => {
           </Grid>
           <Button
             variant={'outlined'}
-            onClick={() => fetchCardsForUpload({
+            onClick={() =>
+              fetchCardsForUpload({
                 type: 'Повторные звонки',
                 date: {
                   ...searchDate,
                   end: dayjs(searchDate.end).add(1, 'day').format('YYYY-MM-DD'),
                 },
-                solutions: filteredSolutions.map((item) =>item.id),
-                reasons: filteredReasons.map((item) =>item.id),
-              }
-            )}
+                solutions: filteredSolutions.map((item) => item.id),
+                reasons: filteredReasons.map((item) => item.id),
+              })
+            }
             loading={loadingExport}
           >
             Экспорт
@@ -346,8 +362,69 @@ const StatsByRepeatedCalls = () => {
                   },
                 }}
               >
-                <TableCell sx={{ minWidth: '100px' }}>
-                  <Typography>Личный счет</Typography>
+                <TableCell sx={{ minWidth: '130px' }}>
+                  <Grid container>
+                    <Typography>Личный счет</Typography>
+
+                    <Button
+                      aria-describedby={idLS_AbonPopover}
+                      variant="text"
+                      onClick={(event) => handleClick(event, 'ls_abon')}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        p: 0,
+                        width: '25px',
+                        height: '25px',
+                        minWidth: 'unset',
+                      }}
+                    >
+                      <SettingsIcon
+                        sx={{
+                          color: searchFields.ls_abon ? '#009dff' : '#fff',
+                        }}
+                      />
+                    </Button>
+                  </Grid>
+                  <Popover
+                    id={idLS_AbonPopover}
+                    open={open.ls_abon}
+                    anchorEl={anchorElLs_Abon}
+                    onClose={() => handleClose('ls_abon')}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    }}
+                  >
+                    <Grid
+                      sx={{
+                        minWidth: '300px',
+                        background: 'rgb(41,41,41)',
+                        p: 2,
+                      }}
+                    >
+                      <Typography
+                        variant={'h5'}
+                        sx={{
+                          fontSize: '18px',
+                          mb: 2,
+                          textAlign: 'center',
+                        }}
+                      >
+                        Поиск по лич. счету
+                      </Typography>
+                      <TextField
+                        autoComplete="off"
+                        value={searchFields.ls_abon}
+                        name={'ls_abon'}
+                        onChange={handleChangeSearchFields}
+                        variant={'outlined'}
+                        label={'Личный счёт'}
+                        fullWidth
+                      />
+                    </Grid>
+                  </Popover>
                 </TableCell>
                 <TableCell>
                   <Typography>Адрес</Typography>
@@ -396,7 +473,12 @@ const StatsByRepeatedCalls = () => {
                         minWidth: 'unset',
                       }}
                     >
-                      <SettingsIcon />
+                      <SettingsIcon
+                        sx={{
+                          color:
+                            filteredReasons.length < 1 ? '#fff' : '#009dff',
+                        }}
+                      />
                     </Button>
                     <Popover
                       id={idReasonPopover}
@@ -537,7 +619,12 @@ const StatsByRepeatedCalls = () => {
                         minWidth: 'unset',
                       }}
                     >
-                      <SettingsIcon />
+                      <SettingsIcon
+                        sx={{
+                          color:
+                            filteredSolutions.length < 1 ? '#fff' : '#009dff',
+                        }}
+                      />
                     </Button>
                     <Popover
                       id={idSolutionPopover}
