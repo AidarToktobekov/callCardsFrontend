@@ -54,8 +54,8 @@ const StatsByRepeatedCalls = () => {
   const [filteredList, setFilteredList] = useState(repeatedCalls.result);
   const { loadingExport, fetchCardsForUpload } = useExportExcel();
   const [searchDate, setSearchDate] = useState({
-    start: dayjs().startOf('month').format('YYYY-MM-DD'),
-    end: dayjs().endOf('month').format('YYYY-MM-DD'),
+    createdAt: dayjs().startOf('month').format('YYYY-MM-DD'),
+    finishedAt: dayjs().endOf('month').format('YYYY-MM-DD'),
   });
   const reasons = useAppSelector(selectReasonsList);
   const reasonLoading = useAppSelector(selectReasonsListLoading);
@@ -70,8 +70,8 @@ const StatsByRepeatedCalls = () => {
     await dispatch(
       getRepeatedCalls({
         date: {
-          ...date,
-          end: dayjs(date.end).add(1, 'day').format('YYYY-MM-DD'),
+          start: searchDate.createdAt,
+          end: dayjs(date.finishedAt).add(1, 'day').format('YYYY-MM-DD'),
         },
         reasons: reasonsIds,
         ls_abon: searchFields.ls_abon,
@@ -241,7 +241,6 @@ const StatsByRepeatedCalls = () => {
 
   const handleChangeSearchFields = (e) => {
     const { name, value } = e.target;
-    console.log(value, name);
     if (!value) {
       setSearchFields({
         reasons: reasons,
