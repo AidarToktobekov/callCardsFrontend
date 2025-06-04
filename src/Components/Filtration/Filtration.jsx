@@ -34,7 +34,6 @@ import {
   getReasonsList,
   getSolutionsList,
 } from '../../features/reasonsAndSolution/reasonsAndSolutionThunk.js';
-import { getList } from '../../features/list/listThunk.js';
 import dayjs from 'dayjs';
 import { useExportExcel } from '../../hooks.js';
 
@@ -42,9 +41,8 @@ const Filtration = ({
   setFilteredList,
   list,
   filtrationRequest,
-  listPage,
   type,
-  inactiveDate,
+  date,
 }) => {
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [filteredReasons, setFilteredReasons] = useState([]);
@@ -102,31 +100,11 @@ const Filtration = ({
   }, [dispatch, employees, reasons, solutions, hovered.type]);
 
   useEffect(() => {
-    if (type === 'Карточки') {
-      const reasonsIds = filteredReasons.map((item) => item.id);
-      const solutionsIds = filteredSolutions.map((item) => item.id);
-      const employeesSip = filteredEmployees.map((item) => item.sip);
-      dispatch(
-        getList({
-          listPage: listPage,
-          date: {
-            ...filteredDate,
-            finishedAt: dayjs(filteredDate.finishedAt)
-              .add(1, 'day')
-              .format('YYYY-MM-DD'),
-          },
-          reasons: reasonsIds,
-          employees: employeesSip,
-          solutions: solutionsIds,
-        })
-      );
-    } else if (type === 'Неактивка') {
-      setFilteredDate({
-        createdAt: inactiveDate.createdAt,
-        finishedAt: inactiveDate.finishedAt,
-      });
-    }
-  }, [dispatch, listPage, type, inactiveDate]);
+    setFilteredDate({
+      createdAt: date.createdAt,
+      finishedAt: date.finishedAt,
+    });
+  }, [dispatch, date]);
 
   const handleToggle = (value, state, setState) => () => {
     const currentIndex = state.indexOf(value);
@@ -432,7 +410,7 @@ const Filtration = ({
               >
                 <CalendarMonthIcon />
               </Grid>
-              <Typography>Поиск по л.с.</Typography>
+              <Typography>Поиск</Typography>
             </ListItemButton>
           </ListItem>
         </List>
@@ -703,6 +681,7 @@ const Filtration = ({
                 spacing={1}
                 sx={{
                   p: '15px',
+                  bgcolor: 'background.paper',
                 }}
               >
                 <Grid
@@ -801,12 +780,12 @@ const Filtration = ({
                         fontSize: '18px',
                       }}
                     >
-                      Поиск по лич. счету
+                      Поиск
                     </Typography>
                     <TextField
                       autoComplete={'off'}
                       type={'text'}
-                      label={'Л.С. абонента'}
+                      label={'лич. счет / номер тел.'}
                       name={'ls_abon'}
                       onChange={handleChangeSearchFields}
                       value={searchFields.ls_abon || ''}

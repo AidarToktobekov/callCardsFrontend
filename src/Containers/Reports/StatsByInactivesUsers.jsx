@@ -199,7 +199,7 @@ const StatsByInactivesUsers = () => {
           type={'Неактивка'}
           setFilteredList={setFilteredList}
           filtrationRequest={filtrationRequest}
-          inactiveDate={searchDate}
+          date={searchDate}
         />
       </Grid>
       <TableContainer

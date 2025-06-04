@@ -3,7 +3,7 @@ import {
   selectList,
   selectListLoading,
 } from '../../features/list/listSlice.js';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getList } from '../../features/list/listThunk.js';
 import {
   Button,
@@ -23,19 +23,54 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import dayjs from 'dayjs';
 import Filtration from '../../Components/Filtration/Filtration.jsx';
+import Calendar from '../../Components/Calendar/Calendar.jsx';
 
 const CardsList = () => {
   const dispatch = useAppDispatch();
   const list = useAppSelector(selectList);
   const loading = useAppSelector(selectListLoading);
+  const isFirstRender = useRef(true);
+  const [searchDate, setSearchDate] = useState({
+    createdAt: dayjs().startOf('month').format('YYYY-MM-DD'),
+    finishedAt: dayjs().endOf('month').format('YYYY-MM-DD'),
+  });
 
   const [tableHeight, setTableHeight] = useState(0);
   const [filteredList, setFilteredList] = useState(list.result);
   const [listPage, setListPage] = useState(1);
 
+  const searchCards = () => {
+    dispatch(
+      getList({
+        listPage: listPage,
+        date: {
+          ...searchDate,
+          end: dayjs(searchDate.end).add(1, 'day').format('YYYY-MM-DD'),
+        },
+      })
+    );
+  };
+
   useEffect(() => {
     setFilteredList(list.result);
   }, [list]);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false; // mark first render as done
+      return;
+    }
+
+    dispatch(
+      getList({
+        listPage,
+        date: {
+          ...searchDate,
+          end: dayjs(searchDate.end).add(1, 'day').format('YYYY-MM-DD'),
+        },
+      })
+    );
+  }, [dispatch, listPage]);
 
   useEffect(() => {
     changeTableHeight();
@@ -45,7 +80,7 @@ const CardsList = () => {
   const changeTableHeight = () => {
     const headerHeight = document.querySelector('header').offsetHeight;
     const windowHeight = window.innerHeight;
-    setTableHeight(windowHeight - headerHeight - 243);
+    setTableHeight(windowHeight - headerHeight - 260);
   };
 
   const filtrationRequest = async ({
@@ -160,11 +195,30 @@ const CardsList = () => {
         >
           Звонки
         </Typography>
+        <Grid
+          container
+          spacing={2}
+          alignItems="center"
+          sx={{ marginLeft: 'auto' }}
+        >
+          <Calendar setState={setSearchDate} />
+          <Button
+            variant={'contained'}
+            color={'primary'}
+            onClick={searchCards}
+            loading={loading}
+            sx={{
+              height: '56px',
+            }}
+          >
+            Поиск
+          </Button>
+        </Grid>
         <Filtration
           list={list.result}
-          listPage={listPage}
           setFilteredList={setFilteredList}
           filtrationRequest={filtrationRequest}
+          date={searchDate}
           type={'Карточки'}
         />
       </Grid>
