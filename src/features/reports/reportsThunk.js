@@ -65,7 +65,7 @@ export const getCardsInactives = createAsyncThunk(
     try {
       const { data: cardsInactives } =
         await axiosApi.get(`/cards/inactives?start_date=${date?.createdAt}&end_date=${date?.finishedAt}
-                    ${ls_abon ? `&search_ls-abon=${ls_abon}` : ''}
+                    ${ls_abon ? `&ls_abon=${ls_abon}` : ''}
                     ${reasons?.length ? `&reason=${reasons}` : ''}
                     ${solutions?.length ? `&solution=${solutions}` : ''}
                     ${employees?.length ? `&sip=${employees}` : ''}
