@@ -3,9 +3,9 @@ import axiosApi from '../../axiosApi.js';
 
 export const getCardsReport = createAsyncThunk(
   'reports/getCardsReport',
-  async () => {
+  async ({date}) => {
     try {
-      const { data: cardsReport } = await axiosApi.get('/cards/report');
+      const { data: cardsReport } = await axiosApi.get(`/cards/report${date?.createdAt && date?.finishedAt ? `?start_date=${date.createdAt}&end_date=${date.finishedAt}` : ''}`);
       return cardsReport || [];
     } catch (error) {
       console.log(error);
@@ -15,10 +15,10 @@ export const getCardsReport = createAsyncThunk(
 
 export const getTreatmentReport = createAsyncThunk(
   'reports/getTreatmentReport',
-  async () => {
+  async ({date}) => {
     try {
       const { data: treatmentReport } = await axiosApi.get(
-        '/cards/stats_by_reason'
+        `/cards/stats_by_reason${date?.createdAt && date?.finishedAt ? `?start_date=${date.createdAt}&end_date=${date.finishedAt}` : ''}`
       );
       return treatmentReport || [];
     } catch (error) {
@@ -29,10 +29,10 @@ export const getTreatmentReport = createAsyncThunk(
 
 export const getSolutionReport = createAsyncThunk(
   'reports/getSolutionReport',
-  async () => {
+  async ({date}) => {
     try {
       const { data: solutionReport } = await axiosApi.get(
-        '/cards/stats_by_solution'
+        `/cards/stats_by_solution${date?.createdAt && date?.finishedAt ? `?start_date=${date.createdAt}&end_date=${date.finishedAt}` : ''}`
       );
       return solutionReport || [];
     } catch (error) {

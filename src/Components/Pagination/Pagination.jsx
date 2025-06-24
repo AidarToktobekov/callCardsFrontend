@@ -29,7 +29,6 @@ const Pagination = ({
       spacing={2}
       sx={{
         border: '1px solid #90caf9',
-        ml: 'auto',
         borderRadius: '5px',
         color: '#90caf9',
         fontFamily: 'Roboto, sans-serif',

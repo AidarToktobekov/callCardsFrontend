@@ -25,7 +25,7 @@ import {
   selectTreatmentReportLoading,
 } from '../../features/reports/reportsSlice.js';
 import { useEffect, useState } from 'react';
-import { getTreatmentReport } from '../../features/reports/reportsThunk.js';
+import {getTreatmentReport} from '../../features/reports/reportsThunk.js';
 import Grid from '@mui/material/Grid2';
 import { exportToExcel } from '../../excelExporter.js';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -37,6 +37,8 @@ import {
 } from '../../features/reasonsAndSolution/reasonsAndSolutionSlice.js';
 import { getReasonsList } from '../../features/reasonsAndSolution/reasonsAndSolutionThunk.js';
 import Pagination from '../../Components/Pagination/Pagination.jsx';
+import Calendar from "../../Components/Calendar/Calendar.jsx";
+import dayjs from "dayjs";
 
 const StatsByReasons = () => {
   const dispatch = useAppDispatch();
@@ -48,6 +50,21 @@ const StatsByReasons = () => {
   const reasonLoading = useAppSelector(selectReasonsListLoading);
   const [filteredList, setFilteredList] = useState(treatmentReport);
   const [exportExcel, setExportExcel] = useState([]);
+  const [searchDate, setSearchDate] = useState({
+    createdAt: dayjs().startOf('month').format('YYYY-MM-DD'),
+    finishedAt: dayjs().endOf('month').format('YYYY-MM-DD'),
+  });
+
+  const searchCards = () => {
+    dispatch(
+      getTreatmentReport({
+        date: {
+          ...searchDate,
+          end: dayjs(searchDate.end).add(1, 'day').format('YYYY-MM-DD'),
+        },
+      })
+    );
+  };
   useEffect(() => {
     const newArr = [];
     filteredList.map((item) => {
@@ -64,7 +81,6 @@ const StatsByReasons = () => {
   }, [treatmentReport]);
 
   useEffect(() => {
-    dispatch(getTreatmentReport());
     dispatch(getReasonsList());
   }, [dispatch]);
 
@@ -78,7 +94,7 @@ const StatsByReasons = () => {
   const changeTableHeight = () => {
     const headerHeight = document.querySelector('header').offsetHeight;
     const windowHeight = window.innerHeight;
-    setTableHeight(windowHeight - headerHeight - 135);
+    setTableHeight(windowHeight - headerHeight - 205);
   };
 
   useEffect(() => {
@@ -214,29 +230,47 @@ const StatsByReasons = () => {
   return (
     <>
       <Container variant={'h1'} maxWidth={'lg'}>
-        <Grid container justifyContent="space-between" spacing={1} p={'20px'}>
-          <Typography
-            sx={{
-              fontSize: '25px',
-              color: '#fff',
-              textAlign: 'center',
-            }}
-          >
-            Подсчёт звонков по причинам
-          </Typography>
-          <Pagination
-            setItemsPerPage={setItemsPerPage}
-            setCurrentPage={setCurrentPage}
-            itemsPerPage={itemsPerPage}
-            currentPage={currentPage}
-            list={filteredList}
-          />
-          <Button
-            variant={'outlined'}
-            onClick={() => exportToExcel(exportExcel, 'Стат-ка_по_сотрудникам')}
-          >
-            Экспорт
-          </Button>
+        <Grid container flexDirection="column" spacing={2} p={'20px'}>
+          <Grid container>
+            <Typography
+              sx={{
+                fontSize: '25px',
+                color: '#fff',
+                textAlign: 'center',
+                mr: "auto",
+              }}
+            >
+              Подсчёт звонков по причинам
+            </Typography>
+
+            <Calendar setState={setSearchDate} />
+            <Button
+              variant={'contained'}
+              color={'primary'}
+              onClick={searchCards}
+              loading={loading}
+              sx={{
+                height: '56px',
+              }}
+            >
+              Поиск
+            </Button>
+          </Grid>
+          <Grid container justifyContent={'space-between'}>
+            <Pagination
+              setItemsPerPage={setItemsPerPage}
+              setCurrentPage={setCurrentPage}
+              itemsPerPage={itemsPerPage}
+              currentPage={currentPage}
+              list={filteredList}
+            />
+            <Button
+              variant={'outlined'}
+              onClick={() => exportToExcel(exportExcel, 'Стат-ка_по_сотрудникам')}
+            >
+              Экспорт
+            </Button>
+          </Grid>
         </Grid>
         <TableContainer
           component={Paper}

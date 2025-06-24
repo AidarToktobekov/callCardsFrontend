@@ -38,6 +38,8 @@ import { getEmployees } from '../../features/user/userThunk.js';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { getCardsReport } from '../../features/reports/reportsThunk.js';
 import Pagination from '../../Components/Pagination/Pagination.jsx';
+import Calendar from "../../Components/Calendar/Calendar.jsx";
+import dayjs from "dayjs";
 
 const StatsByEmployees = () => {
   const dispatch = useAppDispatch();
@@ -47,6 +49,21 @@ const StatsByEmployees = () => {
   const loading = useAppSelector(selectCardsReportLoading);
   const [filteredList, setFilteredList] = useState(cardsReport);
   const [exportExcel, setExportExcel] = useState([]);
+  const [searchDate, setSearchDate] = useState({
+    createdAt: dayjs().startOf('month').format('YYYY-MM-DD'),
+    finishedAt: dayjs().endOf('month').format('YYYY-MM-DD'),
+  });
+
+  const searchCards = () => {
+    dispatch(
+      getCardsReport({
+        date: {
+          ...searchDate,
+          end: dayjs(searchDate.end).add(1, 'day').format('YYYY-MM-DD'),
+        },
+      })
+    );
+  };
   useEffect(() => {
     const newArr = [];
     filteredList.map((item) => {
@@ -62,10 +79,6 @@ const StatsByEmployees = () => {
   useEffect(() => {
     setFilteredList(cardsReport);
   }, [cardsReport]);
-
-  useEffect(() => {
-    dispatch(getCardsReport());
-  }, [dispatch]);
 
   useEffect(() => {
     if (!tableHeight) {
@@ -121,7 +134,7 @@ const StatsByEmployees = () => {
   const changeTableHeight = () => {
     const headerHeight = document.querySelector('header').offsetHeight;
     const windowHeight = window.innerHeight;
-    setTableHeight(windowHeight - headerHeight - 135);
+    setTableHeight(windowHeight - headerHeight - 205);
   };
 
   const [filteredEmployees, setFilteredEmployees] = useState([]);
@@ -238,29 +251,47 @@ const StatsByEmployees = () => {
   return (
     <>
       <Container variant={'h1'} maxWidth={'lg'}>
-        <Grid container justifyContent="space-between" spacing={1} p={'20px'}>
-          <Typography
-            sx={{
-              fontSize: '25px',
-              color: '#fff',
-              textAlign: 'center',
-            }}
-          >
-            Подсчёт звонков по операторам
-          </Typography>
-          <Pagination
-            list={filteredList}
-            setCurrentPage={setCurrentPage}
-            currentPage={currentPage}
-            itemsPerPage={itemsPerPage}
-            setItemsPerPage={setItemsPerPage}
-          />
-          <Button
-            variant={'outlined'}
-            onClick={() => exportToExcel(exportExcel, 'Стат-ка_по_сотрудникам')}
-          >
-            Экспорт
-          </Button>
+        <Grid container flexDirection="column" spacing={2} p={'20px'}>
+          <Grid container justifyContent="space-between">
+            <Typography
+              sx={{
+                fontSize: '25px',
+                color: '#fff',
+                textAlign: 'center',
+                mr: "auto",
+              }}
+            >
+              Подсчёт звонков по операторам
+            </Typography>
+
+            <Calendar setState={setSearchDate} />
+            <Button
+              variant={'contained'}
+              color={'primary'}
+              onClick={searchCards}
+              loading={loading}
+              sx={{
+                height: '56px',
+              }}
+            >
+              Поиск
+            </Button>
+          </Grid>
+          <Grid container justifyContent="space-between">
+            <Pagination
+              list={filteredList}
+              setCurrentPage={setCurrentPage}
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+              setItemsPerPage={setItemsPerPage}
+            />
+            <Button
+              variant={'outlined'}
+              onClick={() => exportToExcel(exportExcel, 'Стат-ка_по_сотрудникам')}
+            >
+              Экспорт
+            </Button>
+          </Grid>
         </Grid>
         <TableContainer
           component={Paper}
