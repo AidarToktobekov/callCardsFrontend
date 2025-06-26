@@ -44,6 +44,7 @@ const ListSlice = createSlice({
     });
     builder.addCase(getClient.pending, (state) => {
       state.clientsLoading = true;
+      state.clients = [];
     });
     builder.addCase(getClient.fulfilled, (state, { payload: client }) => {
       state.clientsLoading = false;

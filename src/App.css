@@ -1,6 +1,17 @@
-/*#root {}*/
+
 body {
+  font-family: "M PLUS Rounded 1c", sans-serif !important;
   margin: 0;
-  background-color: #121212;
+  background-image: url("/public/black-theme-bg.png");
+  background-size: 600px;
   color: #ffffff !important;
+}
+
+.layout{
+  display: flex;
+}
+
+.main-area{
+  padding: 15px;
+  flex-grow: 1;
 }
