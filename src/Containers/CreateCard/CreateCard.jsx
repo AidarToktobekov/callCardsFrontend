@@ -5,7 +5,9 @@ import {
   Button,
   CircularProgress,
   Container,
+  FormControlLabel,
   MenuItem,
+  Switch,
   TextField,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -154,6 +156,7 @@ const CreateCard = () => {
         account_id: `${state?.account_id}`,
         n_base_subject_id: `${state?.n_base_subject_id}`,
         n_result_id: `${state?.n_result_id}`,
+        save_call_from: state?.save_call_from,
       };
 
       await dispatch(createCard(cardMutation));
@@ -407,6 +410,25 @@ const CreateCard = () => {
                 label={'ip_olt'}
                 value={state?.ip_olt || ''}
                 sx={{ width: 'calc(50% - 7.5px)' }}
+              />
+              <FormControlLabel
+                value="end"
+                control={
+                  <Switch
+                    checked={!!state?.save_call_from || false}
+                    color="primary"
+                    onChange={(_, value) =>
+                      inputChangeHandler({
+                        target: {
+                          name: 'save_call_from',
+                          value,
+                        },
+                      })
+                    }
+                  />
+                }
+                label="Сохранить в Гидре номер с которого звонили"
+                labelPlacement="end"
               />
               <TextField
                 label="Комментарий"
