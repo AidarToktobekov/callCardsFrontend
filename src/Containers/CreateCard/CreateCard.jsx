@@ -120,6 +120,7 @@ const CreateCard = () => {
         ip_address: cards[cardIndex].ip_address,
         mac_address: cards[cardIndex].mac_address,
         account_id: cards[cardIndex].account_id,
+        n_base_subject_id: cards[cardIndex].n_base_subject_id,
         n_result_id: cards[cardIndex].n_result_id,
         mac_onu: cards[cardIndex].mac_onu,
         ip_olt: cards[cardIndex].ip_olt,
@@ -151,6 +152,7 @@ const CreateCard = () => {
         ip_olt: state?.ip_olt,
         mac_onu: state?.mac_onu,
         account_id: `${state?.account_id}`,
+        n_base_subject_id: `${state?.n_base_subject_id}`,
         n_result_id: `${state?.n_result_id}`,
       };
 
