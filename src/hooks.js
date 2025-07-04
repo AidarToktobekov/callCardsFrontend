@@ -13,6 +13,7 @@ export const useExportExcel = () => {
     employees,
     list,
   }) => {
+    console.log(date);
     setLoadingExport(true);
     let listCards;
     if (type === 'Неактивка') {
@@ -64,7 +65,7 @@ export const useExportExcel = () => {
       }));
     } else if (type === 'Повторные звонки') {
       const { data: repeatedCalls } = await axiosApi.get(
-        `/cards/repeated_calls?page_size=10000000&start_date=${date.start}&end_date=${date.end}
+        `/cards/repeated_calls?page_size=10000000&start_date=${date.createdAt}&end_date=${date.finishedAt}
             ${solutions?.length ? `&solution=${solutions}` : ''}
             ${reasons?.length ? `&reason=${reasons}` : ''}
         `
